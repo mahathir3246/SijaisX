@@ -1,0 +1,14 @@
+html, body {
+  height: 100%; /* Ensure body and HTML take full height */
+  margin: 0;    /* Remove default margin from body */
+}
+.appContainer {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; // Makes sure it takes up the full height of the viewport
+  }
+  
+  .content {
+    flex: 1; // This pushes the footer down
+  }
+  
