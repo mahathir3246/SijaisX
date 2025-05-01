@@ -1,0 +1,11 @@
+# dependencies
+node_modules/
+.pnpm/
+
+# builds / coverage
+build/
+coverage/
+
+# environment files & OS junk
+.env*
+.DS_Store
