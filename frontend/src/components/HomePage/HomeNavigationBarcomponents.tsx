@@ -37,7 +37,7 @@ const NavigationBarComponents = () => {
         </ResponsiveNav.Item>
         <ResponsiveNav.Item
           as={Link}
-          to="/"
+          to="/register"
           className={navigationStyles.navLink}
         >
           <span className={navigationStyles.register}>Hae SijaisX</span>

@@ -285,7 +285,7 @@
   }
   
   
-  
+//homepage  
 .register {
 background-color: transparent;
 color: #007bff; // Blue text
@@ -300,7 +300,7 @@ text-align: center;
     color: white;
 }
 }
-
+//homepage
 .login {
     background-color: #007bff;  // Blue background
     color: white !important ; // White text
@@ -313,4 +313,43 @@ text-align: center;
         background: #2f4be9 !important;
         color: white;
     }
+}
+
+
+//register
+.registerHeaderContainer{
+  padding: 0 60px;
+  background-color: white;
+  height: 90px;
+  display: flex; /* Ensure flexbox is used */
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+  @media (max-width: 700px) {
+      padding: 0 60;
+      height: 65px;
+    }
+    z-index: 10;
+    box-shadow: 0px 4px 10px 0px #e9eaed;
+}
+
+.registerlogocontainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 160px;
+  order: 1;
+  align-items: center;
+
+  @media screen and (max-width: 700px) {
+    align-items: center;
+    order: 2;
+    flex: 1 1 0;
+    width: 100%;
+    margin-left: auto;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
 }

@@ -1,5 +1,5 @@
-import NavigationBar from './OpePageNavBar';
-import Footer from './OpePageFooter';
+import NavigationBar from './teacherPageNavBar';
+import Footer from './teacherFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
 
  const FullHomePage = () => {

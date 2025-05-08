@@ -1,0 +1,39 @@
+.teacherRegisterWrapper {
+    margin-top: 2rem;
+    margin-bottom: 4rem;
+  }
+  
+  .registerPanel {
+    min-width: 500px;
+    max-width: 840px;           /* how wide the box can grow */
+    width: 100%;                /* stretch on mobile */
+    border: none;               /* we’ll use a soft shadow instead */
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(#000, 0.08);
+  
+    h3 {
+      font-weight: 700;
+      margin: 0 0 1.5rem;
+    }
+  
+    /* tighter vertical rhythm between fields */
+    .rs-form-group {
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  /* teacher_register.module.scss (new or existing) */
+.pageBg {
+    min-height: 100vh;          /* fill the viewport */
+    background: #f3f3f3;        /* light‑grey backdrop */
+    display: flex;              /* center the panel nicely */
+    justify-content: center;
+    align-items: flex-start;    /* top‑aligned; use center if you want vertical centering */
+    padding: 4rem 1rem;         /* breathing‑room on small screens */
+  }
+  
+  
+  .box{
+    width: 100%;
+  }

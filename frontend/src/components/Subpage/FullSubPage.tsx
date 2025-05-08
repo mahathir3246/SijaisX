@@ -1,5 +1,5 @@
-import NavigationBar from './SijaisPageNavBar';
-import Footer from './SijaisFooter';
+import NavigationBar from './SubPageNavBar';
+import Footer from './SubFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
 
 

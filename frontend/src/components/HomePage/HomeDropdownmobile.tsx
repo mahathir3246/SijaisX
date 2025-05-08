@@ -71,7 +71,7 @@ const NavDropdownMobile = () => {
           <Link
             className={navigationStyles.sidebarLink}
             tabIndex={0}
-            to="/"
+            to="/register"
             target="_blank"
             rel="noopener noreferrer"
           >
