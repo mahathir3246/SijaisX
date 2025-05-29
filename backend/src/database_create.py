@@ -10,7 +10,7 @@ def create_database():
     CREATE TABLE Teacher (
         teacher_ID TEXT PRIMARY KEY,
         name TEXT NOT NULL,
-        phone_number TEXT,
+        phone_number TEXT UNIQUE,
         school_name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL
