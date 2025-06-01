@@ -11,9 +11,10 @@ def create_database():
         teacher_ID TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         phone_number TEXT UNIQUE,
-        school_name TEXT NOT NULL,
         email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL
+        password TEXT NOT NULL,
+        school_ID TEXT,
+        FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
 
 
@@ -84,6 +85,11 @@ def create_database():
         duration INTEGER,
         room TEXT NOT NULL
     );
+                             
+    CREATE TABLE School (
+        school_ID TEXT PRIMARY KEY,
+        school_name TEXT NOT NULL
+    );
 
     CREATE TABLE Assignment (
         assignment_ID TEXT PRIMARY KEY,
@@ -113,7 +119,14 @@ def create_database():
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
         FOREIGN KEY (class_ID) REFERENCES Class(class_ID)
     );
-
+                             
+    CREATE TABLE VolunteersInSchool (
+        substitute_ID TEXT,
+        school_ID TEXT,
+        PRIMARY KEY (substitute_ID, school_ID)
+        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
+        FOREIGN KEY (school_ID) REFERENCES School(school_ID)
+    );
 
                             ''')
     except sqlite3.Error as e:
