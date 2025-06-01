@@ -96,3 +96,44 @@ def generate_unique_substitute_preference(
         
     base = "_".join(None, parts)
     return make_unique_id("Preference", "preference_ID", base)
+
+def generate_unique_class_id(
+        subject: str,
+        grade: str,
+        beginning_time: str,
+        ending_time: str,
+        duration: int | None,
+        room: str
+) -> str:
+    parts: list[str] = ["cl",
+                        slugify(subject)[0:2],
+                        slugify(grade),
+                        slugify(beginning_time),
+                        slugify(ending_time)]
+    if duration is not None:
+        parts.append("dur")
+        parts.append(str(duration))
+    parts.append("rm")
+    parts.append(slugify(room))
+    base = "_".join(parts)
+    return make_unique_id("Class", "class_ID", base)
+
+def generate_unique_assignment_id(
+        date: str,
+        notes: str | None,
+        status: str,
+        class_id: str,
+        teacher_id: str,
+        substitute_id: str
+) -> str:
+    base = (
+        "as_" +
+        slugify(date) + "_" +
+        slugify(status)[0:1] + "_" +
+        slugify(class_id)[0:3] + "_" +
+        slugify(teacher_id)[0:2] + "_" +
+        slugify(substitute_id)[0:2]
+    )
+    return make_unique_id("Assignment", "assignment_ID", base)
+
+
