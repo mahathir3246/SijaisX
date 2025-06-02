@@ -24,6 +24,7 @@ register_get_route("/api/feedback_to_teacher/<string:id>", get_functions.get_fee
 register_get_route("/api/availability/<string:id>", get_functions.get_availability, "Availability not found")
 register_get_route("/api/preference/<string:id>", get_functions.get_single_substitute_preference, "Preference not found")
 register_get_route("/api/class/<string:id>", get_functions.get_class_info, "Class not found")
+register_get_route("/api/school/<string:id>", get_functions.get_school_info, "School not found")
 register_get_route("/api/assignment/<string:id>", get_functions.get_single_assignment, "Assignment not found")
 
 

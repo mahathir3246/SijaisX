@@ -48,6 +48,10 @@ export async function get_availability_info(availabilityID: string) {
     return await fetchData(`${BASE_URL}/availability/${availabilityID}`);
 }
 
+export async function get_school_info(school_ID: string) {
+    return await fetchData(`${BASE_URL}/school/${school_ID}`);
+}
+
 export async function login(email: string, password: string) {
     try {
         const response = await fetch(`${BASE_URL}/login`, {

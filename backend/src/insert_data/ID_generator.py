@@ -24,7 +24,7 @@ def make_unique_id(table: str, column: str, base_id: str) -> str:
 
 
 def generate_unique_teacher_id(name: str, school_name: str) -> str:
-    base = f"t_{slugify(name)}_{slugify(school_name)}"
+    base = f"t_{slugify(name)}_{slugify(school_name)[0:2] + slugify(school_name)[4:6]}"
     return make_unique_id("Teacher", "teacher_ID", base)
 
 
@@ -117,6 +117,10 @@ def generate_unique_class_id(
     parts.append(slugify(room))
     base = "_".join(parts)
     return make_unique_id("Class", "class_ID", base)
+
+def generate_unique_school_id(school_name: str) -> str:
+    base = "sc_" + slugify(school_name)[0:2] + slugify(school_name)[4:6]
+    return make_unique_id("School", "school_ID", base)
 
 def generate_unique_assignment_id(
         date: str,

@@ -142,6 +142,25 @@ def get_class_info(class_ID):
         print('Database error:', e)
         return None
     
+def get_school_info(school_ID):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('''
+                       SELECT * 
+                       FROM School
+                       WHERE school_ID = ?
+                       ''', (school_ID, ))
+        row = cursor.fetchone()
+        if row:
+            columns = [desc[0] for desc in cursor.description]
+            return dict(zip(columns, row))
+        else:
+            return None
+    except sqlite3.Error as e:
+        print('Database error:', e)
+        return None
+
 def get_single_assignment(assignment_ID):
     try:
         conn = get_db_connection()
