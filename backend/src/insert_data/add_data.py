@@ -111,10 +111,24 @@ def add_substitute_preference(grade, substitute_ID, school_name, subject, locati
         print("Database error: ", e)
         return False
     
-def add_class(subject, grade, beginning_time, ending_time, room, duration):
-    class_ID = generate_unique_class_id(subject, grade, beginning_time, ending_time, duration, room)
+def add_class(subject, grade, beginning_time, ending_time, room, duration, school_name):
     try:
-        return insert_class(class_ID, subject, grade, beginning_time, ending_time, room, duration)
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        result = cursor.execute('''
+                                   SELECT school_ID
+                                   FROM School
+                                   WHERE school_name = ?
+                                   ''', (school_name,)).fetchone()
+        if result is not None:
+            school_ID = result[0]
+        else:
+            school_ID = add_school(school_name)
+            if school_ID is None:
+                return False
+        class_ID = generate_unique_class_id(subject, grade, beginning_time, ending_time, duration, room)
+        return insert_class(class_ID, subject, grade, beginning_time, ending_time, room, school_ID, duration)
     
     except sqlite3.Error as e:
         print("Database error: ", e)

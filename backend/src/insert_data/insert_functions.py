@@ -136,15 +136,15 @@ def insert_substitute_preference(preference_ID, grade, substitute_ID, school_ID,
         if conn:
             conn.close()
 
-def insert_class(class_ID, subject, grade, beginning_time, ending_time, room, duration = None):
+def insert_class(class_ID, subject, grade, beginning_time, ending_time, room, school_ID, duration = None):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO Class (class_ID, subject, grade, beginning_time, ending_time, duration, room)
+            INSERT INTO Class (class_ID, subject, grade, beginning_time, ending_time, duration, room, school_ID)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (class_ID, subject, grade, beginning_time, ending_time, duration, room))
+        ''', (class_ID, subject, grade, beginning_time, ending_time, duration, room, school_ID))
 
         conn.commit()
         return True

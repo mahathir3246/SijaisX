@@ -84,7 +84,9 @@ def create_database():
         beginning_time TEXT NOT NULL,
         ending_time TEXT NOT NULL,
         duration INTEGER,
-        room TEXT NOT NULL
+        room TEXT NOT NULL,
+        school_ID TEXT NOT NULL,
+        FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
                              
     CREATE TABLE School (

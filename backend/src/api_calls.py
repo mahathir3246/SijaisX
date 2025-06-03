@@ -53,9 +53,9 @@ register_insert_route("/api/feedback_to_sub", insert_functions.add_feedback_to_s
 register_insert_route("/api/feedback_to_teacher", insert_functions.add_feedback_to_teacher, required_fields=["date", "comments", "teacher_ID", "substitute_ID"])
 register_insert_route("/api/availability", insert_functions.add_availability, required_fields=["substitute_ID", "beginning_date", "ending_date", "location"])
 register_insert_route("/api/preference", insert_functions.add_substitute_preference, required_fields=["grade", "substitute_ID", "school_name", "subject", "location"])
-register_insert_route("/api/class", insert_functions.add_class, required_fields=["subject", "grade", "beginning_time", "ending_time", "teacher_ID", "school_ID"])
+register_insert_route("/api/class", insert_functions.add_class, required_fields=["subject", "grade", "beginning_time", "ending_time", "teacher_ID", "room", "school_ID"])
 register_insert_route("/api/school", insert_functions.add_school, required_fields=["school_name"])
-register_insert_route("/api/assignment", insert_functions.add_assignment, required_fields=["date", "notes", "status", "class_id", "teacher_id", "substitute_id"])
+register_insert_route("/api/assignment", insert_functions.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
 
 
 @app.route("/api/login", methods=['POST'])

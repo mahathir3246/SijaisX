@@ -86,67 +86,79 @@ export async function create_teacher(teacherData: {
     return await postData(`${BASE_URL}/teacher`, teacherData);
 }
 
-export async function create_student(studentData: {
+export async function create_substitute(substituteData: {
     name: string;
     phone_number: string;
-    school_name: string;
     email: string;
     password: string;
+    experience: number;
 }) {
-    return await postData(`${BASE_URL}/student`, studentData);
+    return await postData(`${BASE_URL}/substitute`, substituteData);
 }
 
 export async function create_class(classData: {
-    name: string;
-    teacher_id: string;
+    subject: string;
+    grade: string;
+    beginning_time: string;
+    ending_time: string;
+    teacher_ID: string;
+    room: string;
+    school_ID: string;
 }) {
     return await postData(`${BASE_URL}/class`, classData);
 }
 
 export async function create_feedback_to_teacher(feedbackData: {
-    content: string;
-    student_id: string;
-    teacher_id: string;
+    date: string;
+    comments: string;
+    teacher_ID: string;
+    substitute_ID: string;
 }) {
     return await postData(`${BASE_URL}/feedback_to_teacher`, feedbackData);
 }
 
 export async function create_feedback_to_sub(feedbackData: {
-    content: string;
-    student_id: string;
-    sub_id: string;
+    date: string;
+    rating: number;
+    comments: string;
+    teacher_ID: string;
+    substitute_ID: string;
 }) {
     return await postData(`${BASE_URL}/feedback_to_sub`, feedbackData);
 }
 
 export async function create_assignment(assignmentData: {
-    title: string;
-    description: string;
-    class_id: string;
+    date: string;
+    notes: string;
+    status: string;
+    class_ID: string;
+    teacher_ID: string;
+    substitute_ID: string;
 }) {
     return await postData(`${BASE_URL}/assignment`, assignmentData);
 }
 
 export async function create_preference(preferenceData: {
-    student_id: string;
-    class_id: string;
-    preference: string;
+    grade: string;
+    substitute_ID: string;
+    school_name: string;
+    subject: string;
+    location: string;
 }) {
     return await postData(`${BASE_URL}/preference`, preferenceData);
 }
 
 export async function create_availability(availabilityData: {
-    teacher_id: string;
-    start_time: string;
-    end_time: string;
+    substitute_ID: string;
+    beginning_date: string;
+    ending_date: string;
+    location: string;
 }) {
     return await postData(`${BASE_URL}/availability`, availabilityData);
 }
 
 export async function create_school(schoolData: {
-    name: string;
-    address: string;
-    phone_number: string;
+    school_name: string;
 }) {
     return await postData(`${BASE_URL}/school`, schoolData);
 }   
