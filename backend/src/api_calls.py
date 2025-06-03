@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import get_functions
+from insert_data import insert_functions
 import login_check
 
 app = Flask(__name__)
@@ -27,6 +28,8 @@ register_get_route("/api/class/<string:id>", get_functions.get_class_info, "Clas
 register_get_route("/api/school/<string:id>", get_functions.get_school_info, "School not found")
 register_get_route("/api/assignment/<string:id>", get_functions.get_single_assignment, "Assignment not found")
 
+
+### API calls for the additions
 
 @app.route("/api/login", methods=['POST'])
 def password_check():

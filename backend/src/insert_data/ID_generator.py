@@ -77,7 +77,7 @@ def generate_unique_substitute_preference(
         substitute_id: str,
         grade: str | None,
         subject: str | None,
-        school: str | None,
+        school_ID: str | None,
         location: str | None
 ) -> str :
     parts: list[str] = ["pr", slugify(substitute_id)[4:6]]
@@ -87,9 +87,8 @@ def generate_unique_substitute_preference(
     if subject:
         parts.append("sub")
         parts.append(slugify(subject)[0:2])
-    if school:
-        parts.append("sch")
-        parts.append(slugify(school))
+    if school_ID:
+        parts.append(slugify(school_ID))
     if location:
         parts.append("l")
         parts.append(slugify(location))

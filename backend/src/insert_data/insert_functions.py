@@ -115,15 +115,15 @@ def insert_availability(availability_ID, substitute_ID, beginning_date = None, e
         if conn:
             conn.close()
     
-def insert_substitute_preference(preference_ID, grade, substitute_ID, subject = None, school = None, location = None):
+def insert_substitute_preference(preference_ID, grade, substitute_ID, school_ID, subject = None, location = None):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO SubstitutePreference (preference_ID, grade, subject, school, location, substitute_ID)
+            INSERT INTO SubstitutePreference (preference_ID, grade, subject, location, substitute_ID, school_ID)
             VALUES (?, ?, ?, ?, ?, ?)
-        ''', (preference_ID, grade, subject, school, location, substitute_ID))
+        ''', (preference_ID, grade, subject, location, substitute_ID, school_ID))
 
         conn.commit()
         return True

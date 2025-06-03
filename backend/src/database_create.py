@@ -70,10 +70,11 @@ def create_database():
         preference_ID TEXT PRIMARY KEY,
         grade TEXT CHECK (grade IN ('Yläkoulu', 'Alakoulu', 'Lukio')),
         subject TEXT,
-        school TEXT,
         location TEXT,
         substitute_ID TEXT,
-        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID)
+        school_ID TEXT,
+        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
+        FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
 
     CREATE TABLE Class (
@@ -123,7 +124,7 @@ def create_database():
     CREATE TABLE VolunteersInSchool (
         substitute_ID TEXT,
         school_ID TEXT,
-        PRIMARY KEY (substitute_ID, school_ID)
+        PRIMARY KEY (substitute_ID, school_ID),
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
         FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
