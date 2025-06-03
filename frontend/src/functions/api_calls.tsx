@@ -16,6 +16,28 @@ async function fetchData<T>(url: string): Promise<T | null> {
     }
 }
 
+async function postData<T>(url: string, body: any): Promise<T | null> {
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            console.error(`POST ${url} failed:`, await response.text());
+            return null;
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error(`POST ${url} failed:`, err);
+        return null;
+    }
+}
+
+
+// Functions to fetch data from API
 export async function get_teacher_info(teacherID: string) {
     return await fetchData(`${BASE_URL}/teacher/${teacherID}`);
 }
@@ -51,6 +73,84 @@ export async function get_availability_info(availabilityID: string) {
 export async function get_school_info(school_ID: string) {
     return await fetchData(`${BASE_URL}/school/${school_ID}`);
 }
+
+
+// Functions to post data to API
+export async function create_teacher(teacherData: {
+    name: string;
+    phone_number: string;
+    school_name: string;
+    email: string;
+    password: string;
+}) {
+    return await postData(`${BASE_URL}/teacher`, teacherData);
+}
+
+export async function create_student(studentData: {
+    name: string;
+    phone_number: string;
+    school_name: string;
+    email: string;
+    password: string;
+}) {
+    return await postData(`${BASE_URL}/student`, studentData);
+}
+
+export async function create_class(classData: {
+    name: string;
+    teacher_id: string;
+}) {
+    return await postData(`${BASE_URL}/class`, classData);
+}
+
+export async function create_feedback_to_teacher(feedbackData: {
+    content: string;
+    student_id: string;
+    teacher_id: string;
+}) {
+    return await postData(`${BASE_URL}/feedback_to_teacher`, feedbackData);
+}
+
+export async function create_feedback_to_sub(feedbackData: {
+    content: string;
+    student_id: string;
+    sub_id: string;
+}) {
+    return await postData(`${BASE_URL}/feedback_to_sub`, feedbackData);
+}
+
+export async function create_assignment(assignmentData: {
+    title: string;
+    description: string;
+    class_id: string;
+}) {
+    return await postData(`${BASE_URL}/assignment`, assignmentData);
+}
+
+export async function create_preference(preferenceData: {
+    student_id: string;
+    class_id: string;
+    preference: string;
+}) {
+    return await postData(`${BASE_URL}/preference`, preferenceData);
+}
+
+export async function create_availability(availabilityData: {
+    teacher_id: string;
+    start_time: string;
+    end_time: string;
+}) {
+    return await postData(`${BASE_URL}/availability`, availabilityData);
+}
+
+export async function create_school(schoolData: {
+    name: string;
+    address: string;
+    phone_number: string;
+}) {
+    return await postData(`${BASE_URL}/school`, schoolData);
+}   
+
 
 export async function login(email: string, password: string) {
     try {
