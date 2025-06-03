@@ -52,7 +52,7 @@ def add_teacher(name, phone_number, school_name, email, password):
         if conn:
             conn.close()
 
-def add_substitute(name, phone_number, email, password, experience, profile, picture):
+def add_substitute(name, phone_number, email, password, experience, profile = None, picture = None):
     substitute_ID = generate_unique_substitute_id(name)
     try:
         return insert_substitute(substitute_ID, name, phone_number, email, password, experience, profile, picture)
