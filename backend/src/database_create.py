@@ -13,7 +13,7 @@ def create_database():
         phone_number TEXT UNIQUE,
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
-        school_ID TEXT,
+        school_ID TEXT NOT NULL,
         FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
 
@@ -41,8 +41,8 @@ def create_database():
         date TEXT NOT NULL,
         rating INTEGER,
         comments TEXT,
-        teacher_ID TEXT,
-        substitute_ID TEXT,
+        teacher_ID TEXT NOT NULL,
+        substitute_ID TEXT NOT NULL,
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID),
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID)
     );
@@ -51,8 +51,8 @@ def create_database():
         feedback_tunnus TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         comments TEXT NOT NULL,
-        teacher_ID TEXT,
-        substitute_ID TEXT,
+        teacher_ID TEXT NOT NULL,
+        substitute_ID TEXT NOT NULL,
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID),
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID)
     );
@@ -62,7 +62,7 @@ def create_database():
         beginning_date TEXT,
         ending_date TEXT,
         location TEXT,
-        substitute_ID TEXT,
+        substitute_ID TEXT NOT NULL,
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID)
     );
 
@@ -71,7 +71,7 @@ def create_database():
         grade TEXT CHECK (grade IN ('Yläkoulu', 'Alakoulu', 'Lukio')),
         subject TEXT,
         location TEXT,
-        substitute_ID TEXT,
+        substitute_ID TEXT NOT NULL,
         school_ID TEXT,
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
         FOREIGN KEY (school_ID) REFERENCES School(school_ID)
@@ -97,8 +97,8 @@ def create_database():
         date TEXT NOT NULL,
         notes TEXT,
         status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')), 
-        class_ID TEXT,
-        teacher_ID TEXT,
+        class_ID TEXT NOT NULL,
+        teacher_ID TEXT NOT NULL,
         substitute_ID TEXT,
         FOREIGN KEY (class_ID) REFERENCES Class(class_ID),
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID),
