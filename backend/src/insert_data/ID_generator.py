@@ -93,7 +93,7 @@ def generate_unique_substitute_preference(
         parts.append("l")
         parts.append(slugify(location))
         
-    base = "_".join(None, parts)
+    base = "_".join(parts)
     return make_unique_id("Preference", "preference_ID", base)
 
 def generate_unique_class_id(

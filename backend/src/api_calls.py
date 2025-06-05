@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import get_functions
-from insert_data import insert_functions
+from insert_data.insert_functions import *
 import login_check
 
 app = Flask(__name__)

@@ -5,23 +5,11 @@ from ..get_functions import *
 def add_school(school_name):
     school_ID = generate_unique_school_id(school_name)
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        cursor.execute('''
-                       INSERT INTO School (school_ID, school_name)
-                       VALUES (?, ?)
-                       ''', (school_ID, school_name))
-        conn.commit()
-        return school_ID
+        return insert_school(school_ID, school_name)
     
     except sqlite3.Error as e:
         print("Database error:", e)
-        return None
-    
-    finally:
-        if conn:
-            conn.close()
+        return None    
 
 def add_teacher(name, phone_number, school_name, email, password):
     try:
