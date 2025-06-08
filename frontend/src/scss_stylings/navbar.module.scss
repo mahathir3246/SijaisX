@@ -1,0 +1,355 @@
+//Navbar
+.headerContainer {
+    padding: 0 60px;
+    background-color: white;
+    height: 90px;
+    @media (max-width: 700px) {
+      padding: 0 60;
+      height: 65px;
+    }
+    z-index: 10;
+    box-shadow: 0px 4px 10px 0px #e9eaed;
+  }
+  
+  .headerSubContainer {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1300px;
+    height: 100%;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    color: #343d48;
+    background-color: #fff;
+    text-decoration: none;
+    flex: 1;
+    @media screen and (max-width: 700px) {
+      justify-content: space-between;
+    }
+    .logoContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 160px;
+      order: 1;
+  
+      @media screen and (max-width: 700px) {
+        align-items: center;
+        order: 2;
+        flex: 1 1 0;
+        width: 100%;
+        margin-left: auto;
+      }
+  
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+    }
+    .navContainer {
+      order: 3;
+      margin-right: 0;
+      max-width: calc(100% - 20 * 10px);
+  
+      @media screen and (max-width: 700px) {
+        display: none;
+      }
+    }
+    color: #343d48;
+    background-color: white;
+    text-decoration: none;
+    &:hover {
+      background-color: white;
+    }
+    .dropdown {
+      display: none;
+  
+      @media screen and (max-width: 700px) {
+        display: block;
+        position: absolute;
+        top: 1;
+        left: 10px;
+        margin: 10px;
+      }
+    }
+  }
+  
+  .menuButton {
+    font-size: 28px;
+    margin-left: -10px;
+    padding: 10px;
+    &:hover,
+    &:focus,
+    &:active {
+      background-color: transparent !important;
+    }
+  }
+  
+  .responsiveNav {
+    margin-left: auto;
+    float: right;
+    padding-left: 5px;
+  }
+  
+  .navLink {
+    order: 3;
+    height: 50px;
+    color: #343d48;
+    text-decoration: none;
+    background-color: white;
+    align-content: center;
+  
+    &:hover {
+      color: #2f4be9;
+      background-color: transparent !important;
+    }
+  
+    &:active {
+      color: #2f4be9;
+      background-color: transparent !important;
+    }
+  }
+  
+  .moreDropDownButton {
+    padding: 8px 0 8px 12px;
+    .responsiveNav & > a {
+      padding-right: 0;
+      &:hover {
+        color: #2f4be9;
+        background-color: transparent;
+      }
+    }
+    ul {
+      transform: translate(calc(-100% + 75px));
+  
+      > :first-child {
+        display: none; // FIxed similarly in Review Center, the offset in responsive navbar causes duplication of one element
+      }
+    }
+  }
+  
+  .sidebarLink {
+    font-weight: 400;
+    color: black;
+    &:hover {
+      color: #2f4be9;
+      text-decoration: none;
+    }
+  }
+  
+  .sidebarLinkLogout {
+    font-weight: 400;
+    order: 4;
+    color: #ff0f0f;
+    fill: #ff0f0f;
+    text-decoration: none;
+    background-color: #fff;
+    text-align: start;
+    padding: 0;
+  
+    &:hover {
+      color: #ac3030;
+      background-color: white;
+    }
+  }
+  
+  .buyerInsightEngine {
+    color: #054c2e;
+    font-size: 12px;
+    margin-left: -1px; // Needed for logo styling
+    margin-top: 1px;
+  
+    @media screen and (max-width: 700px) {
+      margin-top: -7px; // Needed for logo styling
+      margin-left: -1px;
+      font-size: 9px;
+    }
+  }
+  
+  .buyerInsightEngineFooter {
+    color: white;
+  }
+  
+  .logoSmall {
+    display: none;
+  
+    @media screen and (max-width: 700px) {
+      display: block;
+      color: black;
+      font-size: 25px;
+      font-weight: bold;
+    }
+  }
+  
+  .logoBig {
+  
+    color: black;
+    font-size: 25px;
+    font-weight: bold;
+    margin-left: 50px;
+  
+    @media screen and (max-width: 700px) {
+      display: none;
+    }
+  }
+  
+  
+  .LuoSijaisuus {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    font-size: 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+    box-sizing: border-box;
+    text-align: center;
+    width: 100%;
+  
+    &:hover {
+      background: #2f4be9 !important;
+      color: white;
+    }
+  }
+  
+  
+  
+  .navItemSubContainer {
+    font-size: 15px;
+    box-sizing: border-box;
+    font-weight: 500;
+    padding: 0 10px;
+    text-align: center;
+    width: 100%;
+  
+    &:active {
+      color: #2f4be9;
+      background-color: transparent !important;
+    }
+  }
+  
+  .logOut {
+    order: 4;
+    color: #ff0f0f;
+    fill: #ff0f0f;
+    text-decoration: none;
+    background-color: white;
+  
+    .responsiveNav > & {
+      padding-right: 0;
+    }
+  
+    &:hover {
+      color: #ac3030;
+  
+      background-color: white;
+    }
+  
+    svg {
+      @media screen and (max-width: 700px) {
+        margin-top: -2px;
+      }
+    }
+  }
+  
+  .mobileDrawerHeaderSidebar {
+    height: 65px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  
+    svg {
+      color: #0f2137;
+    }
+  }
+  
+  .sidebar {
+    margin-top: 3 * 10px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 3 * 10px;
+    padding: 20px;
+    font-weight: 400;
+  }
+  
+  .exitIcon {
+    margin: -2px 10px 0 0;
+    height: 16px;
+  }
+  
+  .logoSubtitle {
+    font-size: 12px;
+    color: #054c2e;
+    margin-left: 2 rem;
+  }
+  
+  
+//homepage  
+.register {
+background-color: transparent;
+color: #007bff; // Blue text
+padding: 10px 15px;
+border: 2px solid #007bff; // Blue border
+border-radius: 5px;
+font-weight: bold;
+text-align: center;
+
+&:hover {
+    background-color: #2f4be9;
+    color: white;
+}
+}
+//homepage
+.login {
+    background-color: #007bff;  // Blue background
+    color: white !important ; // White text
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+    text-align: center;
+
+    &:hover { // Darker blue on hover
+        background: #2f4be9 !important;
+        color: white;
+    }
+}
+
+
+//register
+.registerHeaderContainer{
+  padding: 0 60px;
+  background-color: white;
+  height: 90px;
+  display: flex; /* Ensure flexbox is used */
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+  @media (max-width: 700px) {
+      padding: 0 60;
+      height: 65px;
+    }
+    z-index: 10;
+    box-shadow: 0px 4px 10px 0px #e9eaed;
+}
+
+.registerlogocontainer{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 160px;
+  order: 1;
+  align-items: center;
+
+  @media screen and (max-width: 700px) {
+    align-items: center;
+    order: 2;
+    flex: 1 1 0;
+    width: 100%;
+    margin-left: auto;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+  }
+}

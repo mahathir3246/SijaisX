@@ -1,0 +1,138 @@
+
+.footerDivSubContainer {
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+  
+  
+  .footerlogoBig {
+  
+    color: White;
+    font-size: 30px;
+    font-weight: bold;
+    margin-left: 50px;
+  
+    @media screen and (max-width: 700px) {
+      display: none;
+    }
+  }
+  
+  .footerDiv {
+    box-sizing: border-box;
+    background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    bottom: 0;
+    margin-top: auto;
+    width: 100%;
+    padding: 0 60px;
+  
+    @media (max-width: 700px) {
+      padding: 0 20px;
+    }
+  
+    .footerDivLogoAndText {
+      @extend .footerDivSubContainer;
+  
+      display: flex;
+      flex-flow: row wrap;
+      justify-content: center;
+      order: 1;
+  
+      .logoContainerFooter {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-right: auto;
+        padding: (3 * 10px) (3 * 10px) (3 * 10px) 0;
+        margin-bottom: 0px;
+  
+        @media (max-width: 992px) {
+          display: none;
+        }
+  
+        &:hover,
+        &:focus {
+          text-decoration: none;
+        }
+      }
+  
+      .logoContainerFooter:last-child {
+        margin-left: auto;
+      }
+  
+      .textContainerFooter {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: (6 * 10px);
+        padding-right: 80px;
+  
+        @media (max-width: 992px) {
+          width: 100%;
+          gap: 0;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          float: none;
+          margin: (3 * 10px) 0;
+        }
+  
+        .textContainerItem {
+          width: 125px;
+          padding: (3 *10px) 0;
+          display: flex;
+          flex-direction: column;
+          row-gap: (10px / 2);
+  
+          @media (max-width: 576px) {
+            width: 34%; // > 1/3 --> max two per row
+          }
+  
+          .footerBottomSublistTitle {
+            font-family:sans-serif;
+            padding-bottom: 7px;
+            color: white;
+            font-weight: 700;
+            font-size: 15px;
+            letter-spacing: -0.5px;
+  
+            @media (max-width: 700px) {
+              padding-bottom: 10px;
+            }
+          }
+  
+          .footerBottomSublistItem {
+            color: white;
+            font-size: 13px;
+            white-space: nowrap;
+  
+            &:hover {
+              color:  #2f4be9;
+              text-decoration: none;
+            }
+          }
+        }
+      }
+    }
+  
+    .copyrightText {
+      padding: (10px) 0;
+      vertical-align: middle;
+      text-align: center;
+      font-weight: 700;
+      color:white;
+      border-top: 1px solid #444444;
+  
+      @media (max-width:700px) {
+        padding: 17px 0;
+      }
+    }
+  }
+  
+  .footerDivCopyright {
+    @extend .footerDiv;
+  
+    background-color: #1e1e1e;
+    margin-top: 0;
+  }
+  
