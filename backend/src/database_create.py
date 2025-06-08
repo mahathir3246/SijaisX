@@ -1,5 +1,5 @@
 import sqlite3
-from .db import get_db_connection
+from .db import get_db_connection    #general 
 
 def create_database():
     conn = None
