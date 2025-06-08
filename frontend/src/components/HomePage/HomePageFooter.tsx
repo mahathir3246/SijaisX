@@ -1,6 +1,6 @@
 "use client";
 import { Link } from 'react-router-dom';
-import footerStyles from "../../scss_stylings/footer.module.scss";//tiedoston haku
+import footerStyles from "../../scss_stylings/footer.module.scss";//tiedoston
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
