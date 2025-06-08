@@ -1,10 +1,10 @@
 "use client";
 import { Link } from 'react-router-dom';
-import footerStyles from "../../scss_stylings/footer.module.scss";
+import footerStyles from "../../scss_stylings/footer.module.scss";//tiedoston haku
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  return (
+  return ( 
     <>
       <div className={footerStyles.footerDiv}>
         <div className={footerStyles.footerDivLogoAndText}>
@@ -13,6 +13,7 @@ const Footer = () => {
               SijaisX
             </div>
           </Link>
+            
           <div className={footerStyles.textContainerFooter}>
             <div className={footerStyles.textContainerItem}>
               <p className={footerStyles.footerBottomSublistTitle}>
@@ -35,7 +36,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Yhetistyökoulut
+                Yhteistyökoulut
               </Link>
               <Link
                 className={footerStyles.footerBottomSublistItem}

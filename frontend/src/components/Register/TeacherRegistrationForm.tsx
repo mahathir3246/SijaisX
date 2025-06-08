@@ -1,234 +1,259 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import {
-  Form, Button, TagPicker, RadioGroup, Radio,
-  Panel, FlexboxGrid, Divider, Message, Schema
+  Form, Button, TagPicker, Panel, FlexboxGrid,
+  SelectPicker, Uploader, Schema
 } from 'rsuite';
-import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import { addDataToFirestore } from '../../../firestore';
+import CameraRetroIcon from '@rsuite/icons/legacy/CameraRetro';
+
 import styles from '../../scss_stylings/teacher_register.module.scss';
-import {
-  schoolsByCity,
-} from '../data/schoolLists';
-import { CityValue,cityOptions } from '../data/cities';
+import { schoolsByLocation } from '../data/schoolLists';
+import { locations } from '../data/cities';
 import { subjectOptions, luokkasteOptions } from '../data/options';
+const roleOptions = [
+  {label : "Teacher" , value: "teacher"},
+  {label : "Substitute", value: "substitute"}
+];
 
-
-const { StringType, ArrayType } = Schema.Types;
-
-const model = Schema.Model({
-  name:            StringType().isRequired(),
-  email:           StringType().isEmail().isRequired(),
-  cities:          ArrayType().minLength(1, 'Pick at least one city'),
-  gender:          StringType().isRequired('Pick gender'),
-  schools:         ArrayType().minLength(1, 'Pick at least one school'),
-  subjects:        ArrayType().minLength(1, 'Pick at least one subject'),
-  luokkaste:       ArrayType().minLength(1),
-  phone:           StringType()
-                    .pattern(/^\+?\d{7,15}$/, 'Enter a valid phone')
-                    .isRequired('Phone number is required'),
-  password:        StringType().minLength(6).isRequired(),
-  confirmPassword: StringType(),
-  bio:             StringType()
-});
-
-/* ---------- component ---------- */
+type FormData = {
+  role: "teacher" | "substitute";
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  phone? : string;
+  password?: string;
+  confirmPassword?: string;
+  location?: string[];
+  school?: string[];
+  subject?: string[];
+  grade?: string[];
+  experience?: number;
+  profile?: File[];
+  picture? : File[];
+}; 
 export default function TeacherRegistrationForm() {
-  const navigate                      = useNavigate();
+  const [formValue, setFormValue] = useState<FormData>({
+  role: "substitute",
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone: "",
+  password: "",
+  confirmPassword: "",
+  location: [],
+  school: [],
+  subject: [],
+  grade: [],
+  experience: 0,
+  profile: [],
+  picture: []
+});
+  const[formError,setFormError] = useState({});
 
-  /* form state */
-  const [formValue, setFormValue]     = useState<Record<string, any>>({});
-  const [loading, setLoading]         = useState(false);
-  const [errorMsg, setErrorMsg]       = useState('');
+  const isSubstitute = formValue.role == "substitute";
+  const isTeacher = formValue.role == "teacher";
 
-  /* city & school helper state */
-  const cities   = (formValue.cities ?? []) as CityValue[];
-  const schools  = formValue.schools ?? [];
+  //Use the selected cities from the form — and if formValue.cities is undefined
+  //  (i.e., user hasn’t selected anything), then use an empty array [].
+  const selectedCities = formValue.location ?? [];
+  const filteredSchools = selectedCities.length
+    ? Object.entries(schoolsByLocation)
+        .filter(([city]) => selectedCities.includes(city))
+        .flatMap(([, schools]) => schools)
+    : [];
 
-  /** All schools from *any* selected city (deduped) */
-  const schoolChoices = useMemo(() => {
-    const merged = cities.flatMap(c => schoolsByCity[c] ?? []);
-    // dedupe by value
-    const map = new Map<string, { label: string; value: string }>();
-    merged.forEach(s => map.set(s.value, s));
-    return [...map.values()];
-  }, [cities]);
+  
+  const validationModel = Schema.Model({
+    role: Schema.Types.StringType().isRequired("Choose a role"),
+    first_name: Schema.Types.StringType().isRequired("First Name is required"),
+    last_name: Schema.Types.StringType().isRequired("Last Name is required"),
+    email: Schema.Types.StringType().isEmail("Invalid Email").isRequired("Email is required"),
+    phone: Schema.Types.StringType(),
+    password: Schema.Types.StringType().isRequired("Password is required"),
+    confirmPassword: Schema.Types.StringType()
+      .addRule((value, data) => value === data.password, "Passwords do not match")
+      .isRequired("Confirm your password"),
+    
+    ...(isTeacher && {
+    location: Schema.Types.ArrayType().addRule((value) => value.length > 0, "At least one location is required"),
 
-  /* ---------- handlers ---------- */
+    school: Schema.Types.ArrayType()
+      .isRequired("Pick the school you work in")
+      .addRule((value) => value.length > 0, "At least one school is required"),
+    }),
 
-  /* removing invalid schools if city set shrinks */
-  const handleCityChange = (vals: CityValue[]) => {
-    const allowed = new Set(
-      vals.flatMap(c => schoolsByCity[c].map(s => s.value))
-    );
-    const filteredSchools = schools.filter((s: string) => allowed.has(s));
+    ...(isSubstitute && {
+      subject: Schema.Types.ArrayType()
+        .isRequired("Subject is required")
+        .addRule((value) => value.length > 0, "Select at least one subject"),
 
-    setFormValue({
-      ...formValue,
-      cities: vals,
-      schools: filteredSchools         // keep only still‑valid schools
-    });
-  };
+      grade: Schema.Types.ArrayType()
+        .isRequired("Teaching grade is required")
+        .addRule((value) => value.length > 0, "Select at least one grade"),
 
-  const handleSubmit = async (ok: boolean) => {
-    if (!ok) return;
+      experience: Schema.Types.NumberType(),
+      profile: Schema.Types.ArrayType(),
+      picture: Schema.Types.ArrayType()
+    })
+  });
 
-    const {
-      name, email,phone, password, confirmPassword,
-      cities, gender, schools,
-      subjects, luokkaste, bio
-    } = formValue;
 
-    if (password !== confirmPassword) {
-      setErrorMsg('Passwords do not match');
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const cred = await createUserWithEmailAndPassword(getAuth(), email, password);
-
-      await addDataToFirestore('teachers', {
-        name,
-        email,
-        phone,
-        cities,
-        gender,
-        schools,
-        subjects,
-        luokkaste,
-        bio,
-        uid: cred.user.uid
-      });
-
-      navigate('/');
-    } catch (e: any) {
-      setErrorMsg(e.message ?? 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* ---------- UI ---------- */
   return (
     <div className={styles.pageBg}>
       <FlexboxGrid justify="center" className={styles.teacherRegisterWrapper}>
         <FlexboxGrid.Item colspan={24}>
-          <Panel bordered shaded className={styles.registerPanel} header="Teacher Registration">
-            {errorMsg && <Message type="error" showIcon>{errorMsg}</Message>}
+          <Panel bordered shaded className={styles.registerPanel} header="Registration Form">
 
             <Form
               fluid
-              model={model}
               formValue={formValue}
-              onChange={setFormValue}
-              onSubmit={formErr => handleSubmit(!formErr)}
+              onChange={(value) => setFormValue(value as FormData)}
+              onCheck={setFormError}
+              model={validationModel}
               checkTrigger="blur"
             >
-              <Form.Group controlId="name">
-                <Form.ControlLabel>Name</Form.ControlLabel>
-                <Form.Control name="name" />
-              </Form.Group>
-
-              <Form.Group controlId="gender">
-                <Form.ControlLabel>Gender</Form.ControlLabel>
-                <RadioGroup
-                  name="gender"
-                  inline
-                  value={formValue.gender}
-                  onChange={val => setFormValue({ ...formValue, gender: val })}
-                >
-                  <Radio value="male">Male</Radio>
-                  <Radio value="female">Female</Radio>
-                  <Radio value="other">Other</Radio>
-                </RadioGroup>
-              </Form.Group>
-
-              <Form.Group controlId="email">
-                <Form.ControlLabel>Email</Form.ControlLabel>
-                <Form.Control name="email" type="email" />
-              </Form.Group>
-
-              <Form.Group controlId="phone">
-                <Form.ControlLabel>Phone Number</Form.ControlLabel>
-                <Form.Control 
-                  name="phone" 
-                  placeholder="+358 40 1234567" 
-                  style={{ width: '100%' }} 
-                />
-              </Form.Group>
-
-              <Divider />
-
-              {/* ------------ city picker (multi) ------------ */}
-              <Form.Group controlId="cities">
-                <Form.ControlLabel>City / Cities</Form.ControlLabel>
-                <TagPicker
-                  name="cities"
-                  data={[...cityOptions]}      // spread removes readonly
-                  value={cities}
-                  onChange={(vals) => handleCityChange(vals as CityValue[])}
-                  placeholder="Select city / cities"
+              {/* Select role */}
+              <Form.Group>
+                <Form.ControlLabel>Registering as</Form.ControlLabel>
+                <SelectPicker
+                  data={roleOptions}
+                  value={formValue.role}
+                  onChange={(val) => setFormValue({ ...formValue, role: val as 'teacher' | 'substitute' })}
                   block
                 />
               </Form.Group>
 
-              {/* ------------ schools (depends on city) ------------ */}
-              <Form.Group controlId="schools">
-                <Form.ControlLabel>School(s)</Form.ControlLabel>
-                <TagPicker
-                  name="schools"
-                  data={schoolChoices}
-                  value={schools}
-                  onChange={val => setFormValue({ ...formValue, schools: val })}
-                  disabled={cities.length === 0}
-                  placeholder={cities.length ? 'Select school(s)' : 'Pick city first'}
-                  block
-                />
-              </Form.Group>
-
-              <Form.Group controlId="subjects">
-                <Form.ControlLabel>Subject(s)</Form.ControlLabel>
-                <TagPicker name="subjects" data={subjectOptions} block />
-              </Form.Group>
-
-              <Form.Group controlId="luokkaste">
-                <Form.ControlLabel>Teaching Level (Luokkaste)</Form.ControlLabel>
-                <TagPicker name="luokkaste" data={luokkasteOptions} block />
-              </Form.Group>
-
-
-              <Form.Group controlId="bio">
-                <Form.ControlLabel>Short Bio / Additional Info </Form.ControlLabel>
-                <Form.Control
-                  accepter="textarea"
-                  name="bio"    
-                  rows={4}
-                  defaultValue="Tell us a little about yourself..."
-                  style={{ resize: 'vertical' }}
-                  className={styles.box}
-                />
-              </Form.Group>
-              
-              <Divider> Security </Divider>
-
-              <Form.Group controlId="password">
-                <Form.ControlLabel>Password</Form.ControlLabel>
-                <Form.Control name="password" type="password" autoComplete="new-password" />
-              </Form.Group>
-
-              <Form.Group controlId="confirmPassword">
-                <Form.ControlLabel>Confirm Password</Form.ControlLabel>
-                <Form.Control name="confirmPassword" type="password" autoComplete="new-password" />
+              {/* Common fields */}
+              <Form.Group>
+                <Form.ControlLabel>First Name</Form.ControlLabel>
+                <Form.Control name="first_name" />
               </Form.Group>
 
               <Form.Group>
-                <Button appearance="primary" type="submit" loading={loading} block>
+                <Form.ControlLabel>Last Name</Form.ControlLabel>
+                <Form.Control name="last_name" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Email</Form.ControlLabel>
+                <Form.Control name="email" type="email" placeholder='youremail@example.com' />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Phone</Form.ControlLabel>
+                <Form.Control name="phone" placeholder="+358 40 1234567" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Password</Form.ControlLabel>
+                <Form.Control name="password" type="password" autoComplete="new-password" placeholder='********'/>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Confirm Password</Form.ControlLabel>
+                <Form.Control name="confirmPassword" type="password" autoComplete="new-password" placeholder='********'/>
+              </Form.Group>
+
+              {isTeacher && (
+                <>
+                  <Form.Group>
+                    <Form.ControlLabel>Location</Form.ControlLabel>
+                    <Form.Control
+                      name="location"                         // must match the schema key
+                      accepter={TagPicker}                    // tell Form which component to render
+                      data={locations}
+                      value={formValue.location}
+                      onChange={(vals) => {
+                        setFormValue({ ...formValue, location: vals });
+                      }}
+                      placeholder="Selct the location where the school is situated"
+                      block
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.ControlLabel>School</Form.ControlLabel>
+                    <Form.Control
+                      accepter={TagPicker}
+                      name = "school"
+                      data = {filteredSchools}
+                      value = {formValue.school}
+                      onChange={(selected) => setFormValue({ ...formValue, school: selected })}
+                      block
+                      disabled={!selectedCities.length}
+                      placeholder = "Pick a city"
+                    />
+                  </Form.Group>
+                </>
+              )}
+
+              {/*Substitute-only fields */}
+              {isSubstitute && (
+                <>
+
+                  <Form.Group>
+                    <Form.ControlLabel>Subject(s)</Form.ControlLabel>
+                    <Form.Control
+                      accepter={TagPicker}
+                      name="subject" 
+                      data={subjectOptions}
+                      value={formValue.subject}
+                      onChange={(selected) => setFormValue({ ...formValue, subject: selected })} 
+                      block
+                      placeholder = "Pick the subject(s) you teach"
+                    />
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.ControlLabel>Grade(s)</Form.ControlLabel>
+                    <Form.Control
+                      accepter={TagPicker}
+                      name="grade" 
+                      data={luokkasteOptions}
+                      value={formValue.grade}
+                      onChange={(selected) => setFormValue({ ...formValue, grade: selected })} 
+                      block
+                      placeholder = "Pick the grade you teach in"
+                    />
+                  </Form.Group>
+                  
+
+                  <Form.Group>
+                    <Form.ControlLabel>Experience (Years)</Form.ControlLabel>
+                    <Form.Control name="experience" type="number" />
+                  </Form.Group>
+
+
+                  <Form.Group>
+                    <Form.ControlLabel>Profile Picture</Form.ControlLabel>
+                    <Uploader multiple listType="picture" action="//jsonplaceholder.typicode.com/posts/">
+                      <button>
+                        <CameraRetroIcon />
+                      </button>
+                    </Uploader>
+                  </Form.Group>
+
+                  <Form.Group>
+                    <Form.ControlLabel>Attach a file(CV, cover letter etc..)</Form.ControlLabel>
+                    <Uploader action="//jsonplaceholder.typicode.com/posts/">
+                      <Button>Select files...</Button>
+                    </Uploader>
+                  </Form.Group>
+                </>
+              )}
+
+              {/* Submit */}
+              <Form.Group>
+                <Button
+                  appearance="primary"
+                  type="submit"
+                  block
+                  disabled={Object.keys(formError).length > 0}
+                >
                   Register
                 </Button>
               </Form.Group>
             </Form>
+
           </Panel>
         </FlexboxGrid.Item>
       </FlexboxGrid>
