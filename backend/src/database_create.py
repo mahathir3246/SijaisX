@@ -32,6 +32,7 @@ def create_database():
         email TEXT UNIQUE NOT NULL,
         password TEXT NOT NULL,
         experience INTEGER,
+        highest_education TEXT CHECK (highest_education IN ('Peruskoulu', 'Lukio', 'Ammattikoulu', 'Ammattikorkeakoulu', 'Alempi korkeakoulu', 'Ylempi korkeakoulu')),
         profile BLOB,
         picture BLOB
     );
