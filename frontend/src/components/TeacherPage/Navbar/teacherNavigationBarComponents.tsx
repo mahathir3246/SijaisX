@@ -3,10 +3,10 @@ import ResponsiveNav from "@rsuite/responsive-nav";
 import NoticeIcon from '@rsuite/icons/Notice';
 import { useState } from "react";
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 import ExitIcon from "@rsuite/icons/Exit";
 import PlusIcon from "@rsuite/icons/Plus";
-import CreateSubstituteModal from "./CreateSubstituteModal";
+import CreateSubstituteModal from "../CreateSubstituteModal";
 
 const NavigationBarComponents = () => {
     const [openModal, setOpenModal] = useState(false); // State to control modal visibility
