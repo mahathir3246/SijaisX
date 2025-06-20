@@ -6,7 +6,8 @@ import TeacherUpcomings from './MainContent/TeacherUpcomings/teacherUpcomings';
 import SchoolUpcomings from './MainContent/schoolupcomings';
 import CalendarCard from './MainContent/Calendar';
 import teacherstyles from "../../scss_stylings/teacher.module.scss"
-import { Grid,Col, Row } from 'rsuite';
+import { Grid,Col, Row, Button } from 'rsuite';
+import { Plus } from '@rsuite/icons';
 
  const FullHomePage = () => {
 
@@ -25,7 +26,18 @@ import { Grid,Col, Row } from 'rsuite';
 
                         <Col xs={24} md={13}>
                             <div>
-                                <h3 className={teacherstyles.profile}>Your job posts</h3>
+                                <div className={teacherstyles.jobPostHeadline}>
+                                    <h3 className={teacherstyles.profile}>Your job posts</h3>
+                                    <Button
+                                        size="lg"                   // bigger than the default md
+                                        appearance="primary"
+                                        color="blue"
+                                        startIcon={<Plus />}        // ➕ icon to the left of the label  :contentReference[oaicite:0]{index=0}
+                                        className={teacherstyles.postJobBtn}   // extra tweaks live in SCSS
+                                    >
+                                        Post a Job
+                                    </Button>
+                                </div>
                                 <TeacherUpcomings/>
                             </div>
                             

@@ -19,13 +19,6 @@ const NavigationBarComponents = () => {
         pullRight={true}
         className={navigationStyles.responsiveNav}
       >
-        <ResponsiveNav.Item 
-        className={navigationStyles.navLink}
-        onClick={() => setOpenModal(true)}>
-          <p className={navigationStyles.LuoSijaisuus}>
-          <PlusIcon style={{ marginRight: "6px" }} />
-          Luo Sijaisuus</p>
-        </ResponsiveNav.Item>
         <ResponsiveNav.Item className={navigationStyles.navLink}>
           <p className={navigationStyles.navItemSubContainer}>Kalenteri</p>
         </ResponsiveNav.Item>

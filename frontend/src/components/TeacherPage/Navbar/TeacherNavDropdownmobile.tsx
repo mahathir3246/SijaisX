@@ -39,14 +39,6 @@ const NavDropdownMobile = () => {
             className={navigationStyles.sidebarLink}
             tabIndex={0}
           >
-            Luo Sijaisuus
-          </Link>
-          <Link
-            to="/"
-            onClick={handleLinkEvent}
-            className={navigationStyles.sidebarLink}
-            tabIndex={0}
-          >
             Kalenteri
           </Link>
           <Link
