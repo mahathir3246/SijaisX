@@ -1,11 +1,8 @@
 import { Panel, TagProps,Tag } from "rsuite";
 import {Job } from "../../../Data/jobsdata";
 import styles from "../../../../../scss_stylings/card.module.scss"
+import { ClassCardProps } from "../../../Data/jobsdata";
 
-
-export interface ClassCardProps {
-    job:Job;
-}
 
 
 type TagColour = NonNullable<TagProps['color']>

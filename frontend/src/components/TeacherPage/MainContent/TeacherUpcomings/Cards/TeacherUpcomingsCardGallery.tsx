@@ -1,8 +1,7 @@
-import { Grid, Row, Col } from 'rsuite';
 import ClassCard from './ClassCard';
 import styles from "../../../../../scss_stylings/card.module.scss"
 
-import { jobs, Job } from '../../../Data/jobsdata';   // NEW
+import { jobs, Job } from '../../../Data/jobsdata';
 
 const TeacherUpcomingsCardGallery = () => (
   <div className={`${styles.galleryWrapper} ${styles.cardRail}`}>  

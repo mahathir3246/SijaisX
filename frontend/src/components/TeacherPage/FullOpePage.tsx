@@ -8,8 +8,13 @@ import CalendarCard from './MainContent/Calendar';
 import teacherstyles from "../../scss_stylings/teacher.module.scss"
 import { Grid,Col, Row, Button } from 'rsuite';
 import { Plus } from '@rsuite/icons';
+import { useState } from 'react';
+import PostJobModal from "./PostJobModal"
+
 
  const FullHomePage = () => {
+
+    const [open, setOpen] = useState(false);
 
     return(
         <div className={globalstyles.appContainer}>
@@ -34,9 +39,12 @@ import { Plus } from '@rsuite/icons';
                                         color="blue"
                                         startIcon={<Plus />}        // ➕ icon to the left of the label  :contentReference[oaicite:0]{index=0}
                                         className={teacherstyles.postJobBtn}   // extra tweaks live in SCSS
+                                        onClick={() => setOpen(true)}
                                     >
                                         Post a Job
                                     </Button>
+
+                                    <PostJobModal open={open} onClose={() => setOpen(false)} />
                                 </div>
                                 <TeacherUpcomings/>
                             </div>

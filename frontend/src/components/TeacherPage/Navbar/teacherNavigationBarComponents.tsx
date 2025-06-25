@@ -5,8 +5,7 @@ import { useState } from "react";
 import { Link } from 'react-router-dom';
 import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 import ExitIcon from "@rsuite/icons/Exit";
-import PlusIcon from "@rsuite/icons/Plus";
-import CreateSubstituteModal from "../CreateSubstituteModal";
+import CreateSubstituteModal from "../PostJobModal";
 
 const NavigationBarComponents = () => {
     const [openModal, setOpenModal] = useState(false); // State to control modal visibility
