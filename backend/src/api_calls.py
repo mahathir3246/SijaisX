@@ -4,6 +4,8 @@ from backend.src.insert_data import add_data
 from backend.src.insert_data.insert_functions import insert_volunteers
 import get_functions
 import login_check
+from assignment_functions.assignment_routes import assignment_bp
+
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173"]) # we add our website here after code completion
@@ -59,6 +61,7 @@ register_insert_route("/api/school", add_data.add_school, required_fields=["scho
 register_insert_route("/api/assignment", add_data.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
 register_insert_route("/api/volunteers", insert_volunteers, required_fields=["substitute_ID", "class_ID"])
 
+app.register_blueprint(assignment_bp)
 
 @app.route("/api/login", methods=['POST'])
 def password_check():

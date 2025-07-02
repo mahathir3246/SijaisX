@@ -131,6 +131,14 @@ def create_database():
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
         FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
+                             
+    CREATE TABLE AssignmentVolunteers (
+    assignment_ID TEXT NOT NULL,
+    substitute_ID TEXT NOT NULL,
+    PRIMARY KEY (assignment_ID, substitute_ID),
+    FOREIGN KEY (assignment_ID) REFERENCES Assignment(assignment_ID) ON DELETE CASCADE,
+    FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID) ON DELETE CASCADE
+    );
 
                             ''')
     except sqlite3.Error as e:
