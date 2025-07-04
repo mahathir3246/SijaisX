@@ -1,9 +1,8 @@
 import navigationStyles from "../../scss_stylings/navbar.module.scss";
 import Footer from '../HomePage/HomePageFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
-import TeacherRegistrationForm from "./TeacherRegistrationForm"
-
-const RegisterPage = () =>{
+import LoginForm from "./loginForm";
+const LogIn = () => {
     return(
         <div className={globalstyles.appContainer}>
             <div className={navigationStyles.registerHeaderContainer}>
@@ -16,12 +15,10 @@ const RegisterPage = () =>{
                     </div>
                 </div>
             </div>
-            <TeacherRegistrationForm/>
+            <LoginForm/>
             <Footer/>
         </div>
-        
-
     )
 }
 
-export default RegisterPage;
+export default LogIn

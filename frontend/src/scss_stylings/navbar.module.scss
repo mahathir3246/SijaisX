@@ -7,8 +7,10 @@
       padding: 0 60;
       height: 65px;
     }
-    z-index: 10;
-    box-shadow: 0px 4px 10px 0px #e9eaed;
+    z-index: 200;
+    box-shadow: 5px 5px 5px 5px #e9eaed;
+    border-radius: 500px;
+    margin-top: 20px;
   }
   
   .headerSubContainer {
@@ -194,6 +196,16 @@
     }
   }
   
+  .logoBigRegister {
+  
+    color: black;
+    font-size: 25px;
+    font-weight: bold;
+  
+    @media screen and (max-width: 700px) {
+      display: none;
+    }
+  }
   
   .LuoSijaisuus {
     background-color: #007bff;
