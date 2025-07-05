@@ -18,7 +18,7 @@ def update_status(assignment_ID):
     data = request.json
     teacher_ID = data.get("teacher_ID")
     new_status = data.get("status")
-    substitute_ID = data.get("substitute_ID")  # Optional unless accepting
+    substitute_ID = data.get("substitute_ID")
     result = update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_ID)
     
     if not result["success"]:
