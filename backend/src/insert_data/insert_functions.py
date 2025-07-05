@@ -1,6 +1,6 @@
 import sqlite3
 from ..db import get_db_connection
-from backend.src.insert_data.ID_generator import *
+from . import ID_generator 
 
 def insert_teacher(teacher_ID, name, phone_number, school_name, email, password):
     try:

@@ -1,37 +1,37 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import get_functions
-from insert_data.insert_functions import *
-import login_check
+from . import get_functions
+from .insert_data import add_data
+from . import login_check
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173"]) # we add our website here after code completion
 
 # Helper functions
 def register_get_route(route, get_function, error_message):
-    @app.route(route)
     def handler(id):
-        result = get_function(id)
-        if result:
-            return jsonify(result)
-        else:
-            return jsonify({"error": error_message}), 404
+        data = get_function(id)
+        return jsonify(data) if data else (jsonify({"error": error_message}), 404)
+
+    endpoint = f"get_{get_function.__name__}"
+    app.add_url_rule(route, endpoint=endpoint, view_func=handler)
+
 
 def register_insert_route(route, insert_function, required_fields=None):
-    @app.route(route, methods=["POST"])
     def handler():
-        data = request.get_json()
-        
+        data = request.get_json() or {}
         if required_fields:
-            missing = [field for field in required_fields if field not in data]
+            missing = [f for f in required_fields if f not in data]
             if missing:
                 return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
-        
-        success = insert_function(**data)
-        if success:
-            return jsonify({"message": "Insertion successful"}), 201
-        else:
-            return jsonify({"error": "Insertion failed"}), 500
+
+        ok = insert_function(**data)
+        return (jsonify({"message": "Insertion successful"}), 201) if ok \
+             else (jsonify({"error": "Insertion failed"}), 500)
+
+    endpoint = f"insert_{insert_function.__name__}"
+    app.add_url_rule(route, endpoint=endpoint, view_func=handler, methods=["POST"])
+
 
 
 ### API calls for the info
@@ -47,15 +47,15 @@ register_get_route("/api/assignment/<string:id>", get_functions.get_single_assig
 
 
 ### API calls for inserting data
-register_insert_route("/api/teacher", insert_functions.add_teacher, required_fields=["name", "phone_number", "school_name", "email", "password"])
-register_insert_route("/api/substitute", insert_functions.add_substitute, required_fields=["name", "phone_number", "email", "password", "experience"])
-register_insert_route("/api/feedback_to_sub", insert_functions.add_feedback_to_sub, required_fields=["date", "rating", "comments", "teacher_ID", "substitute_ID"])
-register_insert_route("/api/feedback_to_teacher", insert_functions.add_feedback_to_teacher, required_fields=["date", "comments", "teacher_ID", "substitute_ID"])
-register_insert_route("/api/availability", insert_functions.add_availability, required_fields=["substitute_ID", "beginning_date", "ending_date", "location"])
-register_insert_route("/api/preference", insert_functions.add_substitute_preference, required_fields=["grade", "substitute_ID", "school_name", "subject", "location"])
-register_insert_route("/api/class", insert_functions.add_class, required_fields=["subject", "grade", "beginning_time", "ending_time", "teacher_ID", "room", "school_ID"])
-register_insert_route("/api/school", insert_functions.add_school, required_fields=["school_name"])
-register_insert_route("/api/assignment", insert_functions.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
+register_insert_route("/api/teacher", add_data.add_teacher, required_fields=["name", "phone_number", "school_name", "email", "password"])
+register_insert_route("/api/substitute", add_data.add_substitute, required_fields=["name", "phone_number", "email", "password", "experience"])
+register_insert_route("/api/feedback_to_sub", add_data.add_feedback_to_sub, required_fields=["date", "rating", "comments", "teacher_ID", "substitute_ID"])
+register_insert_route("/api/feedback_to_teacher", add_data.add_feedback_to_teacher, required_fields=["date", "comments", "teacher_ID", "substitute_ID"])
+register_insert_route("/api/availability", add_data.add_availability, required_fields=["substitute_ID", "beginning_date", "ending_date", "location"])
+register_insert_route("/api/preference", add_data.add_substitute_preference, required_fields=["grade", "substitute_ID", "school_name", "subject", "location"])
+register_insert_route("/api/class", add_data.add_class, required_fields=["subject", "grade", "beginning_time", "ending_time", "teacher_ID", "room", "school_ID"])
+register_insert_route("/api/school", add_data.add_school, required_fields=["school_name"])
+register_insert_route("/api/assignment", add_data.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
 
 
 @app.route("/api/login", methods=['POST'])
@@ -69,6 +69,11 @@ def password_check():
         return jsonify(user_data)
     else:
         return jsonify({"error": "Invalid credentials"}), 401
+
+@app.route("/")
+def index():
+    """Simple sanity-check so / shows something useful."""
+    return jsonify({"status": "API is running 🚀"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)

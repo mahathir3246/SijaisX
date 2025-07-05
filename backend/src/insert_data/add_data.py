@@ -1,5 +1,5 @@
-from insert_functions import *
-from ID_generator import *
+from . import insert_functions
+from . import ID_generator
 from ..get_functions import *
 
 def add_school(school_name):

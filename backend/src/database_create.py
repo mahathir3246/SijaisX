@@ -8,7 +8,7 @@ def create_database():
         cursor = conn.cursor()      # allows interactions with code
         cursor.executescript('''
     CREATE TABLE Teacher (
-        teacher_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        teacher_ID TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         phone_number TEXT UNIQUE,
         email TEXT UNIQUE NOT NULL,
@@ -19,14 +19,14 @@ def create_database():
 
 
     CREATE TABLE SubstituteCoordinator (
-        teacher_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        teacher_ID TEXT PRIMARY KEY,
         authority_level INTEGER NOT NULL CHECK (authority_level >= 0 AND authority_level < 10),
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID) ON DELETE CASCADE
     );
 
 
     CREATE TABLE Substitute (
-        substitute_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        substitute_ID TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         phone_number TEXT UNIQUE NOT NULL,
         email TEXT UNIQUE NOT NULL,
@@ -37,7 +37,7 @@ def create_database():
     );
 
     CREATE TABLE FeedbackToSub (
-        feedback_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        feedback_ID TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         rating INTEGER,
         comments TEXT,
@@ -48,7 +48,7 @@ def create_database():
     );
 
     CREATE TABLE FeedbackToTeacher (
-        feedback_tunnus TEXT PRIMARY KEY ON UPDATE CASCADE,
+        feedback_tunnus TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         comments TEXT NOT NULL,
         teacher_ID TEXT NOT NULL,
@@ -58,7 +58,7 @@ def create_database():
     );
 
     CREATE TABLE Availability (
-        availability_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        availability_ID TEXT PRIMARY KEY,
         beginning_date TEXT,
         ending_date TEXT,
         location TEXT,
@@ -67,7 +67,7 @@ def create_database():
     );
 
     CREATE TABLE SubstitutePreference (
-        preference_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        preference_ID TEXT PRIMARY KEY,
         grade TEXT CHECK (grade IN ('Yläkoulu', 'Alakoulu', 'Lukio')),
         subject TEXT,
         location TEXT,
@@ -78,7 +78,7 @@ def create_database():
     );
 
     CREATE TABLE Class (
-        class_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        class_ID TEXT PRIMARY KEY,
         subject TEXT NOT NULL,
         grade TEXT NOT NULL,
         beginning_time TEXT NOT NULL,
@@ -95,7 +95,7 @@ def create_database():
     );
 
     CREATE TABLE Assignment (
-        assignment_ID TEXT PRIMARY KEY ON UPDATE CASCADE,
+        assignment_ID TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         notes TEXT,
         status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')), 
