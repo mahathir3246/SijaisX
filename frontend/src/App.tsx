@@ -5,7 +5,7 @@ import FullHomePage from "./components/HomePage/FullHomePage";
 import FullSijaisPage from "./components/Subpage/FullSubPage";
 import FullOpePage from "./components/TeacherPage/FullOpePage";
 import RegisterPage from "./components/Register/registerpage"
-import LogIn from './components/Login/Login';
+import LogIn from './components/Login/login';
 
 function App() {
   return (
