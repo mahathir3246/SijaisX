@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, Drawer } from "rsuite";
 import ExitIcon from "@rsuite/icons/Exit";
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 
 const NavDropdownMobile = () => {
   const [open, setOpen] = useState(false);
@@ -33,14 +33,6 @@ const NavDropdownMobile = () => {
           </div>
         </Drawer.Header>
         <Drawer.Body id="sidebar" className={navigationStyles.sidebar}>
-          <Link
-            to="/"
-            onClick={handleLinkEvent}
-            className={navigationStyles.sidebarLink}
-            tabIndex={0}
-          >
-            Luo Sijaisuus
-          </Link>
           <Link
             to="/"
             onClick={handleLinkEvent}

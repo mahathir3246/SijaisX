@@ -1,0 +1,130 @@
+
+
+.fullLayout{
+    padding: 20px 20px 20px 20px;
+}
+
+
+.profileContainer {
+  
+  height: 100%; 
+  min-height: 80vh;         /* fill the whole column */
+  display: flex;
+  flex-direction: column;
+
+}
+
+
+
+.profile{
+    font-size:1.5rem  ;
+    font-weight: bold;
+    text-align: left;
+    margin-bottom: 10px;
+
+}
+
+.upperHalfContainer{
+    text-align: center;
+}
+
+.name{
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.email{
+    color: gray;
+    margin-bottom: 10px;
+    font-size: 0.875rem;
+}
+
+.phone{
+    color: gray;
+    margin-bottom: 15px;
+    font-size: 0.875rem;
+}
+
+
+.label{
+    color: gray;
+    margin-bottom: 10px;
+}
+
+.value{
+    font-weight: bold;
+    text-align: right;
+}
+.editProfileButton{
+    margin-top: 20px;
+    background-color: black;
+}
+
+.midheadline{
+    font-size:1.5rem  ;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+
+.jobPostHeadline{
+  display: flex;
+  justify-content: space-between;   // <— “end-to-end”
+  align-items: center;
+  margin-bottom: 1rem; 
+}
+
+.postJobBtn {
+  padding: .5rem 1.25rem;
+  border: none;
+  border-radius: .5rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #60a5fa 0%, #2563eb 100%);
+  cursor: pointer;
+  transition: filter .2s ease;
+
+  &:hover { filter: brightness(1.1); }  // subtle lift on hover
+}
+
+
+
+
+//Calendar
+
+/* CalendarCard.module.css */
+.frame {
+  border-radius: 8px;
+  padding: 2rem 2rem 2.5rem;
+  background: #fff;
+  max-width: 420px;     /* keeps it nice and compact */
+}
+
+.heading {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0 0 1.25rem;
+}
+
+.calendar :global(.rs-calendar) {
+  border: 1px solid #f5f6f8;
+  border-radius: 12px;
+  padding: 1.5rem 1rem 1.75rem;
+}
+
+.calendar :global(.rs-calendar-btn-select) {
+  background: #0f172a;       /* dark navy */
+  border-radius: 6px;
+  color: #fff;
+}
+
+.calendar :global(.rs-calendar-table-cell-is-today) {
+  font-weight: 600;
+}
+
+.calendar :global(.rs-calendar-table-cell-disabled) {
+  opacity: 0.35;
+}

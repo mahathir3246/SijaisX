@@ -1,0 +1,88 @@
+.card{
+  border-radius: 0.75rem;
+  overflow: hidden;
+  color: white;
+  min-height: 170px;
+
+  &.g0{background: linear-gradient(135deg, #6b7280, #374151) !important;}
+  &.g1{background: linear-gradient(135deg, #60a5fa, #2563eb) !important;}
+  &.g2 { background: linear-gradient(135deg, #6ee7b7, #10b981) !important; }
+  &.g3 { background: linear-gradient(135deg, #f87171, #ef4444) !important; }
+}
+
+.inner {
+  padding: 1.25rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+}
+
+.smallertext {
+  font-size: 0.85rem;
+  margin-bottom: 0.25rem;
+}
+
+.status {
+  display: inline-block;
+  margin-top: 0.75rem;
+  font-weight: bold;
+}
+
+.galleryWrapper { 
+  padding: 0 .5rem;
+  margin: 1rem 0; /* adds top and bottom margin */
+}
+
+.avatars {
+  margin-bottom: 0.75rem;
+}
+
+.more {
+  background: rgba(255, 255, 255, 0.35);
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cardRail {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 1rem; /* increased from .5rem to 1rem */
+  scroll-snap-type: x mandatory;
+  
+  /* cosmetic scrollbar */
+  &::-webkit-scrollbar { 
+    height: 8px; 
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .2);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, .05);
+    border-radius: 4px;
+  }
+}
+
+.cardContainer {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2rem; /* 32px gap between cards */
+  min-width: min-content;
+  margin-bottom: 0.5rem; /* adds space between cards and scrollbar */
+}
+
+.cardWrapper {
+  flex: 0 0 260px;
+  min-width: 260px;
+  max-width: 260px;
+  scroll-snap-align: start;
+}

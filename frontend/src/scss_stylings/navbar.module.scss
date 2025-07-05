@@ -1,7 +1,7 @@
 //Navbar
 .headerContainer {
     padding: 0 60px;
-    background-color: white;
+     
     height: 90px;
     @media (max-width: 700px) {
       padding: 0 60;
@@ -194,6 +194,16 @@
     }
   }
   
+  .logoBigRegister {
+  
+    color: black;
+    font-size: 25px;
+    font-weight: bold;
+  
+    @media screen and (max-width: 700px) {
+      display: none;
+    }
+  }
   
   .LuoSijaisuus {
     background-color: #007bff;
