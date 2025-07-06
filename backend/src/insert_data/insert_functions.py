@@ -1,6 +1,6 @@
 import sqlite3
 from ..db import get_db_connection
-from backend.src.insert_data.ID_generator import *
+from . import ID_generator as idg
 
 def insert_teacher(teacher_ID, name, phone_number, school_name, email, password):
     try:
@@ -13,7 +13,7 @@ def insert_teacher(teacher_ID, name, phone_number, school_name, email, password)
         if school:
             school_ID = school[0]
         else:
-            school_ID = generate_unique_school_id(school_name)
+            school_ID = idg.generate_unique_school_id(school_name)
             cursor.execute('INSERT INTO School (school_ID, school_name) VALUES (?, ?)', (school_ID, school_name))
 
         cursor.execute('''

@@ -1,11 +1,11 @@
-from insert_functions import *
-from ID_generator import *
+from . import insert_functions as insert
+from . import ID_generator as idg
 from ..get_functions import *
 
 def add_school(school_name):
-    school_ID = generate_unique_school_id(school_name)
+    school_ID = idg.generate_unique_school_id(school_name)
     try:
-        return insert_school(school_ID, school_name)
+        return insert.insert_school(school_ID, school_name)
     
     except sqlite3.Error as e:
         print("Database error:", e)
@@ -23,13 +23,13 @@ def add_teacher(name, phone_number, school_name, email, password):
                                    ''', (school_name,)).fetchone()
         if result is not None:
             school_ID = result[0]
-        else:
+        else:    ## If school does not exist, this is a backup for testing. Remove later
             school_ID = add_school(school_name)
             if school_ID is None:
                 return False
             
-        teacher_ID = generate_unique_teacher_id(name, school_name)
-        success = insert_teacher(teacher_ID, name, phone_number, school_name, email, password)
+        teacher_ID = idg.generate_unique_teacher_id(name, school_name)
+        success = insert.insert_teacher(teacher_ID, name, phone_number, school_name, email, password)
         return success
     
     except sqlite3.Error as e:
@@ -40,37 +40,37 @@ def add_teacher(name, phone_number, school_name, email, password):
         if conn:
             conn.close()
 
-def add_substitute(name, phone_number, email, password, experience, highest_education,profile = None, picture = None):
-    substitute_ID = generate_unique_substitute_id(name)
+def add_substitute(name, phone_number, email, password, experience, profile = None, picture = None):
+    substitute_ID = idg.generate_unique_substitute_id(name)
     try:
-        return insert_substitute(substitute_ID, name, phone_number, email, password, experience, highest_education, profile, picture)
+        return insert.insert_substitute(substitute_ID, name, phone_number, email, password, experience, profile, picture)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
         return False
 
 def add_feedback_to_sub(date, rating, comments, teacher_ID, substitute_ID):
-    feedback_ID = generate_unique_feedback_to_sub_id(teacher_ID, substitute_ID, date)
+    feedback_ID = idg.generate_unique_feedback_to_sub_id(teacher_ID, substitute_ID, date)
     try:
-        return insert_feedback_to_sub(feedback_ID, date, rating, comments, teacher_ID, substitute_ID)
+        return insert.insert_feedback_to_sub(feedback_ID, date, rating, comments, teacher_ID, substitute_ID)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
         return False
 
 def add_feedback_to_teacher(date, comments, teacher_ID, substitute_ID):
-    feedback_tunnus = generate_unique_feedback_to_teacher_id(teacher_ID, substitute_ID, date)
+    feedback_tunnus = idg.generate_unique_feedback_to_teacher_id(teacher_ID, substitute_ID, date)
     try:        
-        return insert_feedback_to_teacher(feedback_tunnus, date, comments, teacher_ID, substitute_ID)
+        return insert.insert_feedback_to_teacher(feedback_tunnus, date, comments, teacher_ID, substitute_ID)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
         return False
 
 def add_availability(substitute_ID, beginning_date, ending_date, location):
-    availability_ID = generate_unique_availability_id(substitute_ID, beginning_date, ending_date, location)
+    availability_ID = idg.generate_unique_availability_id(substitute_ID, beginning_date, ending_date, location)
     try:
-        return insert_availability(availability_ID, substitute_ID, beginning_date, ending_date, location)
+        return insert.insert_availability(availability_ID, substitute_ID, beginning_date, ending_date, location)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
@@ -92,8 +92,8 @@ def add_substitute_preference(grade, substitute_ID, school_name, subject, locati
             if school_ID is None:
                 return False
         
-        preference_ID = generate_unique_substitute_preference(substitute_ID, grade, subject, school_ID, location)
-        return insert_substitute_preference(preference_ID, grade, substitute_ID, school_ID, subject, location)
+        preference_ID = idg.generate_unique_substitute_preference(substitute_ID, grade, subject, school_ID, location)
+        return insert.insert_substitute_preference(preference_ID, grade, substitute_ID, school_ID, subject, location)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
@@ -115,17 +115,17 @@ def add_class(subject, grade, beginning_time, ending_time, room, duration, schoo
             school_ID = add_school(school_name)
             if school_ID is None:
                 return False
-        class_ID = generate_unique_class_id(subject, grade, beginning_time, ending_time, duration, room)
-        return insert_class(class_ID, subject, grade, beginning_time, ending_time, room, school_ID, duration)
+        class_ID = idg.generate_unique_class_id(subject, grade, beginning_time, ending_time, duration, room)
+        return insert.insert_class(class_ID, subject, grade, beginning_time, ending_time, room, school_ID, duration)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
         return False
     
 def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes):
-    assignment_ID = generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID)
+    assignment_ID = idg.generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID)
     try:
-        return insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes)
+        return insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes)
     
     except sqlite3.Error as e:
         print("Database error: ", e)
