@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from backend.src.insert_data import add_data
+from .insert_data import add_data
+from . import get_functions
+from . import login_check
 from backend.src.insert_data.insert_functions import insert_volunteers
-import get_functions
-import login_check
 from assignment_functions.assignment_routes import assignment_bp
 
 
