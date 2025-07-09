@@ -23,7 +23,7 @@ def add_teacher(name, phone_number, school_name, email, password):
                                    ''', (school_name,)).fetchone()
         if result is not None:
             school_ID = result[0]
-        else:
+        else:    ## If school does not exist, this is a backup for testing. Remove later
             school_ID = add_school(school_name)
             if school_ID is None:
                 return False

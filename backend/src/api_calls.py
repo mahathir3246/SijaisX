@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from . import get_functions
 from .insert_data import add_data
+from . import get_functions
 from . import login_check
+from backend.src.insert_data.insert_functions import insert_volunteers
+from assignment_functions.assignment_routes import assignment_bp
+
 
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173"]) # we add our website here after code completion
@@ -57,6 +60,10 @@ register_insert_route("/api/class", add_data.add_class, required_fields=["subjec
 register_insert_route("/api/school", add_data.add_school, required_fields=["school_name"])
 register_insert_route("/api/assignment", add_data.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
 
+register_insert_route("/api/volunteers", insert_volunteers, required_fields=["substitute_ID", "class_ID"])
+
+
+app.register_blueprint(assignment_bp)
 
 @app.route("/api/login", methods=['POST'])
 def password_check():
