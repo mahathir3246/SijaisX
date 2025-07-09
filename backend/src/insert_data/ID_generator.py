@@ -1,6 +1,6 @@
 import sqlite3
 import re
-from src.db import get_db_connection
+from backend.src.db import get_db_connection
 
 # This generates unique IDs based on the name and possible school name.
 # It ensures that the generated ID is unique by checking against existing IDs in the database.

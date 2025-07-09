@@ -13,7 +13,7 @@ def check_password(email, password_attempt):
             WHERE email = ? AND password = ?
             ''', (email, password_attempt))
         result = cursor.fetchone()
-        if result:  # if found result, then return values otherwise we keep going
+        if result:  # if found result, return values otherwise we keep going
             return {'user_ID': result[0], 'role': result[1]}
         
         

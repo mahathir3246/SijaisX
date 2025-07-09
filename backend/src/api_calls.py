@@ -12,29 +12,29 @@ CORS(app, origins=["http://localhost:5173"]) # we add our website here after cod
 
 # Helper functions
 def register_get_route(route, get_function, error_message):
-    @app.route(route)
     def handler(id):
-        result = get_function(id)
-        if result:
-            return jsonify(result)
-        else:
-            return jsonify({"error": error_message}), 404
+        data = get_function(id)
+        return jsonify(data) if data else (jsonify({"error": error_message}), 404)
+
+    endpoint = f"get_{get_function.__name__}"
+    app.add_url_rule(route, endpoint=endpoint, view_func=handler)
+
 
 def register_insert_route(route, insert_function, required_fields=None):
-    @app.route(route, methods=["POST"])
     def handler():
-        data = request.get_json()
-        
+        data = request.get_json() or {}
         if required_fields:
-            missing = [field for field in required_fields if field not in data]
+            missing = [f for f in required_fields if f not in data]
             if missing:
                 return jsonify({"error": f"Missing required fields: {', '.join(missing)}"}), 400
-        
-        success = insert_function(**data)
-        if success:
-            return jsonify({"message": "Insertion successful"}), 201
-        else:
-            return jsonify({"error": "Insertion failed"}), 500
+
+        ok = insert_function(**data)
+        return (jsonify({"message": "Insertion successful"}), 201) if ok \
+             else (jsonify({"error": "Insertion failed"}), 500)
+
+    endpoint = f"insert_{insert_function.__name__}"
+    app.add_url_rule(route, endpoint=endpoint, view_func=handler, methods=["POST"])
+
 
 
 ### API calls for the info
@@ -59,7 +59,9 @@ register_insert_route("/api/preference", add_data.add_substitute_preference, req
 register_insert_route("/api/class", add_data.add_class, required_fields=["subject", "grade", "beginning_time", "ending_time", "teacher_ID", "room", "school_ID"])
 register_insert_route("/api/school", add_data.add_school, required_fields=["school_name"])
 register_insert_route("/api/assignment", add_data.add_assignment, required_fields=["date", "notes", "status", "class_ID", "teacher_ID", "substitute_ID"])
+
 register_insert_route("/api/volunteers", insert_volunteers, required_fields=["substitute_ID", "class_ID"])
+
 
 app.register_blueprint(assignment_bp)
 
@@ -74,6 +76,11 @@ def password_check():
         return jsonify(user_data)
     else:
         return jsonify({"error": "Invalid credentials"}), 401
+
+@app.route("/")
+def index():
+    """Simple sanity-check so / shows something useful."""
+    return jsonify({"status": "API is running 🚀"}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)
