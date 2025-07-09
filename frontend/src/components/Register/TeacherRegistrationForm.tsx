@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState , useRef} from 'react';
 import {
-  Form, Button, TagPicker, Panel, FlexboxGrid,
+  Form,type FormInstance, Button, TagPicker, Panel, FlexboxGrid,
   SelectPicker, Uploader, Schema
 } from 'rsuite';
 import CameraRetroIcon from '@rsuite/icons/legacy/CameraRetro';
@@ -9,6 +9,10 @@ import styles from '../../scss_stylings/teacher_register.module.scss';
 import { schoolsByLocation } from '../data/schoolLists';
 import { locations } from '../data/cities';
 import { subjectOptions, luokkasteOptions } from '../data/options';
+import { create_teacher, create_substitute, create_preference } from '../../functions/api_calls';
+
+
+
 const roleOptions = [
   {label : "Teacher" , value: "teacher"},
   {label : "Substitute", value: "substitute"}
@@ -48,7 +52,103 @@ export default function TeacherRegistrationForm() {
   picture: []
 });
   const[formError,setFormError] = useState({});
+  const formRef = useRef<FormInstance>(null);
+  type SubstituteResponse = {
+    substitute_ID: string;
+    // you can add .message or anything else the API returns
+  };
+   
 
+  const handleSubmit = async() =>{
+    //Run the form’s validation.
+    //If the form doesn’t pass (check() is false) or the form isn’t mounted yet (formRef.current is null), 
+    // then abort the submit logic right here
+    if(!formRef.current?.check()) return;
+
+    const {
+      role, first_name, last_name, phone, email,
+      password, experience, school,
+    } = formValue;
+
+    const name = `${first_name?.trim()} ${last_name?.trim()}`.trim()
+
+    try{
+      if(role == "teacher"){
+        if(!school || school.length == 0){
+          alert("Pick at least one school");
+          return;
+        }
+        const promises = school.map(async (schoolname) => {
+          const payload  = {
+            name,
+            phone_number : phone ?? "",
+            school_name: schoolname,
+            email: email ?? "",
+            password: password ?? ""
+          }
+          return create_teacher(payload);
+        });
+
+      const results = await Promise.allSettled(promises);
+
+      const succeeded = results.filter(r => r.status === "fulfilled").length;
+      const failed     = results.filter(r => r.status === "rejected").length;
+
+      alert(`${succeeded} teacher record(s) created${failed ? `, ${failed} failed` : ""}`);
+
+      }else{
+        const payloadForSub = {
+          name,
+          phone_number: phone ?? "",
+          email: email ?? "",
+          password: password ?? "",
+          experience: experience ?? 0
+        };
+
+        const createSub = (await create_substitute(payloadForSub)).json()
+
+        const subId = createSub.substitute_ID;          // ← add this line
+
+        if (!subId) {
+          alert("Could not get substitute ID from the server.");
+          return;
+        }
+
+        const grades= formValue.grade ?? [];
+        const schools = formValue.school ?? [""];
+        const subjects = formValue.subject ?? []; 
+        const locations = formValue.location ?? [""];
+
+
+        const payloadForPref = subjects.flatMap(sub =>
+          grades.flatMap(gr =>
+            schools.flatMap(sch =>
+              locations.map(loc => ({
+                grade        : gr,
+                substitute_ID: subId,
+                school_name  : sch,
+                subject      : sub,
+                location     : loc
+              }))
+            )
+          )
+        );
+        const prefResults = await Promise.allSettled(
+          payloadForPref.map(p => create_preference(p))
+        );
+
+        const ok  = prefResults.filter(r => r.status === 'fulfilled').length;
+        const bad = prefResults.length - ok;
+        alert(
+          `Teacher registered (${ok} rows${bad ? `, ${bad} failed` : ""}).`
+        );
+      }
+    }catch(err){
+      console.error(err);
+      alert("Registration failed – see console for details.");
+
+    }
+  }
   const isSubstitute = formValue.role == "substitute";
   const isTeacher = formValue.role == "teacher";
 
@@ -105,6 +205,8 @@ export default function TeacherRegistrationForm() {
 
             <Form
               fluid
+              ref={formRef} 
+              onSubmit={handleSubmit}
               formValue={formValue}
               onChange={(value) => setFormValue(value as FormData)}
               onCheck={setFormError}
@@ -153,38 +255,34 @@ export default function TeacherRegistrationForm() {
                 <Form.Control name="confirmPassword" type="password" autoComplete="new-password" placeholder='********'/>
               </Form.Group>
 
-              {isTeacher && (
-                <>
-                  <Form.Group>
-                    <Form.ControlLabel>Location</Form.ControlLabel>
-                    <Form.Control
-                      name="location"                         // must match the schema key
-                      accepter={TagPicker}                    // tell Form which component to render
-                      data={locations}
-                      value={formValue.location}
-                      onChange={(vals) => {
-                        setFormValue({ ...formValue, location: vals });
-                      }}
-                      placeholder="Selct the location where the school is situated"
-                      block
-                    />
-                  </Form.Group>
+              <Form.Group>
+                <Form.ControlLabel>Location</Form.ControlLabel>
+                <Form.Control
+                  name="location"                         // must match the schema key
+                  accepter={TagPicker}                    // tell Form which component to render
+                  data={locations}
+                  value={formValue.location}
+                  onChange={(vals) => {
+                    setFormValue({ ...formValue, location: vals });
+                  }}
+                  placeholder="Selct the location where the school is situated"
+                  block
+                />
+              </Form.Group>
 
-                  <Form.Group>
-                    <Form.ControlLabel>School</Form.ControlLabel>
-                    <Form.Control
-                      accepter={TagPicker}
-                      name = "school"
-                      data = {filteredSchools}
-                      value = {formValue.school}
-                      onChange={(selected) => setFormValue({ ...formValue, school: selected })}
-                      block
-                      disabled={!selectedCities.length}
-                      placeholder = "Pick a city"
-                    />
-                  </Form.Group>
-                </>
-              )}
+              <Form.Group>
+                <Form.ControlLabel>School</Form.ControlLabel>
+                <Form.Control
+                  accepter={TagPicker}
+                  name = "school"
+                  data = {filteredSchools}
+                  value = {formValue.school}
+                  onChange={(selected) => setFormValue({ ...formValue, school: selected })}
+                  block
+                  disabled={!selectedCities.length}
+                  placeholder = "Pick a city"
+                />
+              </Form.Group>
 
               {/*Substitute-only fields */}
               {isSubstitute && (
