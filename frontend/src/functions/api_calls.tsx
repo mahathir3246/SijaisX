@@ -42,8 +42,8 @@ export async function get_teacher_info(teacherID: string) {
     return await fetchData(`${BASE_URL}/teacher/${teacherID}`);
 }
 
-export async function get_student_info(studentID: string) {
-    return await fetchData(`${BASE_URL}/student/${studentID}`);
+export async function get_substitute_info(substituteID: string) {
+    return await fetchData(`${BASE_URL}/student/${substituteID}`);
 }
 
 export async function get_class_info(classID: string) {
@@ -72,6 +72,13 @@ export async function get_availability_info(availabilityID: string) {
 
 export async function get_school_info(school_ID: string) {
     return await fetchData(`${BASE_URL}/school/${school_ID}`);
+}
+
+// this is to get volunteers for a particular assignment
+export async function get_assignment_volunteers(assignmentID: string) {
+    return await fetchData<{ volunteers: { substitute_ID: string, name: string, email: string }[] }>(
+        `${BASE_URL}/assignments/${assignmentID}/volunteers`
+    );
 }
 
 
@@ -162,6 +169,32 @@ export async function create_school(schoolData: {
 }) {
     return await postData(`${BASE_URL}/school`, schoolData);
 }   
+
+// Function to update assignment status in the API
+export async function update_assignment_status(assignmentID: string, updatedData: {
+    date?: string;
+    notes?: string;
+    status?: string;
+    class_ID?: string;
+    teacher_ID?: string;
+    substitute_ID?: string;
+}) {
+    try {
+        const response = await fetch(`${BASE_URL}/assignment/${assignmentID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) {
+            console.error(`PUT /assignment/${assignmentID} failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`PUT /assignment/${assignmentID} failed:`, err);
+        return null;
+    }
+}
 
 
 export async function login(email: string, password: string) {

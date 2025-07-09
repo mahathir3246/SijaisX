@@ -1,6 +1,6 @@
 import sqlite3
 from ..db import get_db_connection
-from backend.src.insert_data.ID_generator import *
+from . import ID_generator as idg
 
 def insert_teacher(teacher_ID, name, phone_number, school_name, email, password):
     try:
@@ -13,7 +13,7 @@ def insert_teacher(teacher_ID, name, phone_number, school_name, email, password)
         if school:
             school_ID = school[0]
         else:
-            school_ID = generate_unique_school_id(school_name)
+            school_ID = idg.generate_unique_school_id(school_name)
             cursor.execute('INSERT INTO School (school_ID, school_name) VALUES (?, ?)', (school_ID, school_name))
 
         cursor.execute('''
@@ -32,15 +32,15 @@ def insert_teacher(teacher_ID, name, phone_number, school_name, email, password)
         if conn:
             conn.close()
 
-def insert_substitute(substitute_ID, name, phone_number, email, password, experience, profile=None, picture=None):
+def insert_substitute(substitute_ID, name, phone_number, email, password, experience, highest_education, profile=None, picture=None):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO Substitute (substitute_ID, name, phone_number, email, password, experience, profile, picture)
-                       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                       ''', (substitute_ID, name, phone_number, email, password, experience, profile, picture))
+            INSERT INTO Substitute (substitute_ID, name, phone_number, email, password, experience, highest_education, profile, picture)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (substitute_ID, name, phone_number, email, password, experience, highest_education, profile, picture))
         conn.commit()
         return True
     
@@ -186,7 +186,7 @@ def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substit
         cursor.execute('''
             INSERT INTO Assignment (assignment_ID, date, notes, status, class_ID, teacher_ID, substitute_ID)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (assignment_ID, date, notes, status, class_ID, teacher_ID, substitute_ID))
+        ''', (assignment_ID, date, notes, 'seaching', class_ID, teacher_ID, substitute_ID))
 
         conn.commit()
         return True
