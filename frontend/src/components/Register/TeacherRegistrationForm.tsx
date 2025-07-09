@@ -242,41 +242,42 @@ export default function TeacherRegistrationForm() {
                 <Form.ControlLabel>Confirm Password</Form.ControlLabel>
                 <Form.Control name="confirmPassword" type="password" autoComplete="new-password" placeholder='********'/>
               </Form.Group>
+              {isTeacher && (
+                <>
+                <Form.Group>
+                  <Form.ControlLabel>Location</Form.ControlLabel>
+                  <Form.Control
+                    name="location"                         // it must match the schema key
+                    accepter={TagPicker}                    // tell Form which component to render
+                    data={locations}
+                    value={formValue.location}
+                    onChange={(vals) => {
+                      setFormValue({ ...formValue, location: vals });
+                    }}
+                    placeholder="Selct the location where the school is situated"
+                    block
+                  />
+                </Form.Group>
 
-
-              <Form.Group>
-                <Form.ControlLabel>Location</Form.ControlLabel>
-                <Form.Control
-                  name="location"                         // it must match the schema key
-                  accepter={TagPicker}                    // tell Form which component to render
-                  data={locations}
-                  value={formValue.location}
-                  onChange={(vals) => {
-                    setFormValue({ ...formValue, location: vals });
-                  }}
-                  placeholder="Selct the location where the school is situated"
-                  block
-                />
-              </Form.Group>
-
-              <Form.Group>
-                <Form.ControlLabel>School</Form.ControlLabel>
-                <Form.Control
-                  accepter={TagPicker}
-                  name = "school"
-                  data = {filteredSchools}
-                  value = {formValue.school}
-                  onChange={(selected) => setFormValue({ ...formValue, school: selected })}
-                  block
-                  disabled={!selectedCities.length}
-                  placeholder = "Pick a city"
-                />
-              </Form.Group>
-
+                <Form.Group>
+                  <Form.ControlLabel>School</Form.ControlLabel>
+                  <Form.Control
+                    accepter={TagPicker}
+                    name = "school"
+                    data = {filteredSchools}
+                    value = {formValue.school}
+                    onChange={(selected) => setFormValue({ ...formValue, school: selected })}
+                    block
+                    disabled={!selectedCities.length}
+                    placeholder = "Pick a city"
+                  />
+                </Form.Group>
+                </>
+              )}
               {/*Substitute-only fields */}
               {isSubstitute && (
                 <>
-
+                  {/*
                   <Form.Group>
                     <Form.ControlLabel>Subject(s)</Form.ControlLabel>
                     <Form.Control
@@ -302,6 +303,10 @@ export default function TeacherRegistrationForm() {
                       placeholder = "Pick the grade you teach in"
                     />
                   </Form.Group>
+
+                  
+
+                  */}
                   
 
                   <Form.Group>
