@@ -243,10 +243,11 @@ export default function TeacherRegistrationForm() {
                 <Form.Control name="confirmPassword" type="password" autoComplete="new-password" placeholder='********'/>
               </Form.Group>
 
+
               <Form.Group>
                 <Form.ControlLabel>Location</Form.ControlLabel>
                 <Form.Control
-                  name="location"                         // must match the schema key
+                  name="location"                         // it must match the schema key
                   accepter={TagPicker}                    // tell Form which component to render
                   data={locations}
                   value={formValue.location}
