@@ -9,7 +9,7 @@ import styles from '../../scss_stylings/teacher_register.module.scss';
 import { schoolsByLocation } from '../data/schoolLists';
 import { locations } from '../data/cities';
 import { subjectOptions, luokkasteOptions } from '../data/options';
-import { create_teacher, create_substitute, create_preference } from '../../functions/api_calls';
+import { create_teacher, create_substitute } from '../../functions/api_calls';
 
 
 
@@ -53,11 +53,7 @@ export default function TeacherRegistrationForm() {
 });
   const[formError,setFormError] = useState({});
   const formRef = useRef<FormInstance>(null);
-  type SubstituteResponse = {
-    substitute_ID: string;
-    // you can add .message or anything else the API returns
-  };
-   
+
 
   const handleSubmit = async() =>{
     //Run the form’s validation.
@@ -105,20 +101,20 @@ export default function TeacherRegistrationForm() {
           experience: experience ?? 0
         };
 
-        const createSub = (await create_substitute(payloadForSub)).json()
+        const subcreate = create_substitute(payloadForSub);
+        const results   = await Promise.allSettled([subcreate]); // ← note the [ ]
 
-        const subId = createSub.substitute_ID;          // ← add this line
+        const succeeded = results.filter(r => r.status === "fulfilled").length;
+        const failed    = results.length - succeeded;
 
-        if (!subId) {
-          alert("Could not get substitute ID from the server.");
-          return;
-        }
+        alert(`${succeeded} substitute record(s) created${failed ? `, ${failed} failed` : ""}`);
 
+
+        /*
         const grades= formValue.grade ?? [];
         const schools = formValue.school ?? [""];
         const subjects = formValue.subject ?? []; 
         const locations = formValue.location ?? [""];
-
 
         const payloadForPref = subjects.flatMap(sub =>
           grades.flatMap(gr =>
@@ -133,15 +129,7 @@ export default function TeacherRegistrationForm() {
             )
           )
         );
-        const prefResults = await Promise.allSettled(
-          payloadForPref.map(p => create_preference(p))
-        );
-
-        const ok  = prefResults.filter(r => r.status === 'fulfilled').length;
-        const bad = prefResults.length - ok;
-        alert(
-          `Teacher registered (${ok} rows${bad ? `, ${bad} failed` : ""}).`
-        );
+        */
       }
     }catch(err){
       console.error(err);
