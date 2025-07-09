@@ -43,7 +43,7 @@ export async function get_teacher_info(teacherID: string) {
 }
 
 export async function get_substitute_info(substituteID: string) {
-    return await fetchData(`${BASE_URL}/student/${substituteID}`);
+    return await fetchData(`${BASE_URL}/substitute/${substituteID}`);
 }
 
 export async function get_class_info(classID: string) {

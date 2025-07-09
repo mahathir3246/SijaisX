@@ -4,7 +4,7 @@ from .insert_data import add_data
 from . import get_functions
 from . import login_check
 from backend.src.insert_data.insert_functions import insert_volunteers
-from assignment_functions.assignment_routes import assignment_bp
+from .assignment_functions.assignment_routes import assignment_bp
 
 
 app = Flask(__name__)
