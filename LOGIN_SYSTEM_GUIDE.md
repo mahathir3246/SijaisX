@@ -14,7 +14,7 @@ I've implemented a complete login system with session management and user-based 
 
 2. **🔒 Session Management**
    - User data stored in localStorage
-   - 24-hour session expiry
+   - Session persists until manual logout
    - Automatic session validation
 
 3. **🛡️ Protected Routes**
@@ -49,7 +49,7 @@ Redirect to appropriate page based on role
 ### **2. Authentication Components**
 
 **📁 `frontend/src/functions/auth.ts`**
-- `isAuthenticated()` - Check if user is logged in
+- `isAuthenticated()` - Check if user is logged in (no time expiry)
 - `getCurrentUser()` - Get current user data
 - `logout()` - Clear session and redirect
 - `hasRole()` - Check user role

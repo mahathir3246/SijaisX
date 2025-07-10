@@ -44,8 +44,7 @@ const LoginForm = () => {
         const userData = {
           user_ID: response.user_ID,
           role: response.role,
-          email: email,
-          loginTime: new Date().toISOString()
+          email: email
         };
         
         localStorage.setItem('sijaisx_user', JSON.stringify(userData));

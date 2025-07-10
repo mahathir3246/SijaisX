@@ -2,7 +2,6 @@ export interface UserData {
   user_ID: string;
   role: 'teacher' | 'substitute';
   email: string;
-  loginTime: string;
 }
 
 // Check if user is logged in
@@ -12,12 +11,8 @@ export const isAuthenticated = (): boolean => {
   
   try {
     const user = JSON.parse(userData);
-    // Check if login is not older than 24 hours (optional session expiry)
-    const loginTime = new Date(user.loginTime);
-    const now = new Date();
-    const hoursDiff = (now.getTime() - loginTime.getTime()) / (1000 * 60 * 60);
-    
-    return hoursDiff < 24; // Session expires after 24 hours
+    // Simple check: if user data exists and has required fields, user is authenticated
+    return user && user.user_ID && user.role && user.email;
   } catch {
     return false;
   }
