@@ -1,5 +1,7 @@
 from flask import Blueprint, request, jsonify
-from edit_profile_queries import update_teacher_profile, update_substitute_profile
+from .edit_profile_queries import (
+ update_teacher_profile,update_substitute_profile,
+)
 
 edit_profile_bp = Blueprint("edit_profile_bp", __name__)
 
