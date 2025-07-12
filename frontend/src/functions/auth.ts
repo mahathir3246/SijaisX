@@ -11,8 +11,8 @@ export interface UserData{
 export const isAuthenticated = (): boolean =>{
 
     //localStorage = Browser's storage (like a tiny database in the user's browser)
-    // 'sijaisx_user' = The key we use to store user info (like a folder name)
-    const userData = localStorage.getItem("sijaisx_user");
+    // 'sijaisx-user' = The key we use to store user info (like a folder name)
+    const userData = localStorage.getItem("sijaisx-user");
 
     if(!userData){
         return false;
@@ -21,7 +21,7 @@ export const isAuthenticated = (): boolean =>{
     try{
         const user = JSON.parse(userData)
         //This checks if ALL required pieces exist:
-        return user && user.user_id && user.role && user.email;
+        return user && user.user_ID && user.role && user.email;
     }catch{
         return false;
     }
