@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from assignment_queries import volunteer_for_assignment, update_assignment_status, get_assignment_volunteers
+from .assignment_queries import volunteer_for_assignment, update_assignment_status, get_assignment_volunteers
 
 assignment_bp = Blueprint("assignment_bp", __name__)
 
