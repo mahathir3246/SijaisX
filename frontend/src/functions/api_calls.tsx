@@ -196,6 +196,56 @@ export async function update_assignment_status(assignmentID: string, updatedData
     }
 }
 
+// Function to update teacher profile
+export async function update_teacher_profile(teacherID: string, updatedData: {
+    name?: string;
+    phone_number?: string;
+    email?: string;
+    password?: string;
+    
+}) {
+    try {
+        const response = await fetch(`${BASE_URL}/edit_profile/teacher/${teacherID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) {
+            console.error(`PUT /edit_profile/teacher/${teacherID} failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`PUT /edit_profile/teacher/${teacherID} failed:`, err);
+        return null;
+    }
+}
+
+// Function to update substitute profile
+export async function update_substitute_profile(substituteID: string, updatedData: {
+    name?: string;
+    phone_number?: string;
+    email?: string;
+    password?: string;
+    experience?: number;
+    highest_education?: string;
+}) {
+    try {
+        const response = await fetch(`${BASE_URL}/edit_profile/substitute/${substituteID}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) {
+            console.error(`PUT /edit_profile/substitute/${substituteID} failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`PUT /edit_profile/substitute/${substituteID} failed:`, err);
+        return null;
+    }
+}
 
 export async function login(email: string, password: string) {
     try {

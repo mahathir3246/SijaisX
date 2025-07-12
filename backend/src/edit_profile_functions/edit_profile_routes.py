@@ -1,9 +1,9 @@
 from flask import Blueprint, request, jsonify
 from edit_profile_queries import update_teacher_profile, update_substitute_profile
 
-assignment_bp = Blueprint("assignment_bp", __name__)
+edit_profile_bp = Blueprint("edit_profile_bp", __name__)
 
-@assignment_bp.route("/api/edit_profile/substitute/<string:substitute_ID>", methods=["PATCH"])
+@edit_profile_bp.route("/api/edit_profile/substitute/<string:substitute_ID>", methods=["PATCH"])
 def edit_substitute_profile(substitute_ID):
     data = request.json
     name = data.get("name")
@@ -20,7 +20,7 @@ def edit_substitute_profile(substitute_ID):
         return jsonify(result), 400
     return jsonify(result), 200
 
-@assignment_bp.route("api/edit_profile/teacher/<string:teacher_ID>", methods=["PATCH"])
+@edit_profile_bp.route("api/edit_profile/teacher/<string:teacher_ID>", methods=["PATCH"])
 def edit_teacher_profile(teacher_ID):
     data = request.json
     name = data.get("name")
