@@ -202,7 +202,7 @@ export const schoolsByLocation: Record<string, { label: string, value: string }[
       { label: 'Rajatorpan koulu',               value: 'rajatorpan' },
       { label: 'Rekolan koulu',                  value: 'rekolan' },
       { label: 'Rekolanmäen koulu',              value: 'rekolanmaen' },
-      { label: 'Ruusuvuoren koulu',              value: 'ruusuvuoren' },
+      { label: 'Ruusuvuoren koulu',              value: 'Ruusuvuoren Koulu' },
       { label: 'Seutulan koulu',                 value: 'seutulan' },
       { label: 'Simonkallion koulu',             value: 'simonkallion' },
       { label: 'Simonkylän koulu (Vantaa)',      value: 'simonkylan' },

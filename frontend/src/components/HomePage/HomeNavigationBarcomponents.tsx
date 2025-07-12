@@ -44,8 +44,9 @@ const NavigationBarComponents = () => {
         </ResponsiveNav.Item>
         <ResponsiveNav.Item
           as={Link}
-          to="/"
+          to="/login"
           className={navigationStyles.navLink}
+          
         >
           <span className={navigationStyles.login}>Kirjaudu sisään</span>
         </ResponsiveNav.Item>
