@@ -6,9 +6,13 @@ import { Link } from 'react-router-dom';
 import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 import ExitIcon from "@rsuite/icons/Exit";
 import CreateSubstituteModal from "../PostJobModal";
+import { logout } from "../../../functions/auth";
 
 const NavigationBarComponents = () => {
     const [openModal, setOpenModal] = useState(false); // State to control modal visibility
+    const handleLogOut = () => {
+      logout();
+    }
   return (
     <div className={navigationStyles.navContainer}>
       <ResponsiveNav
@@ -43,6 +47,7 @@ const NavigationBarComponents = () => {
         </ResponsiveNav.Item>
         <ResponsiveNav.Item
           className={`${navigationStyles.logOut} ${navigationStyles.navLink}`}
+          onClick={handleLogOut}
         >
           <p className={navigationStyles.navItemSubContainer}>
             <ExitIcon className={navigationStyles.exitIcon} />

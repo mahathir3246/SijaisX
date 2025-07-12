@@ -8,7 +8,6 @@ import CameraRetroIcon from '@rsuite/icons/legacy/CameraRetro';
 import styles from '../../scss_stylings/teacher_register.module.scss';
 import { schoolsByLocation } from '../data/schoolLists';
 import { locations } from '../data/cities';
-import { subjectOptions, luokkasteOptions } from '../data/options';
 import { create_teacher, create_substitute } from '../../functions/api_calls';
 
 
@@ -170,6 +169,7 @@ export default function TeacherRegistrationForm() {
     }),
 
     ...(isSubstitute && {
+      /*
       subject: Schema.Types.ArrayType()
         .isRequired("Subject is required")
         .addRule((value) => value.length > 0, "Select at least one subject"),
@@ -177,7 +177,7 @@ export default function TeacherRegistrationForm() {
       grade: Schema.Types.ArrayType()
         .isRequired("Teaching grade is required")
         .addRule((value) => value.length > 0, "Select at least one grade"),
-
+      */
       experience: Schema.Types.NumberType(),
       profile: Schema.Types.ArrayType(),
       picture: Schema.Types.ArrayType()
