@@ -181,17 +181,17 @@ export async function update_assignment_status(assignmentID: string, updatedData
 }) {
     try {
         const response = await fetch(`${BASE_URL}/assignment/${assignmentID}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedData),
         });
         if (!response.ok) {
-            console.error(`PUT /assignment/${assignmentID} failed:`, await response.text());
+            console.error(`PATCH /assignment/${assignmentID} failed:`, await response.text());
             return null;
         }
         return await response.json();
     } catch (err) {
-        console.error(`PUT /assignment/${assignmentID} failed:`, err);
+        console.error(`PATCH /assignment/${assignmentID} failed:`, err);
         return null;
     }
 }
@@ -206,17 +206,17 @@ export async function update_teacher_profile(teacherID: string, updatedData: {
 }) {
     try {
         const response = await fetch(`${BASE_URL}/edit_profile/teacher/${teacherID}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(updatedData),
         });
         if (!response.ok) {
-            console.error(`PUT /edit_profile/teacher/${teacherID} failed:`, await response.text());
+            console.error(`PATCH /edit_profile/teacher/${teacherID} failed:`, await response.text());
             return null;
         }
         return await response.json();
     } catch (err) {
-        console.error(`PUT /edit_profile/teacher/${teacherID} failed:`, err);
+        console.error(`PATCH /edit_profile/teacher/${teacherID} failed:`, err);
         return null;
     }
 }
@@ -232,17 +232,17 @@ export async function update_substitute_profile(substituteID: string, updatedDat
 }) {
     try {
         const response = await fetch(`${BASE_URL}/edit_profile/substitute/${substituteID}`, {
-            method: 'PUT',
+            method: 'PATCH',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(updatedData),
         });
         if (!response.ok) {
-            console.error(`PUT /edit_profile/substitute/${substituteID} failed:`, await response.text());
+            console.error(`PATCH /edit_profile/substitute/${substituteID} failed:`, await response.text());
             return null;
         }
         return await response.json();
     } catch (err) {
-        console.error(`PUT /edit_profile/substitute/${substituteID} failed:`, err);
+        console.error(`PATCH /edit_profile/substitute/${substituteID} failed:`, err);
         return null;
     }
 }

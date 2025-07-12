@@ -20,7 +20,7 @@ def edit_substitute_profile(substitute_ID):
         return jsonify(result), 400
     return jsonify(result), 200
 
-@edit_profile_bp.route("api/edit_profile/teacher/<string:teacher_ID>", methods=["PATCH"])
+@edit_profile_bp.route("/api/edit_profile/teacher/<string:teacher_ID>", methods=["PATCH"])
 def edit_teacher_profile(teacher_ID):
     data = request.json
     name = data.get("name")
