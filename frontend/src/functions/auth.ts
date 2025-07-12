@@ -2,7 +2,7 @@
 // When someone logs in, we store their info in this exact format
 
 export interface UserData{
-    user_id: string;
+    user_ID: string;
     role: 'teacher' | 'substitute';
     email: string;
 }
@@ -30,7 +30,7 @@ export const isAuthenticated = (): boolean =>{
 
 // Get current user data
 export const getCurrentUser = (): UserData | null => {
-    const userData = localStorage.getItem("sijaisx_user")
+    const userData = localStorage.getItem("sijaisx-user")
     if (!userData){
         return null;
     }
@@ -44,7 +44,7 @@ export const getCurrentUser = (): UserData | null => {
 }
 
 export const logout = () =>{
-    localStorage.removeItem("sijaisx_user")
+    localStorage.removeItem("sijaisx-user")
     window.location.href = '/'   // Redirect to home page
 }
 
@@ -60,5 +60,5 @@ export const getUserRole = (): 'teacher' | 'substitute' | null =>{
 
 export const getUserID = (): string | null =>{
     const user = getCurrentUser();
-    return user ? user.user_id : null;
+    return user ? user.user_ID : null;
 }
