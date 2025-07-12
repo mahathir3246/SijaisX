@@ -169,6 +169,7 @@ export default function TeacherRegistrationForm() {
     }),
 
     ...(isSubstitute && {
+      /*
       subject: Schema.Types.ArrayType()
         .isRequired("Subject is required")
         .addRule((value) => value.length > 0, "Select at least one subject"),
@@ -176,7 +177,7 @@ export default function TeacherRegistrationForm() {
       grade: Schema.Types.ArrayType()
         .isRequired("Teaching grade is required")
         .addRule((value) => value.length > 0, "Select at least one grade"),
-
+      */
       experience: Schema.Types.NumberType(),
       profile: Schema.Types.ArrayType(),
       picture: Schema.Types.ArrayType()
