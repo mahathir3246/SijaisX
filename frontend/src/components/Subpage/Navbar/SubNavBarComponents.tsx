@@ -2,9 +2,9 @@
 import ResponsiveNav from "@rsuite/responsive-nav";
 import NoticeIcon from '@rsuite/icons/Notice';
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss"
 import ExitIcon from "@rsuite/icons/Exit";
-import { logout } from "../../functions/auth";
+import { logout } from "../../../functions/auth";
 
 
 const NavigationBarComponents = () => {
