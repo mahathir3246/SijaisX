@@ -109,3 +109,8 @@ export const lessonsBydate: Record <DateKey, Assignment[]> ={
     { subject: "Art",       grade: "9C", start: "13:00", end: "13:45", duration: "45 min", room: "Art-1", school: "Lehti­mäen koulu", notes:"" }
   ]
 }
+
+
+
+
+
