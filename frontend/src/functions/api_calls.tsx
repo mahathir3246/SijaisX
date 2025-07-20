@@ -81,6 +81,33 @@ export async function get_assignment_volunteers(assignmentID: string) {
     );
 }
 
+// function to get classes for a specific teacher of a specific range
+export async function get_teacher_classes_within_range(teacher_ID: string, start_date: string, end_date: string) {
+    const url = `${BASE_URL}/get_specifications/teacher_classes/${teacher_ID}?start_date=${start_date}&end_date=${end_date}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch classes: ${response.statusText}`);
+            return null;
+        }
+
+        const data = await response.json();
+
+        // Optional: Validate data shape     chatgpt
+        if (!Array.isArray(data.classes)) {
+            console.error("Unexpected data format:", data);
+            return null;
+        }
+
+        return data;
+
+    } catch (error) {
+        console.error("Network or parsing error:", error);
+        return null;
+    }
+}
+
 
 // Functions to post data to API
 export async function create_teacher(teacherData: {
