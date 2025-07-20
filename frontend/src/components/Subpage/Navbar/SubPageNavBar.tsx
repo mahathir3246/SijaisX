@@ -1,8 +1,8 @@
 "use client";
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
-import NavDropdownMobile from "./SubDropdownmobile";
-import NavigationBarComponents from "./SubNavBarComponents";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss"
+import NavDropdownMobile from './SubDropdownmobile';
+import NavigationBarComponents from './SubNavBarComponents';
 
 const NavigationBar = () => {
   return (

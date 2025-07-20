@@ -2,11 +2,16 @@
 import ResponsiveNav from "@rsuite/responsive-nav";
 import NoticeIcon from '@rsuite/icons/Notice';
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss"
 import ExitIcon from "@rsuite/icons/Exit";
-import PlusIcon from "@rsuite/icons/Plus";
+import { logout } from "../../../functions/auth";
+
 
 const NavigationBarComponents = () => {
+
+  const handleLogOut = () =>{
+    logout()
+  }
   return (
     <div className={navigationStyles.navContainer}>
       <ResponsiveNav
@@ -41,6 +46,7 @@ const NavigationBarComponents = () => {
         </ResponsiveNav.Item>
         <ResponsiveNav.Item
           className={`${navigationStyles.logOut} ${navigationStyles.navLink}`}
+          onClick={handleLogOut}
         >
           <p className={navigationStyles.navItemSubContainer}>
             <ExitIcon className={navigationStyles.exitIcon} />

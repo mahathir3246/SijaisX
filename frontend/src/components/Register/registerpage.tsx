@@ -1,7 +1,7 @@
 import navigationStyles from "../../scss_stylings/navbar.module.scss";
 import Footer from '../HomePage/HomePageFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
-import TeacherRegistrationForm from "./TeacherRegistrationForm"
+import RegistrationForm from "./RegistrationForm"
 
 const RegisterPage = () =>{
     return(
@@ -16,7 +16,7 @@ const RegisterPage = () =>{
                     </div>
                 </div>
             </div>
-            <TeacherRegistrationForm/>
+            <RegistrationForm/>
             <Footer/>
         </div>
         

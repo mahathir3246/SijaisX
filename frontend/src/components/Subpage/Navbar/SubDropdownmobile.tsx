@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Button, Drawer } from "rsuite";
 import ExitIcon from "@rsuite/icons/Exit";
 import { Link } from 'react-router-dom';
-import navigationStyles from "../../scss_stylings/navbar.module.scss";
+import navigationStyles from "../../../scss_stylings/navbar.module.scss"
+
 
 const NavDropdownMobile = () => {
   const [open, setOpen] = useState(false);

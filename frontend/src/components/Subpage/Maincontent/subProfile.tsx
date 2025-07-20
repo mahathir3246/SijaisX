@@ -8,28 +8,24 @@ import {
   toaster,
   Message
 } from 'rsuite';
-import teacherStyles from '../../../scss_stylings/teacher.module.scss';
+import subStyles from '../../../scss_stylings/substitute.module.scss';
 import { getUserID } from '../../../functions/auth';
-import { get_teacher_info, get_school_info , update_teacher_profile} from '../../../functions/api_calls';
+import { get_substitute_info , update_substitute_profile} from '../../../functions/api_calls';
 import { useEffect, useState } from 'react';
 
-const TeacherProfile = () => {
+const SubstituteProfile = () => {
 
-  interface SchoolData{
-    school_ID: string,
-    school_name: string
-  }
 
-  interface TeacherData{
-    teacher_ID: string,
+  interface SubstituteData{
+    substitute_ID:string,
     name: string,
     phone_number: string,
-    email: string,
-    password: string,
-    school_ID: string
+    email:string,
+    password:string,
+    experience: number,
+
   }
-  const [teacher, setTeacher] = useState<TeacherData | null>(null);
-  const [school, setSchool] = useState<SchoolData | null>(null);
+  const [substitute, setSubstitute] = useState<SubstituteData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,24 +38,24 @@ const TeacherProfile = () => {
 
   const handleEdit = () =>{
     setIsEditing(true)
-    if(teacher){
-      setName(teacher.name);
-      setEmail(teacher.email);
-      setPhone(teacher.phone_number);
+    if(substitute){
+      setName(substitute.name);
+      setEmail(substitute.email);
+      setPhone(substitute.phone_number);
     }
   }
 
   const handleCancel = () =>{
     setIsEditing(false)
-    if(teacher){
-      setName(teacher.name);
-      setPhone(teacher.phone_number);
-      setEmail(teacher.email);
+    if(substitute){
+      setName(substitute.name);
+      setPhone(substitute.phone_number);
+      setEmail(substitute.email);
     }
   }
 
   const handleSave = async () => {
-    if (!teacher) return;
+    if (!substitute) return;
     
     setIsSaving(true);
     
@@ -70,11 +66,11 @@ const TeacherProfile = () => {
         phone_number: phone.trim()
       };
 
-      const result = await update_teacher_profile(teacher.teacher_ID, updatedData);
+      const result = await update_substitute_profile(substitute.substitute_ID, updatedData);
       
       if (result && result.success) {
         // Update local state with new data
-        setTeacher(prev => prev ? {
+        setSubstitute(prev => prev ? {
           ...prev,
           name: updatedData.name,
           email: updatedData.email,
@@ -111,25 +107,20 @@ const TeacherProfile = () => {
   }
 
   useEffect(() => {
-    const getTeacherData = async () =>{
+    const getSubstituteData = async () =>{
       try{
-        const teacherID = getUserID();
+        const substitute_id = getUserID();
 
-        if(!teacherID || teacherID === "") {
-          setError('No teacher ID found');
+        if(!substitute_id || substitute_id === "") {
+          setError('No substitute ID found');
           setLoading(false);
           return;
         }
 
-        const teacherInfo = await get_teacher_info(teacherID);
+        const subInfo = await get_substitute_info(substitute_id);
 
-        if(teacherInfo){
-          setTeacher(teacherInfo as TeacherData)
-
-          const schoolInfo = await get_school_info((teacherInfo as TeacherData).school_ID);
-          if (schoolInfo) {
-            setSchool(schoolInfo as SchoolData);
-          }
+        if(subInfo){
+          setSubstitute(subInfo as SubstituteData)
         } else{
           setError("Error Loading profile")
         } 
@@ -141,12 +132,12 @@ const TeacherProfile = () => {
         setLoading(false)
       }
     }
-    getTeacherData()
+    getSubstituteData()
   } , []); 
 
   if (loading) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <Loader size="lg" content="Loading profile..." />
       </div>
@@ -156,7 +147,7 @@ const TeacherProfile = () => {
 
   if (error) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <p style={{ color: 'red' }}>Error: {error}</p>
       </div>
@@ -164,9 +155,9 @@ const TeacherProfile = () => {
   );
   }
 
-  if (!teacher) {
+  if (!substitute) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <p>No teacher data available</p>
       </div>
@@ -178,16 +169,16 @@ const TeacherProfile = () => {
   return (
     <Panel 
     bordered
-    className={teacherStyles.profileContainer}>
-            <div className={teacherStyles.upperHalfContainer}>
-                <div className={teacherStyles.profile}>Profile</div>
+    className={subStyles.profileContainer}>
+            <div className={subStyles.upperHalfContainer}>
+                <div className={subStyles.profile}>Profile</div>
                   <Avatar circle size='xxl' ></Avatar>¨
                   {isEditing ? (
                     <>
                     <div>
                       <label>Name:</label>
                       <Input 
-                      className={teacherStyles.name}
+                      className={subStyles.name}
                       value={name}
                       onChange={setName}
                       placeholder='Enter your name'
@@ -196,7 +187,7 @@ const TeacherProfile = () => {
                     <div>
                       <label>phone:</label>
                       <Input 
-                      className={teacherStyles.email}
+                      className={subStyles.email}
                       value={phone}
                       onChange={setPhone}
                       placeholder='Enter your phone number'
@@ -205,7 +196,7 @@ const TeacherProfile = () => {
                     <div>
                     <label>email:</label>
                     <Input 
-                    className={teacherStyles.phone_number}
+                    className={subStyles.phone_number}
                     value={email}
                     onChange={setEmail}
                     placeholder='Enter your email'
@@ -216,12 +207,9 @@ const TeacherProfile = () => {
                     
                   ): 
                   <>
-                  <h3 className={teacherStyles.name}>{teacher.name || 'Unknown Teacher'}</h3>
-                  <p className={teacherStyles.email}>{teacher.email || 'No email'}</p>
-                  <p className={teacherStyles.phone}>{teacher.phone_number || 'No phone'}</p>
-                  <p className={teacherStyles.school}>
-                    {school ? school.school_name : 'Loading school...'}
-                  </p>
+                  <h3 className={subStyles.name}>{substitute.name || 'Unknown Teacher'}</h3>
+                  <p className={subStyles.email}>{substitute.email || 'No email'}</p>
+                  <p className={subStyles.phone}>{substitute.phone_number || 'No phone'}</p>
                   </>
                   }
 
@@ -230,15 +218,15 @@ const TeacherProfile = () => {
             <div>
               {isEditing ? (
                 <>
-                <Button appearance="primary" block className= {teacherStyles.editProfileButton} onClick={handleSave} loading = {isSaving}>
+                <Button appearance="primary" block className= {subStyles.editProfileButton} onClick={handleSave} loading = {isSaving}>
                   Save
                 </Button>
-                <Button appearance="primary" block className= {teacherStyles.editProfileButton} onClick={handleCancel}>
+                <Button appearance="primary" block className= {subStyles.editProfileButton} onClick={handleCancel}>
                   Cancel
                 </Button>
                 </>
               ):
-                <Button appearance="primary" block className= {teacherStyles.editProfileButton} onClick={handleEdit}>
+                <Button appearance="primary" block className= {subStyles.editProfileButton} onClick={handleEdit}>
                   Edit Profile
                 </Button>
               }
@@ -247,4 +235,4 @@ const TeacherProfile = () => {
   );
 };
 
-export default TeacherProfile;
+export default SubstituteProfile;

@@ -5,7 +5,7 @@ import {
 } from 'rsuite';
 import CameraRetroIcon from '@rsuite/icons/legacy/CameraRetro';
 
-import styles from '../../scss_stylings/teacher_register.module.scss';
+import styles from '../../scss_stylings/register.module.scss';
 import { schoolsByLocation } from '../data/schoolLists';
 import { locations } from '../data/cities';
 import { create_teacher, create_substitute } from '../../functions/api_calls';
@@ -33,7 +33,7 @@ type FormData = {
   profile?: File[];
   picture? : File[];
 }; 
-export default function TeacherRegistrationForm() {
+export default function RegistrationForm() {
   const [formValue, setFormValue] = useState<FormData>({
   role: "substitute",
   first_name: "",
