@@ -30,7 +30,7 @@ def add_sub_to_volunteers_in_school(teacher_ID, substitute_ID):
         # Check if sub is already in list
         cursor. execute('''
                         SELECT 1 from VolunteersInSchool
-                        WHERE substitute_ID = ? AND school_ID ?
+                        WHERE substitute_ID = ? AND school_ID = ?
                         ''', (substitute_ID, school_ID))
         in_list = cursor.fetchone()
         if in_list:
@@ -49,4 +49,3 @@ def add_sub_to_volunteers_in_school(teacher_ID, substitute_ID):
     
     finally:
         conn.close()
-        
