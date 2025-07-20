@@ -6,6 +6,7 @@ from . import login_check
 from backend.src.insert_data.insert_functions import insert_volunteers
 from .assignment_functions.assignment_routes import assignment_bp
 from .edit_profile_functions.edit_profile_routes import edit_profile_bp
+from .subcoord_functions.subcoord_routes import subcoord_bp
 
 
 app = Flask(__name__)
@@ -66,6 +67,8 @@ register_insert_route("/api/volunteers", insert_volunteers, required_fields=["su
 
 app.register_blueprint(assignment_bp)
 app.register_blueprint(edit_profile_bp)
+app.register_blueprint(subcoord_bp)
+
 
 @app.route("/api/login", methods=['POST'])
 def password_check():
