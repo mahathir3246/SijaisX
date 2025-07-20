@@ -170,6 +170,11 @@ export async function create_school(schoolData: {
     return await postData(`${BASE_URL}/school`, schoolData);
 }   
 
+export async function volunteer_in_school(teacher_ID: string)
+{
+    return await postData(`${BASE_URL}/substitute_coordinator/${teacher_ID}/add_substitute_to_list`, { teacher_ID });
+}
+
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {
     date?: string;
