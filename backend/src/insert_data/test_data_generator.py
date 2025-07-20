@@ -94,12 +94,12 @@ def dump_day(
                 f'("{class_id}", '
                 f'"{subjects[i]}", "{grades[i]}", '
                 f'"{start_ts}", "{end_ts}", '
-                f'"45", "{rooms[i]}", "{school_id}")'
+                f'"45", "{rooms[i]}", "{school_id}");'
             )
 
             print(
                 f'INSERT INTO Teaches Values'
-                f'("{teacher_id}" , "{class_id}")'
+                f'("{teacher_id}" , "{class_id}");'
 
             )
         current += timedelta(days=7)
