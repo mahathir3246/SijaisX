@@ -252,6 +252,32 @@ export async function update_substitute_profile(substituteID: string, updatedDat
     }
 }
 
+// Function to update class info
+export async function update_class_info(classID: string, teacherID: string, updatedData: {
+    subject?: string;
+    grade?: string;
+    beginning_time?: string;
+    ending_time?: string;
+    duration?: number;
+    room?: string;
+}) {
+    try {
+        const response = await fetch(`${BASE_URL}/edit_class/${classID}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json'},
+            body: JSON.stringify({teacher_ID: teacherID, ...updatedData}),
+        });
+        if (!response.ok) {
+            console.error(`PATCH /edit_class/${classID} failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`PATCH /edit_class/${classID} failed:`, err);
+        return null;
+    }
+}
+
 
 
 export async function login(email: string, password: string) {

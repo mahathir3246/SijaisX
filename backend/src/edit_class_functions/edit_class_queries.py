@@ -9,12 +9,12 @@ def edit_class_info(class_ID, teacher_ID, subject=None, grade=None,
     try:
         # check if teacher teaches this class
         cursor.execute('''
-                       SELECT class_ID
+                       SELECT 1
                        FROM Teaches
-                       WHERE teacher_ID = ?
-                       ''', (teacher_ID,))
+                       WHERE teacher_ID = ? AND class_ID = ?
+                       ''', (teacher_ID, class_ID))
         result = cursor.fetchone()
-        if result is None or result[0] != class_ID:
+        if result is None:
             return {"success": False, "error": "Unauthorized"}
         
         # fetch current class data
@@ -26,17 +26,17 @@ def edit_class_info(class_ID, teacher_ID, subject=None, grade=None,
         existing_data = cursor.fetchone()
         if existing_data is None:
             return {"success": False, "error": "Class info not found"}
-        subject = existing_data[0]
-        grade = existing_data[1]
-        beginning_time = existing_data[2]
-        ending_time = existing_data[3]
-        duration = existing_data[4]
-        room = existing_data[5]
+        subject = subject if subject is not None else existing_data[0]
+        grade = grade if grade is not None else existing_data[1]
+        beginning_time = beginning_time if beginning_time is not None else existing_data[2]
+        ending_time = ending_time if ending_time is not None else existing_data[3]
+        duration = duration if duration is not None else existing_data[4]
+        room = room if room is not None else existing_data[5]
 
         # edit class info
         cursor.execute('''
                        UPDATE Class
-                       SET subject = ?, grade = ?, beginning_time = ?, ending_time = ?, duration = ?, room = ?)
+                       SET subject = ?, grade = ?, beginning_time = ?, ending_time = ?, duration = ?, room = ?
                        WHERE class_ID = ?
                        ''', (subject, grade, beginning_time, ending_time, duration, room, class_ID))
         conn.commit()
