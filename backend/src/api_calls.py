@@ -8,6 +8,7 @@ from .assignment_functions.assignment_routes import assignment_bp
 from .edit_profile_functions.edit_profile_routes import edit_profile_bp
 from .subcoord_functions.subcoord_routes import subcoord_bp
 from .edit_class_functions.edit_class_routes import edit_class_info_bp
+from .get_function_specifications.get_specifications_routes import get_specifications_bp
 
 
 app = Flask(__name__)
@@ -70,6 +71,7 @@ app.register_blueprint(assignment_bp)
 app.register_blueprint(edit_profile_bp)
 app.register_blueprint(subcoord_bp)
 app.register_blueprint(edit_class_info_bp)
+app.register_blueprint(get_specifications_bp)
 
 
 @app.route("/api/login", methods=['POST'])
