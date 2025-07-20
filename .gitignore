@@ -9,3 +9,6 @@ coverage/
 # environment files & OS junk
 .env*
 .DS_Store
+
+#
+.main_database.db
