@@ -46,6 +46,8 @@ export default function PostJobModal({ open, onClose }: Props) {
     <Modal size="lg" open={open} onClose={onClose}>
       <Modal.Header><h4>Post a Job</h4></Modal.Header>
 
+
+
       <Modal.Body>
         <DateRangePicker
           style={{ width: '100%' }}
