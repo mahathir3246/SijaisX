@@ -173,7 +173,7 @@ export const schoolsByLocation: Record<string, { label: string, value: string }[
       { label: 'Hämeenkylän koulu',              value: 'hameenkylan' },
       { label: 'Ilolan koulu (Vantaa)',          value: 'ilolan' },
       { label: 'Itä‑Hakkilan koulu',             value: 'itahakkilan' },
-      { label: 'Jokiniemen koulu',               value: 'jokiniemen' },
+      { label: 'Jokiniemen koulu',               value: 'Jokiniemen Koulu' },
       { label: 'Jokivarren koulu (Vantaa)',      value: 'jokivarren' },
       { label: 'Kaivokselan koulu',              value: 'kaivokselan' },
       { label: 'Kanniston koulu',               value: 'kanniston' },

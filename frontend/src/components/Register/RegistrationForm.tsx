@@ -18,7 +18,7 @@ const roleOptions = [
 ];
 
 type FormData = {
-  role: "teacher" | "substitute";
+  role: undefined;
   first_name?: string;
   last_name?: string;
   email?: string;
@@ -35,7 +35,7 @@ type FormData = {
 }; 
 export default function RegistrationForm() {
   const [formValue, setFormValue] = useState<FormData>({
-  role: "substitute",
+  role: undefined,
   first_name: "",
   last_name: "",
   email: "",
@@ -204,10 +204,12 @@ export default function RegistrationForm() {
               {/* Select role */}
               <Form.Group>
                 <Form.ControlLabel>Registering as</Form.ControlLabel>
-                <SelectPicker
+
+                <Form.Control
+                  name="role"                       // must match schema key
+                  accepter={SelectPicker}           // tell RSuite which widget to render
                   data={roleOptions}
-                  value={formValue.role}
-                  onChange={(val) => setFormValue({ ...formValue, role: val as 'teacher' | 'substitute' })}
+                  placeholder="Choose…"             // shows “Choose…” when empty
                   block
                 />
               </Form.Group>
