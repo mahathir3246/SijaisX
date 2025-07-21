@@ -180,3 +180,4 @@ def get_single_assignment(assignment_ID):
     except sqlite3.Error as e:
         print('Database error:', e)
         return None
+    
