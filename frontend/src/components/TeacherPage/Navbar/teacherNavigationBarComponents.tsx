@@ -5,7 +5,6 @@ import { useState } from "react";
 import { Link } from 'react-router-dom';
 import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 import ExitIcon from "@rsuite/icons/Exit";
-import CreateSubstituteModal from "../PostJobModal";
 import { logout } from "../../../functions/auth";
 
 const NavigationBarComponents = () => {
@@ -54,7 +53,6 @@ const NavigationBarComponents = () => {
             Kirjaudu ulos
           </p>
         </ResponsiveNav.Item>
-        <CreateSubstituteModal open={openModal} onClose={() => setOpenModal(false)} />
       </ResponsiveNav>
     </div>
   );
