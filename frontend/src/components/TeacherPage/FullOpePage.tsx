@@ -9,7 +9,7 @@ import teacherstyles from "../../scss_stylings/teacher.module.scss"
 import { Grid,Col, Row, Button } from 'rsuite';
 import { Plus } from '@rsuite/icons';
 import { useState } from 'react';
-import PostJobModal from "./PostJobModal"
+import PostJobModal from "./PostJobPopup"
 
 
  const FullHomePage = () => {
