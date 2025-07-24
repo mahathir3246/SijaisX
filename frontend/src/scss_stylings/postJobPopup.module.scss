@@ -1,0 +1,362 @@
+.modal {
+  .header {
+    border-bottom: 1px solid #e5e5ea;
+    padding-bottom: 16px;
+    
+    h4 {
+      margin: 0;
+      color: #333;
+      font-weight: 600;
+    }
+  }
+
+  .body {
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+}
+
+// Date Selection Section
+.dateSection {
+  margin-bottom: 24px;
+  
+  h6 {
+    margin-bottom: 12px;
+    color: #555;
+    font-weight: 500;
+    font-size: 14px;
+  }
+}
+
+.datePicker {
+  width: 100%;
+}
+
+// Loading State
+.loadingContainer {
+  text-align: center;
+  padding: 40px 20px;
+  
+  .loadingText {
+    margin-top: 12px;
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+// Classes Section
+.classesSection {
+  h6 {
+    margin-bottom: 16px;
+    color: #333;
+    font-weight: 600;
+    font-size: 16px;
+  }
+}
+
+// Date grouping styles
+.dayGroup {
+  margin-bottom: 32px;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.dateHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  
+  h5 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+    font-size: 16px;
+  }
+  
+  .classCount {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+}
+
+.dayClasses {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 8px;
+  border-left: 3px solid #e9ecef;
+  
+  .classCard {
+    margin-bottom: 0; // Override the default margin since we use gap now
+  }
+}
+
+// Individual Class Card
+.classCard {
+  border: 1px solid #e5e5ea;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: white;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.editing {
+    background-color: #f7f7fa;
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+  }
+}
+
+// Form Groups
+.formGroup {
+  margin-bottom: 16px;
+  
+  .label {
+    display: block;
+    margin-bottom: 6px;
+    color: #444;
+    font-weight: 500;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .input {
+    width: 100%;
+    
+    &:disabled {
+      background-color: #f8f9fa;
+      color: #666;
+      cursor: not-allowed;
+    }
+    
+    &:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    }
+  }
+  
+  .textarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+  }
+}
+
+// Special styling for notes field
+.notesGroup {
+  .label {
+    color: #28a745;
+    
+    &::after {
+      color: #6c757d;
+      font-weight: 400;
+      font-size: 11px;
+    }
+  }
+  
+  .textarea {
+    border-color: #28a745;
+    
+    &:focus {
+      border-color: #28a745;
+      box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.1);
+    }
+  }
+}
+
+// Button Section
+.buttonSection {
+  margin-top: 20px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.editButton {
+  background-color: transparent;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+}
+
+.saveButton {
+  background-color: #28a745;
+  border: 1px solid #28a745;
+  color: white;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+  }
+  
+  &:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+  }
+}
+
+.cancelButton {
+  background-color: transparent;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  padding: 6px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+}
+
+// Empty State
+.emptyState {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6c757d;
+  font-size: 14px;
+  
+  .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+}
+
+// Footer
+.footer {
+  border-top: 1px solid #e5e5ea;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  .actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .note {
+    color: #6c757d;
+    font-size: 12px;
+    font-style: italic;
+  }
+}
+
+.closeButton {
+  background-color: transparent;
+  border: 1px solid #6c757d;
+  color: #6c757d;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    background-color: #6c757d;
+    color: white;
+  }
+}
+
+// Time input styling
+.timeInput {
+  font-family: monospace;
+  letter-spacing: 1px;
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .classCard {
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  
+  .buttonSection {
+    flex-direction: column;
+    align-items: stretch;
+    
+    button {
+      width: 100%;
+      margin-bottom: 8px;
+    }
+  }
+  
+  .footer {
+    flex-direction: column;
+    gap: 12px;
+    
+    .actions {
+      width: 100%;
+      
+      button {
+        flex: 1;
+      }
+    }
+  }
+  
+  .dateHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    
+    .classCount {
+      align-self: flex-end;
+    }
+  }
+  
+  .dayClasses {
+    padding-left: 4px;
+    border-left-width: 2px;
+  }
+}
+
+// Animations
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Success/Error states
+.success {
+  border-color: #28a745;
+  background-color: #f8fff9;
+}
+
+.error {
+  border-color: #dc3545;
+  background-color: #fff8f8;
+}
