@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .assignment_queries import volunteer_for_assignment, update_assignment_status, get_assignment_volunteers
+from .assignment_queries import volunteer_for_assignment, update_assignment_status, get_assignment_volunteers, create_batch_assignment
 
 assignment_bp = Blueprint("assignment_bp", __name__)
 
@@ -29,6 +29,18 @@ def update_status(assignment_ID):
 @assignment_bp.route("/api/assignments/<assignment_ID>/volunteers", methods=["GET"])
 def get_volunteers(assignment_ID):
     result = get_assignment_volunteers(assignment_ID)
+    if not result["success"]:
+        return jsonify(result), 400
+    return jsonify(result), 200
+
+
+@assignment_bp.route("/api/assignments/create_batch", methods=["POST"])
+def create_batch():
+    data = request.json
+    teacher_ID = data.get("teacher_ID")
+    assignments = data.get("assignments", [])
+    result = create_batch_assignment(teacher_ID, assignments)
+
     if not result["success"]:
         return jsonify(result), 400
     return jsonify(result), 200

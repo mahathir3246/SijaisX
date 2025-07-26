@@ -122,10 +122,14 @@ def add_class(subject, grade, beginning_time, ending_time, room, duration, schoo
         print("Database error: ", e)
         return False
     
-def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes):
+def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, conn):
     assignment_ID = idg.generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID)
     try:
-        return insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes)
+        success = insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes, conn)
+        if success:
+            return {"success": True}
+        else:
+            return {"success": False, "error": f"Insertion failed for class {class_ID}"}
     
     except sqlite3.Error as e:
         print("Database error: ", e)

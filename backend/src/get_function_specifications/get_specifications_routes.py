@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from .get_specifications_routes import (get_teacher_classes_within_range)
+from .get_specifications_queries import (get_teacher_classes_within_range)
 
 get_specifications_bp = Blueprint("get_specifications_bp", __name__)
 

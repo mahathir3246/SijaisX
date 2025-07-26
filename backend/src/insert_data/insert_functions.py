@@ -178,9 +178,14 @@ def insert_school(school_ID, school_name):
         if conn:
             conn.close()
 
-def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes = None):
-    try:
+def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes = None, conn = None):
+    
+    close_conn = False
+    if conn is None:
+        close_conn = True
         conn = get_db_connection()
+
+    try:
         cursor = conn.cursor()
 
         cursor.execute('''
@@ -188,15 +193,19 @@ def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substit
             VALUES (?, ?, ?, ?, ?, ?, ?)
         ''', (assignment_ID, date, notes, 'seaching', class_ID, teacher_ID, substitute_ID))
 
-        conn.commit()
+        if close_conn:
+            conn.commit()
+
         return True
 
     except sqlite3.Error as e:
+        if close_conn:
+            conn.rollback()
         print("Database error:", e)
         return False
 
     finally:
-        if conn:
+        if close_conn:
             conn.close()
 
 def insert_teaches(teacher_ID, class_ID):
