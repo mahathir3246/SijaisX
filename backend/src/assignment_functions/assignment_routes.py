@@ -37,9 +37,17 @@ def get_volunteers(assignment_ID):
 @assignment_bp.route("/api/assignments/create_batch", methods=["POST"])
 def create_batch():
     data = request.json
+    print(f"🔍 DEBUG - Received data: {data}")  # Debug log
+    
     teacher_ID = data.get("teacher_ID")
     assignments = data.get("assignments", [])
+    
+    print(f"🔍 DEBUG - Teacher ID: {teacher_ID}")  # Debug log
+    print(f"🔍 DEBUG - Assignments: {assignments}")  # Debug log
+    
     result = create_batch_assignment(teacher_ID, assignments)
+    
+    print(f"🔍 DEBUG - Result: {result}")  # Debug log
 
     if not result["success"]:
         return jsonify(result), 400
