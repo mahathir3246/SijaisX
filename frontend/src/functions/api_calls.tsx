@@ -229,6 +229,43 @@ export async function create_batch_assignment(
     }
 }
 
+// Function to add sub to school list
+export async function add_substitute_to_school_list(teacher_ID: string, substitute_ID: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/substitute_coordinator/${teacher_ID}/add_substitute_to_list`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ substitute_ID }),
+        });
+        if (!response.ok) {
+            console.error(`POST /substitute_coordinator/${teacher_ID}/add_substitute_to_list failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`POST /substitute_coordinator/${teacher_ID}/add_substitute_to_list failed:`, err);
+        return null;
+    }
+}
+
+// Function to add substitute to assignment list
+export async function add_substitute_to_assignment_list(assignmentID: string, substituteID: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/assignments/${assignmentID}/volunteer`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ substitute_ID: substituteID }),
+        });
+        if (!response.ok) {
+            console.error(`POST /assignments/${assignmentID}/volunteer failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`POST /assignments/${assignmentID}/volunteer failed:`, err);
+        return null;
+    }
+}
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {
     date?: string;
