@@ -11,7 +11,7 @@ def add_to_assignment_list(substitute_ID, assignment_ID):
                        FROM Teacher
                        JOIN Assignment ON Teacher.teacher_ID = Assignment.teacher_ID
                        WHERE Assignment.assignment_ID = ?
-                       ''', (assignment_ID))
+                       ''', (assignment_ID,))
         school_ID = cursor.fetchone()
         if not school_ID:
             return {"success": False, "message": "Assignment not found"}
@@ -39,7 +39,7 @@ def add_to_assignment_list(substitute_ID, assignment_ID):
         # else add to list
         cursor.execute('''
                        INSERT INTO AssignmentVolunteers (assignment_ID, substitute_ID)
-                       VALUES (?, ?, ?)
+                       VALUES (?, ?)
                        ''', (assignment_ID, substitute_ID))
         conn.commit()
         return {"success": True, "message": "Substitute added to the assignment list"}
@@ -51,5 +51,5 @@ def add_to_assignment_list(substitute_ID, assignment_ID):
         cursor.close()
         conn.close()
 
-        
+
         
