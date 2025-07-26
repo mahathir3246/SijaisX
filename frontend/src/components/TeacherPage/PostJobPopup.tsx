@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Modal, DateRangePicker, Grid, Row, Col, Input, Loader, Message, toaster } from 'rsuite';
+import { Modal, DateRangePicker, Grid, Row, Col, Input, Loader, Message, toaster, Button } from 'rsuite';
 import { format } from 'date-fns';
-import { get_teacher_classes_within_range, update_class_info } from '../../functions/api_calls';
+import { get_teacher_classes_within_range, update_class_info, create_batch_assignment  } from '../../functions/api_calls';
 import styles from '../../scss_stylings/postJobPopup.module.scss';
 
 // TypeScript interface defining the structure of class data from the database
@@ -278,6 +278,36 @@ export default function PostJobModal({ open, onClose }: Props) {
         );
     };
 
+    const handleSubmit = async() =>{
+
+        if (!classes.length || !teacherID){
+            toaster.push(<Message type='error'> No classes available to post assignments</Message>)
+            return;
+        }
+        try{
+            const assignments = classes.map((cls)=>({
+                class_ID: cls.class_ID,
+                date: cls.beginning_time.slice(0,10),
+                notes: cls.notes || "",
+                status: "searching"
+            }));
+            console.log("Teacher ID:", teacherID);
+            console.log("Assignments being sent:", assignments);
+            const result = await create_batch_assignment(teacherID, assignments);
+
+            if(result?.success){
+                toaster.push(<Message type='success'>Successfully created {assignments.length} assignments</Message>);
+                onClose()
+            }else{
+                toaster.push(<Message type='error'>Assignment creation failed</Message>)
+            }
+
+
+        }catch(error){
+            console.log("Error: ",error)
+        }
+    } 
+
     // RENDER SECTION
     return (
         // Main modal container with size and visibility controls
@@ -489,6 +519,11 @@ export default function PostJobModal({ open, onClose }: Props) {
                     <button className={styles.closeButton} onClick={onClose}>
                         Close
                     </button>
+                    <Button
+                      className={styles.saveButton}
+                      onClick={handleSubmit}> 
+                        Submit Assignment
+                    </Button>
                 </div>
             </Modal.Footer>
         </Modal>

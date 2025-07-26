@@ -1,6 +1,7 @@
 import sqlite3
 import re
 from backend.src.db import get_db_connection
+import time
 
 # This generates unique IDs based on the name and possible school name.
 # It ensures that the generated ID is unique by checking against existing IDs in the database.
@@ -127,15 +128,18 @@ def generate_unique_assignment_id(
         status: str,
         class_id: str,
         teacher_id: str,
-        substitute_id: str
+        substitute_id: str | None
 ) -> str:
+    # Add a timestamp to make each assignment unique
+    timestamp = str(int(time.time() * 1000))  # milliseconds since epoch
     base = (
         "as_" +
         slugify(date) + "_" +
         slugify(status)[0:1] + "_" +
         slugify(class_id)[0:3] + "_" +
         slugify(teacher_id)[0:2] + "_" +
-        slugify(substitute_id)[0:2]
+        (slugify(substitute_id)[0:2] if substitute_id else "na") + "_" +
+        timestamp[-6:]  # Use last 6 digits of timestamp
     )
     return make_unique_id("Assignment", "assignment_ID", base)
 
