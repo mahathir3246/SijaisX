@@ -1,4 +1,5 @@
 from ..db import get_db_connection
+from ..insert_data.add_data import add_assignment
 
 def volunteer_for_assignment(substitute_ID, assignment_ID):
     conn = get_db_connection()
@@ -148,5 +149,55 @@ def get_assignment_volunteers(assignment_ID):
     except Exception as e:
         return {"success": False, "error": str(e)}
     finally:
+        conn.close()
+
+
+
+def create_batch_assignment(teacher_ID, assignment_data):
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # iterate through each assignment
+        for assignment in assignment_data:
+            class_ID = assignment.get("class_ID")
+            date = assignment.get("date")
+            notes = assignment.get("notes", "")
+            status = assignment.get("status", "searching")
+
+            # check if the teacher is ok
+            cursor.execute('''
+                           SELECT 1 
+                           FROM Teaches
+                           WHERE teacher_ID = ? AND class_ID = ?
+                           ''', (teacher_ID, class_ID))
+            
+            if cursor.fetchone() is None:
+                conn.rollback()
+                return {"success": False, "error": f"Unauthorized for class {class_ID}"}
+            
+            # insert assignment
+            result = add_assignment(
+                date=date,
+                status=status,
+                class_ID=class_ID,
+                teacher_ID=teacher_ID,
+                substitute_ID=None,
+                notes=notes,
+                conn=conn  # pass shared connection
+            )
+            if not result["success"]:
+                conn.rollback()
+                return {"success": False, "error": result.get("error", f"Failed to add assignment for class {class_ID}")}
+        
+        conn.commit()
+        return {"success": True, "message": f"{len(assignment_data)} assignments created."}
+        
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": str(e)}
+    
+    finally: 
         conn.close()
 

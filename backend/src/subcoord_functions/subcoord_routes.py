@@ -1,4 +1,4 @@
-from Flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify
 from .subcoord_queries import add_sub_to_volunteers_in_school
 
 subcoord_bp = Blueprint("subcoord_bp", __name__)
