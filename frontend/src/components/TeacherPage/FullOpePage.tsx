@@ -9,7 +9,7 @@ import teacherstyles from "../../scss_stylings/teacher.module.scss"
 import { Grid,Col, Row, Button } from 'rsuite';
 import { Plus } from '@rsuite/icons';
 import { useState } from 'react';
-import PostJobModal from "./PostJobPopup"
+import PostAssignmentModal from "./PostJobPopup"
 
 
  const FullHomePage = () => {
@@ -32,7 +32,7 @@ import PostJobModal from "./PostJobPopup"
                         <Col xs={24} md={13}>
                             <div>
                                 <div className={teacherstyles.jobPostHeadline}>
-                                    <h3 className={teacherstyles.profile}>Your job posts</h3>
+                                    <h3 className={teacherstyles.profile}>Your assignments</h3>
                                     <Button
                                         size="lg"                   // bigger than the default md
                                         appearance="primary"
@@ -41,10 +41,10 @@ import PostJobModal from "./PostJobPopup"
                                         className={teacherstyles.postJobBtn}   // extra tweaks live in SCSS
                                         onClick={() => setOpen(true)}
                                     >
-                                        Post a Job
+                                        Post Assignments
                                     </Button>
 
-                                    <PostJobModal open={open} onClose={() => setOpen(false)} />
+                                    <PostAssignmentModal open={open} onClose={() => setOpen(false)} />
                                 </div>
                                 <TeacherUpcomings/>
                             </div>

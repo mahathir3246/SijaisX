@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Modal, DateRangePicker, Grid, Row, Col, Input, Loader, Message, toaster } from 'rsuite';
 import { format } from 'date-fns';
-import { get_teacher_classes_within_range, update_class_info } from '../../functions/api_calls';
+import { get_teacher_classes_within_range, update_class_info, create_batch_assignment } from '../../functions/api_calls';
 import styles from '../../scss_stylings/postJobPopup.module.scss';
 
 // TypeScript interface defining the structure of class data from the database
@@ -28,11 +28,12 @@ interface Props {
 }
 
 
-export default function PostJobModal({ open, onClose }: Props) {
+export default function PostAssignmentModal({ open, onClose }: Props) {
 
     const [range, setRange] = useState<[Date, Date] | null>(null);
     const [classes, setClasses] = useState<EditableClass[]>([]);
     const [loading, setLoading] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
 
     // AUTHENTICATION - Get teacher ID from browser's localStorage
     // This data was stored when the teacher logged in
@@ -46,6 +47,7 @@ export default function PostJobModal({ open, onClose }: Props) {
         if (!open) {
             setRange(null);      // Clear selected date range
             setClasses([]);      // Clear fetched classes
+            setSubmitting(false); // Reset submitting state
         }
     }, [open]); // Dependency array - only run when 'open' changes
 
@@ -278,20 +280,56 @@ export default function PostJobModal({ open, onClose }: Props) {
         );
     };
 
+    // EVENT HANDLER: Post assignments for selected classes
+    const postAssignments = async () => {
+        // Validate that we have classes and teacher ID
+        if (!classes.length || !teacherID) {
+            toaster.push(<Message type="error">No classes available to post assignments for</Message>);
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            // Create assignment data for each class
+            const assignmentData = classes.map(cls => ({
+                class_ID: cls.class_ID,
+                date: cls.beginning_time.slice(0, 10), // Extract date part (YYYY-MM-DD)
+                notes: cls.notes || '', // Use notes or empty string
+                status: 'searching' // Default status for new assignments
+            }));
+
+            // Call the batch assignment API
+            const result = await create_batch_assignment(teacherID, assignmentData);
+
+            if (result?.success) {
+                toaster.push(<Message type="success">{result.message || `Successfully posted ${assignmentData.length} assignments!`}</Message>);
+                // Close the modal after successful submission
+                onClose();
+            } else {
+                toaster.push(<Message type="error">{result?.error || 'Failed to post assignments'}</Message>);
+            }
+        } catch (error) {
+            console.error('Error posting assignments:', error);
+            toaster.push(<Message type="error">Error occurred while posting assignments</Message>);
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
     // RENDER SECTION
     return (
         // Main modal container with size and visibility controls
         <Modal size="lg" open={open} onClose={onClose} className={styles.modal}>
             {/* Modal header with title */}
             <Modal.Header className={styles.header}>
-                <h4>Post a Job</h4>
+                <h4>Post Assignments</h4>
             </Modal.Header>
 
             {/* Main modal content area */}
             <Modal.Body className={styles.body}>
                 {/* Date selection section */}
                 <div className={styles.dateSection}>
-                    <h6>Select the date/dates you want a substitute for:</h6>
+                    <h6>Select the date/dates you want to post assignments for:</h6>
                     <DateRangePicker
                         className={styles.datePicker}
                         // When user selects dates, update our range state
@@ -483,10 +521,20 @@ export default function PostJobModal({ open, onClose }: Props) {
                 )}
             </Modal.Body>
 
-            {/* Modal footer with close button */}
+            {/* Modal footer with action buttons */}
             <Modal.Footer className={styles.footer}>
                 <div className={styles.actions}>
-                    <button className={styles.closeButton} onClick={onClose}>
+                    {/* Show Post Assignments button only when classes are available */}
+                    {!loading && classes.length > 0 && (
+                        <button 
+                            className={styles.postButton} 
+                            onClick={postAssignments}
+                            disabled={submitting}
+                        >
+                            {submitting ? '📤 Posting...' : '📤 Post Assignments'}
+                        </button>
+                    )}
+                    <button className={styles.closeButton} onClick={onClose} disabled={submitting}>
                         Close
                     </button>
                 </div>
