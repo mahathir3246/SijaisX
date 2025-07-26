@@ -191,7 +191,7 @@ def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substit
         cursor.execute('''
             INSERT INTO Assignment (assignment_ID, date, notes, status, class_ID, teacher_ID, substitute_ID)
             VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (assignment_ID, date, notes, 'seaching', class_ID, teacher_ID, substitute_ID))
+        ''', (assignment_ID, date, notes, 'searching', class_ID, teacher_ID, substitute_ID))
 
         if close_conn:
             conn.commit()

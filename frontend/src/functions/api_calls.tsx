@@ -202,6 +202,33 @@ export async function volunteer_in_school(teacher_ID: string, substitute_ID: str
     return await postData(`${BASE_URL}/substitute_coordinator/${teacher_ID}/add_substitute_to_list`, { substitute_ID });
 }
 
+// Function to create batch assignments
+export async function create_batch_assignment(
+    teacher_ID: string,
+    assignments: {
+        class_ID: string;
+        date: string;
+        notes?: string;
+        status?: string;
+    } []
+) {
+    try {
+        const response = await fetch(`${BASE_URL}/assignments/create_batch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teacher_ID, assignments }),
+        });
+        if (!response.ok) {
+            console.error(`POST /assignments/create_batch failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`POST /assignments/create_batch failed:`, err);
+        return null;
+    }
+}
+
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {
     date?: string;

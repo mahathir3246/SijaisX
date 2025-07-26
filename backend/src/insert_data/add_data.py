@@ -133,6 +133,6 @@ def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, con
     
     except sqlite3.Error as e:
         print("Database error: ", e)
-        return False
+        return {"success": False, "error": str(e)}
     
 
