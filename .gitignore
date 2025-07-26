@@ -1,14 +1,16 @@
-# dependencies
+# Virtual environment
+.venv/
+venv/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Database file
+main_database.db
+
+# Node modules
 node_modules/
-.pnpm/
-
-# builds / coverage
-build/
-coverage/
-
-# environment files & OS junk
-.env*
-.DS_Store
-
-#
-.main_database.db
+frontend/node_modules/
