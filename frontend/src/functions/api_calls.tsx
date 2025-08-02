@@ -108,6 +108,26 @@ export async function get_teacher_classes_within_range(teacher_ID: string, start
     }
 }
 
+// Funtion to get all assignments of a teacher
+export async function get_all_assignments_of_teacher(teacher_ID: string){
+    const url = `${BASE_URL}/get_specifications/all_assignments/${teacher_ID}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch all assignments: ${response.statusText}`);
+            return null;
+        }
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error("Connection error:", error);
+        return null;
+    }
+}
+
 
 // Functions to post data to API
 export async function create_teacher(teacherData: {
