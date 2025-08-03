@@ -167,3 +167,68 @@ def get_all_assingments_of_school(school_ID):
     finally:
         conn.close()
 
+# get all assignments available to a sub
+def get_all_assingments_available_to_sub(substitute_ID):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # first get all the schools
+        cursor.execute('''
+                       SELECT school_ID
+                       FROM VolunteersInSchool
+                       WHERE substitute_ID = ?
+                       ''', (substitute_ID,))
+        school_IDs= cursor.fetchall()
+        if not school_IDs:
+            return {"success": False, "error": "No schools found "}
+        
+        list_of_all_assignments = []
+        for (school_ID,) in school_IDs:
+            cursor.execute('''
+                            SELECT A.assignment_ID, A.date, A.notes,
+                              C.subject, C.grade, C.beginning_time, 
+                              C.ending_time, C.room, S.school_name,
+                              T.name AS teacher_name, A.status
+                            FROM Assignment AS A
+                            JOIN Class AS C ON A.class_ID = C.class_ID
+                            JOIN Teacher AS T ON A.teacher_ID = T.teacher_ID
+                            WHERE C.school_ID = ? AND A.status IN ("searching", "pending")
+                            ORDER BY A.date DESC
+                           ''', (school_ID,))
+            result = cursor.fetchall()
+            list_of_all_assignments.extend(result)
+        if not list_of_all_assignments:
+            return {"success": False, "error": "No assignments found"}
+        return {
+            "success": True,
+            "assignments": [dict(row) for row in list_of_all_assignments]
+        }
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+    
+    finally:
+        conn.close()
+
+# get all schools a sub is in
+def get_all_schools_of_sub(substitute_ID):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # get all the schools
+        cursor.execute('''
+                       SELECT school_ID, school_name
+                       FROM VolunteersInSchool AS V
+                       JOIN Schools AS S ON V.school_ID = S.school_ID
+                       WHERE substitute_ID = ?
+                       ''', (substitute_ID,))
+        school_rows= cursor.fetchall()
+        if not school_rows:
+            return {"success": False, "error": "No schools found "}
+        return {"success": True,
+                "schools": [dict(row) for row in school_rows]}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
