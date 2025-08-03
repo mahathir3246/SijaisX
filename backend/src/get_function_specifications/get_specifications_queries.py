@@ -102,7 +102,7 @@ def get_all_assignment_of_teacher(teacher_ID):
         conn.close()
 
 # get all assignments of a school
-def get_all_assingments_of_school(school_ID):
+def get_all_assignments_of_school(school_ID):
     conn = get_db_connection()
     cursor = conn.cursor()
 
