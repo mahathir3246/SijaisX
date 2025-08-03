@@ -168,7 +168,7 @@ def get_all_assingments_of_school(school_ID):
         conn.close()
 
 # get all assignments available to a sub
-def get_all_assingments_available_to_sub(substitute_ID):
+def get_all_assignments_available_to_sub(substitute_ID):
     conn = get_db_connection()
     cursor = conn.cursor()
 
