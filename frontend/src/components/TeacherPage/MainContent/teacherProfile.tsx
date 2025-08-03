@@ -13,6 +13,17 @@ import { getUserID } from '../../../functions/auth';
 import { get_teacher_info, get_school_info , update_teacher_profile} from '../../../functions/api_calls';
 import { useEffect, useState } from 'react';
 
+
+export interface TeacherData{
+  teacher_ID: string,
+  name: string,
+  phone_number: string,
+  email: string,
+  password: string,
+  school_ID: string
+}
+
+
 const TeacherProfile = () => {
 
   interface SchoolData{
@@ -20,14 +31,6 @@ const TeacherProfile = () => {
     school_name: string
   }
 
-  interface TeacherData{
-    teacher_ID: string,
-    name: string,
-    phone_number: string,
-    email: string,
-    password: string,
-    school_ID: string
-  }
   const [teacher, setTeacher] = useState<TeacherData | null>(null);
   const [school, setSchool] = useState<SchoolData | null>(null);
   const [loading, setLoading] = useState(true);
