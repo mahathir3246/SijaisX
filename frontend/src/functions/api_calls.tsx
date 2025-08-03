@@ -109,7 +109,7 @@ export async function get_teacher_classes_within_range(teacher_ID: string, start
 }
 
 // Funtion to get all assignments of a teacher
-export async function get_all_assignments_of_teacher(teacher_ID: string){
+export async function get_all_assignments_of_teacher(teacher_ID: string | null){
     const url = `${BASE_URL}/get_specifications/all_assignments_teacher/${teacher_ID}`;
 
     try {

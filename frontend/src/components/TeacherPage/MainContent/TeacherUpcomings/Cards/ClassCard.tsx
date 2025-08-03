@@ -1,7 +1,6 @@
 import { Panel, TagProps,Tag } from "rsuite";
-import {Job } from "../../../Data/jobsdata";
 import styles from "../../../../../scss_stylings/card.module.scss"
-import { ClassCardProps } from "../../../Data/jobsdata";
+import { Job } from "../teacherUpcomings";
 
 
 
@@ -20,26 +19,28 @@ const statusGradient: Record<Job['status'], string> = {
     Accepted: styles.g2,
     Revoked: styles.g3
 }
+type ClassCardProps = { job: Job };
 
-const ClassCard = ({ job }: ClassCardProps) => (
-    <Panel
-        bordered
-        bodyFill
-        className={`${styles.card} ${statusGradient[job.status]}`}
-    >
-        <div className={styles.inner}>
-            <h5 className={styles.title}>{job.subject} {job.class}</h5>
-            <span className={styles.smallertext}>{job.date}</span>
-            <span className={styles.smallertext}>Riikka Ruusuvuori</span>
-            <Tag
-                size="sm"
-                className={styles.status}
-                color={statusColour[job.status]}
-            >
-                {job.status}
-            </Tag>
-        </div>
-    </Panel>
-)
-
-export default ClassCard;
+export default function ClassCard({ job }: ClassCardProps) {
+    return(
+        <Panel
+            bordered
+            bodyFill
+            className={`${styles.card} ${statusGradient[job.status]}`}
+        >
+            <div className={styles.inner}>
+                <h5 className={styles.title}>{job.date}</h5>
+                <h5 className={styles.title}>{job.beginning_time} - {job.ending_time}</h5>
+                <span className={styles.smallertext}>{job.subject}</span>
+                <span className={styles.smallertext}>{job.grade}</span>
+                <Tag
+                    size="sm"
+                    className={styles.status}
+                    color={statusColour[job.status]}
+                >
+                    {job.status}
+                </Tag>
+            </div>
+        </Panel>
+    )
+}

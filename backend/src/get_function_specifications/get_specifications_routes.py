@@ -27,7 +27,7 @@ def api_get_all_assignments_of_teacher(teacher_ID):
 
 @get_specifications_bp.route("/api/get_specifications/all_assignments_school/<string:school_ID>", methods=["GET"])
 def api_get_all_assignments_of_school(school_ID):
-    result = get_all_assignments_of_school(school_ID)
+    result = get_all_assingments_of_school(school_ID)
     if not result["success"]:
         return jsonify(result), 400
     return jsonify(result), 200
