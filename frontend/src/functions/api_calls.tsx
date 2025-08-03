@@ -342,26 +342,24 @@ export async function add_substitute_to_assignment_list(assignmentID: string, su
 }
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {
-    date?: string;
-    notes?: string;
-    status?: string;
-    class_ID?: string;
-    teacher_ID?: string;
-    substitute_ID?: string;
-}) {
+        teacher_ID: string;
+        status: string;
+        substitute_ID?: string; // Only required for "accepted"
+    }
+) {
     try {
-        const response = await fetch(`${BASE_URL}/assignment/${assignmentID}`, {
+        const response = await fetch(`${BASE_URL}/assignments/${assignmentID}/status`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedData),
         });
         if (!response.ok) {
-            console.error(`PATCH /assignment/${assignmentID} failed:`, await response.text());
+            console.error(`PATCH /assignments/${assignmentID}/status failed:`, await response.text());
             return null;
         }
         return await response.json();
     } catch (err) {
-        console.error(`PATCH /assignment/${assignmentID} failed:`, err);
+        console.error(`PATCH /assignments/${assignmentID}/status failed:`, err);
         return null;
     }
 }

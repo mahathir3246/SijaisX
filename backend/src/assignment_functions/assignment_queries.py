@@ -74,7 +74,7 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
     cursor = conn.cursor()
 
     try:
-        # Get the assignment and validate teacher ownership
+        # Validate teacher ownership
         cursor.execute('''
             SELECT teacher_ID FROM Assignment WHERE assignment_ID = ?
         ''', (assignment_ID,))
@@ -105,6 +105,12 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
                 WHERE assignment_ID = ?
             ''', (new_status, substitute_ID, assignment_ID))
 
+            # Clear volunteer list after accepting
+            cursor.execute('''
+                DELETE FROM AssignmentVolunteers
+                WHERE assignment_ID = ?
+            ''', (assignment_ID,))
+
         elif new_status == "revoked":
             # Revoke previously accepted sub
             cursor.execute('''
@@ -112,6 +118,12 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
                 SET status = ?, substitute_ID = NULL
                 WHERE assignment_ID = ?
             ''', (new_status, assignment_ID))
+
+            # Clear volunteer list after revoking
+            cursor.execute('''
+                DELETE FROM AssignmentVolunteers
+                WHERE assignment_ID = ?
+            ''', (assignment_ID,))
 
         else:
             return {"success": False, "error": "Invalid status change"}
@@ -124,6 +136,7 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
 
     finally:
         conn.close()
+
 
 
 # Get assignment volunteers

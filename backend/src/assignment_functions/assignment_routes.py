@@ -7,6 +7,11 @@ assignment_bp = Blueprint("assignment_bp", __name__)
 def volunteer(assignment_ID):
     data = request.json
     substitute_ID = data.get("substitute_ID")
+
+    # check
+    if not substitute_ID:
+        return jsonify({"success": False, "error": "substitute_ID is required"}), 400
+
     result = volunteer_for_assignment(substitute_ID, assignment_ID)
     
     if not result["success"]:
@@ -18,7 +23,18 @@ def update_status(assignment_ID):
     data = request.json
     teacher_ID = data.get("teacher_ID")
     new_status = data.get("status")
-    substitute_ID = data.get("substitute_ID")
+    substitute_ID = data.get("substitute_ID")  # May be None if not accepting
+
+    # check
+    if not teacher_ID:
+        return jsonify({"success": False, "error": "teacher_ID is required"}), 400
+    if not new_status:
+        return jsonify({"success": False, "error": "status is required"}), 400
+
+    # Extra check
+    if new_status == "accepted" and not substitute_ID:
+        return jsonify({"success": False, "error": "substitute_ID is required for accepting"}), 400
+
     result = update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_ID)
 
     if not result["success"]:
