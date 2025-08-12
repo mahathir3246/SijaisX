@@ -27,14 +27,12 @@ import { Grid,Col, Row } from 'rsuite';
                         <Col xs={24} md={13}>
                             <div>
                                 <div className={teacherstyles.jobPostHeadline}>
-                                    <h3 className={teacherstyles.profile}>Your job posts</h3>
+                                    <h3 className={teacherstyles.profile}>Available jobs in your school</h3>
                                 </div>
-                                <SubUpcomings/>
                             </div>
                         </Col>
 
                         <Col xs={24} md={5}>
-                            <CalendarCard/>
                         </Col>
                     </Row>
                 </Grid>
