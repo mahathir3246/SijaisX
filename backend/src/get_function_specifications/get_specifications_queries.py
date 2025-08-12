@@ -218,7 +218,7 @@ def get_all_schools_of_sub(substitute_ID):
     try:
         # get all the schools
         cursor.execute('''
-                       SELECT school_ID, school_name
+                       SELECT S.school_ID, S.school_name
                        FROM VolunteersInSchool AS V
                        JOIN School AS S ON V.school_ID = S.school_ID
                        WHERE substitute_ID = ?
