@@ -192,6 +192,7 @@ def get_all_assignments_available_to_sub(substitute_ID):
                               T.name AS teacher_name, A.status
                             FROM Assignment AS A
                             JOIN Class AS C ON A.class_ID = C.class_ID
+                            JOIN School AS S ON C.school_ID = S.school_ID
                             JOIN Teacher AS T ON A.teacher_ID = T.teacher_ID
                             WHERE C.school_ID = ? AND A.status IN ("searching", "pending")
                             ORDER BY A.date DESC
