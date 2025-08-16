@@ -52,6 +52,12 @@ def setup_test_db(conn):
             substitute_ID TEXT
         )
     """)
+    cursor.execute("""
+        CREATE TABLE VolunteersInSchool (
+            substitute_ID TEXT,
+            school_ID TEXT
+        )
+    """)
 
     # Insert data
     cursor.execute("INSERT INTO School VALUES ('school_001', 'Test High School')")
@@ -69,11 +75,16 @@ def setup_test_db(conn):
 
     cursor.execute("""
         INSERT INTO Assignment VALUES
-        ('assign_001', '2025-08-15', 'accepted', 'Focus on algebra revision', 'teacher_001', 'class_001', 'sub_001'),
-        ('assign_002', '2025-08-15', 'accepted', 'Chapter 5 experiments', 'teacher_001', 'class_002', 'sub_001'),
-        ('assign_003', '2025-08-14', 'accepted', 'Organic chemistry intro', 'teacher_002', 'class_003', 'sub_001'),
-        ('assign_004', '2025-08-14', 'accepted', 'Backup cover', 'teacher_002', 'class_003', 'sub_002')
+        ('assign_001', '2025-08-20', 'searching', 'Focus on algebra revision', 'teacher_001', 'class_001', NULL),
+        ('assign_002', '2025-08-20', 'pending', 'Chapter 5 experiments', 'teacher_001', 'class_002', NULL),
+        ('assign_003', '2025-08-21', 'searching', 'Organic chemistry intro', 'teacher_002', 'class_003', NULL),
+        ('assign_004', '2025-08-22', 'accepted', 'Already taken assignment', 'teacher_002', 'class_003', 'sub_001')
     """)
+
+    # Volunteer-substitute mappings
+    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_001', 'school_001')")
+    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_001', 'school_002')")
+    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_002', 'school_002')")
 
     conn.commit()
 
@@ -83,12 +94,15 @@ def run_test(substitute_ID):
     setup_test_db(conn)
     queries.get_db_connection = lambda: conn  # always return this populated DB
 
-    result = queries.get_batches_of_assignments_for_sub(substitute_ID)
-    print(f"Testing with substitute_ID={substitute_ID}")
+    result = queries.get_available_assignments_of_sub_as_batch(substitute_ID)
+    #result = queries.get_assignments_accepted_by_sub_as_batch(substitute_ID)
+    #replace result with the function needed for testing, possibly change the datatables
+    
+    print(f"Testing available assignments for substitute_ID={substitute_ID}")
     print(result)
     print("-" * 50)
 
 if __name__ == "__main__":
-    run_test("sub_001")  # Should return 2 batches (one per date)
-    run_test("sub_002")  # Should return 1 batch
-    run_test("sub_fake") # Should return empty
+    run_test("sub_001")  # Should return batches from both schools (assign_001, assign_002, assign_003)
+    run_test("sub_002")  # Should return batches only from school_002 (assign_003)
+    run_test("sub_fake") # Should return error: No schools found
