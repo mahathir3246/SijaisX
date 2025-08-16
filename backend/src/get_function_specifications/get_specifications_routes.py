@@ -60,7 +60,7 @@ def api_get_accepted_batch_for_substitute(substitute_ID):
 def api_get_available_batch_for_substitute(substitute_ID):
     result = get_available_assignments_of_sub_as_batch(substitute_ID)
     if not result["success"]:
-        if "No assignments found" in result["success"]:
+        if "No assignments found" in result["error"]:
             return jsonify({"success": True, "batches": []}), 200
         return jsonify(result), 400
     return jsonify(result), 200
