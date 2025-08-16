@@ -233,7 +233,7 @@ def get_all_schools_of_sub(substitute_ID):
     finally:
         conn.close()
 
-def get_batches_of_assignments_for_sub(substitute_ID):
+def get_assignments_accepted_by_sub_as_batch(substitute_ID):
     
     conn = get_db_connection()
     cursor = conn.cursor()

@@ -186,7 +186,7 @@ export async function get_all_schools_of_substitute(substitute_ID: string) {
 
 // Function to get batch of assignments of a substitute
 export async function get_batch_of_assignments_for_substitute(substitute_ID: string) {
-    const url = `${BASE_URL}/get_specifications/get_batch_for_substitute/${substitute_ID}`;
+    const url = `${BASE_URL}/get_specifications/get_accepted_batch_for_substitute/${substitute_ID}`;
 
     try {
         const response = await fetch(url);
