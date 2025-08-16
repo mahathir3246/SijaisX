@@ -184,14 +184,32 @@ export async function get_all_schools_of_substitute(substitute_ID: string) {
     }
 }
 
-// Function to get batch of assignments of a substitute
+// Function to get batch of assigned assignments of a substitute
 export async function get_batch_of_assignments_for_substitute(substitute_ID: string) {
     const url = `${BASE_URL}/get_specifications/get_accepted_batch_for_substitute/${substitute_ID}`;
 
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            console.error(`Failed to fetch batch of assignments of sub: ${response.statusText}`);
+            console.error(`Failed to fetch batch of assigned assignments of sub: ${response.statusText}`);
+            return null; 
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Database connection error:", error);
+        return null;
+    }
+}
+
+// Function to get batch of available assignments of a substitute
+export async function get_batch_of_available_assignments_for_substitute(substitute_ID: string) {
+    const url = `${BASE_URL}/get_specifications/get_available_batch_for_substitute/${substitute_ID}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch batch of available assignments of sub: ${response.statusText}`);
             return null; 
         }
         const data = await response.json();
