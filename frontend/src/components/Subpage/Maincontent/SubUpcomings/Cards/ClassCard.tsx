@@ -1,45 +1,27 @@
-import { Panel, TagProps,Tag } from "rsuite";
-import {Job } from "../../../Data/jobsdata";
-import styles from "../../../../../scss_stylings/card.module.scss"
-import { ClassCardProps } from "../../../Data/jobsdata";
+import { Panel } from "rsuite";
+import styles from "../../../../../scss_stylings/card.module.scss";
+import { SubstitutionFE } from '../subUpcomings';
 
-
-
-type TagColour = NonNullable<TagProps['color']>
-
-const statusColour:  Record<Job['status'], TagColour> = {
-    Pending: 'gray',
-    Searching: 'cyan',
-    Accepted: 'green',
-    Revoked: 'red'
+interface ClassCardProps {
+    substitution: SubstitutionFE;
 }
 
-const statusGradient: Record<Job['status'], string> = {
-    Pending: styles.g0,
-    Searching: styles.g1,
-    Accepted: styles.g2,
-    Revoked: styles.g3
-}
-
-const ClassCard = ({ job }: ClassCardProps) => (
+const ClassCard = ({ substitution }: ClassCardProps) => (
     <Panel
         bordered
         bodyFill
-        className={`${styles.card} ${statusGradient[job.status]}`}
+        className={`${styles.card} ${styles.g0}`} // Always gray (g0)
     >
         <div className={styles.inner}>
-            <h5 className={styles.title}>{job.subject} {job.class}</h5>
-            <span className={styles.smallertext}>{job.date}</span>
-            <span className={styles.smallertext}>Riikka Ruusuvuori</span>
-            <Tag
-                size="sm"
-                className={styles.status}
-                color={statusColour[job.status]}
-            >
-                {job.status}
-            </Tag>
+            <h5 className={styles.title}>{substitution.school_name}</h5>
+            <h5 className={styles.title}>{substitution.teacher_name}</h5>
+            <span className={styles.title}>{substitution.date}</span>
+            <span className={styles.title}>{substitution.beginning_time} - {substitution.ending_time}</span>
+            <span className={styles.title}>{substitution.amount_of_hours}</span>
+            <span className={styles.smallertext}>{substitution.subject}</span>
+            <span className={styles.smallertext}>{substitution.grade}</span>
         </div>
     </Panel>
-)
+);
 
 export default ClassCard;

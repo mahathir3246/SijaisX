@@ -1,21 +1,26 @@
 import ClassCard from './ClassCard';
-import styles from "../../../../../scss_stylings/card.module.scss"
+import styles from "../../../../../scss_stylings/card.module.scss";
+import { SubstitutionFE } from '../subUpcomings';
 
-import { jobs, Job } from '../../../Data/jobsdata';
+interface GalleryProps {
+    substitutions: SubstitutionFE[];
+}
 
-const SubUpcomingsCardGallery = () => (
-  <div className={`${styles.galleryWrapper} ${styles.cardRail}`}>  
-    <div className={styles.cardContainer}>
-      {jobs.map((job: Job) => (
-        <div
-          key={job.class}
-          className={styles.cardWrapper}
-        >
-          <ClassCard job={job} />
+const SubUpcomingsCardGallery = ({ substitutions }: GalleryProps) => {
+    return (
+        <div className={`${styles.galleryWrapper} ${styles.substituteCardRail}`}>  
+            <div className={styles.substituteCardContainer}>
+                {substitutions.map((substitution, index) => (
+                    <div
+                        key={`${substitution.date}-${substitution.school_name}-${substitution.teacher_name}-${index}`}
+                        className={styles.cardWrapper}
+                    >
+                        <ClassCard substitution={substitution} />
+                    </div>
+                ))}
+            </div>
         </div>
-      ))}
-    </div>
-  </div>
-);
+    );
+};
 
 export default SubUpcomingsCardGallery;
