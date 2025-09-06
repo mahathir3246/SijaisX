@@ -183,6 +183,25 @@ export async function get_all_schools_of_substitute(substitute_ID: string) {
         return null;
     }
 }
+
+// Function to get batch of assignments of a substitute
+export async function get_batch_of_assignments_for_substitute(substitute_ID: string) {
+    const url = `${BASE_URL}/get_specifications/get_batch_for_substitute/${substitute_ID}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch batch of assignments of sub: ${response.statusText}`);
+            return null; 
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Database connection error:", error);
+        return null;
+    }
+}
+
 // Functions to post data to API
 export async function create_teacher(teacherData: {
     name: string;
