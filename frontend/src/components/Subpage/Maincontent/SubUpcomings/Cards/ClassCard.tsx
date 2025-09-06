@@ -22,6 +22,8 @@ const ClassCard = ({ substitution }: ClassCardProps) => (
             <span className={styles.smallertext}>{substitution.grade}</span>
         </div>
     </Panel>
+
+    
 );
 
 export default ClassCard;
