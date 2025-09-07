@@ -325,11 +325,13 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
                 continue # ie no assignments found for this school
 
             for row in result:
-                key = (row["date"], row["school_name"])
+                key = (row["date"], row["school_name"], row["teacher_name"])
                 if key not in batches:
                     batches[key] = {
                         "date": row["date"],
                         "school_name": row["school_name"],
+                        "teacher_name": row["teacher_name"],
+                        "teacher_email": row["teacher_email"],
                         "classes": []
                     }
                 batches[key]["classes"].append({
@@ -340,8 +342,6 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
                     "duration": row["duration"],
                     "room": row["room"],
                     "notes": row["notes"],
-                    "teacher_name": row["teacher_name"],
-                    "teacher_email": row["teacher_email"]
                 })
 
         # convert dict to list for json

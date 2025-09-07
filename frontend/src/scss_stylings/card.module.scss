@@ -86,3 +86,53 @@
   max-width: 260px;
   scroll-snap-align: start;
 }
+
+// ... existing styles ...
+
+/* Multi-row layout for substitute cards */
+.substituteCardRail {
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: 600px; /* Adjust based on your needs */
+  padding-bottom: 1rem;
+  
+  /* cosmetic scrollbar */
+  &::-webkit-scrollbar { 
+    width: 8px; 
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, .2);
+    border-radius: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, .05);
+    border-radius: 4px;
+  }
+}
+
+.substituteCardContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 2rem;
+  padding: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .substituteCardContainer {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1200px) {
+  .substituteCardContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1201px) {
+  .substituteCardContainer {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
