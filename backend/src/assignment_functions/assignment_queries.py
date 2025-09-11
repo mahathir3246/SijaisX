@@ -170,6 +170,7 @@ def create_batch_assignment(teacher_ID, assignment_data):
     
     conn = get_db_connection()
     cursor = conn.cursor()
+    created_assignments = []
 
     try:
         # iterate through each assignment
@@ -203,9 +204,12 @@ def create_batch_assignment(teacher_ID, assignment_data):
             if not result["success"]:
                 conn.rollback()
                 return {"success": False, "error": result.get("error", f"Failed to add assignment for class {class_ID}")}
+            created_assignments.append(result["assignment_ID"])
         
+
         conn.commit()
-        return {"success": True, "message": f"{len(assignment_data)} assignments created."}
+        return {"success": True, "message": f"{len(assignment_data)} assignments created.",
+                "assignments": created_assignments}
         
     except Exception as e:
         conn.rollback()
@@ -283,4 +287,4 @@ def volunteer_for_batch_assignment(substitute_ID, assignment_batch):
     
     finally:
         conn.close()
-        
+
