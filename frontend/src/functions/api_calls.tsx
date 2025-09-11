@@ -377,6 +377,27 @@ export async function add_substitute_to_assignment_list(assignmentID: string, su
         return null;
     }
 }
+
+// Function to add substitute to batch of assignments
+export async function add_substitute_to_assignment_batch(substituteID: string, assignmentBatch: string[]) {
+    const formattedBatch = assignmentBatch.map(id => ({ assignment_ID: id }));
+    try {
+        const response = await fetch(`${BASE_URL}/assignments/volunteer_batch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ substitute_ID: substituteID, assignment_batch: formattedBatch }),
+        });
+        if (!response.ok) {
+            console.error(`POST /assignments/volunteer_batch failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`POST /assignments/volunteer_batch failed:`, err);
+        return null;
+    }
+}
+
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {
         teacher_ID: string;

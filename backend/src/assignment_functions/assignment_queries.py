@@ -230,7 +230,7 @@ def volunteer_for_batch_assignment(substitute_ID, assignment_batch):
                            JOIN Class AS C ON A.class_ID = C.class_ID
                            WHERE A.assignment_ID = ?
                            ''', (assignment["assignment_ID"],))
-            result = cursor.fetchall()
+            result = cursor.fetchone()
             if not result:
                 conn.rollback()
                 return {"success": False, "error": f"Assignment {assignment['assignment_ID']} not found"}
@@ -278,9 +278,13 @@ def volunteer_for_batch_assignment(substitute_ID, assignment_batch):
                                WHERE assignment_ID = ?
                                ''', (new_status, assignment["assignment_ID"]))
             
-            conn.commit()
-            return {"success": True, "message": f"Applied to {len(assignment_batch)} assignments.", "status": new_status}
-        
+        conn.commit()
+        return {
+            "success": True,
+            "message": f"Applied to {len(assignment_batch)} assignments.",
+            "assignments": [a["assignment_ID"] for a in assignment_batch]
+        }
+    
     except Exception as e:
         conn.rollback()
         return {"success": False, "error": str(e)}
