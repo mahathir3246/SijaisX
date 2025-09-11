@@ -170,6 +170,7 @@ def create_batch_assignment(teacher_ID, assignment_data):
     
     conn = get_db_connection()
     cursor = conn.cursor()
+    created_assignments = []
 
     try:
         # iterate through each assignment
@@ -203,14 +204,91 @@ def create_batch_assignment(teacher_ID, assignment_data):
             if not result["success"]:
                 conn.rollback()
                 return {"success": False, "error": result.get("error", f"Failed to add assignment for class {class_ID}")}
+            created_assignments.append(result["assignment_ID"])
         
+
         conn.commit()
-        return {"success": True, "message": f"{len(assignment_data)} assignments created."}
+        return {"success": True, "message": f"{len(assignment_data)} assignments created.",
+                "assignments": created_assignments}
         
     except Exception as e:
         conn.rollback()
         return {"success": False, "error": str(e)}
     
     finally: 
+        conn.close()
+
+def volunteer_for_batch_assignment(substitute_ID, assignment_batch):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        for assignment in assignment_batch:
+            cursor.execute('''
+                           SELECT A.status, C.school_ID
+                           FROM Assignment AS A
+                           JOIN Class AS C ON A.class_ID = C.class_ID
+                           WHERE A.assignment_ID = ?
+                           ''', (assignment["assignment_ID"],))
+            result = cursor.fetchone()
+            if not result:
+                conn.rollback()
+                return {"success": False, "error": f"Assignment {assignment['assignment_ID']} not found"}
+            
+            status, school_ID = result
+            if status not in ('searching', 'pending'):
+                conn.rollback()
+                return {"success": False, "error": f"Assignment {assignment['assignment_ID']} not open for volunteers"}
+            
+            cursor.execute('''
+                           SELECT 1
+                           FROM VolunteersInSchool
+                           WHERE substitute_ID = ? AND school_ID = ?
+                           ''', (substitute_ID, school_ID))
+            if not cursor.fetchone():
+                conn.rollback()
+                return {"success": False, "error": f"Substitute not approved for school {school_ID} in assignment {assignment['assignment_ID']}"}
+            
+            cursor.execute('''
+                           SELECT 1
+                           FROM AssignmentVolunteers
+                           WHERE assignment_ID = ? AND substitute_ID = ?
+                           ''', (assignment["assignment_ID"], substitute_ID))
+            if cursor.fetchone():
+                conn.rollback()
+                return {"success": False, "error": f"Already volunteered for assignment {assignment['assignment_ID']}"}
+            
+            cursor.execute('''
+                           INSERT INTO AssignmentVolunteers (assignment_ID, substitute_ID)
+                           VALUES (?, ?)
+                           ''', (assignment["assignment_ID"], substitute_ID))
+            
+            cursor.execute('''
+                           SELECT COUNT(*)
+                           FROM AssignmentVolunteers
+                           WHERE assignment_ID = ?
+                           ''', (assignment["assignment_ID"],))
+            total_volunteers = cursor.fetchone()[0]
+
+            new_status = 'pending' if (total_volunteers > 0 and status == 'searching') else status
+            if new_status != status:
+                cursor.execute('''
+                               UPDATE Assignment
+                               SET status = ?
+                               WHERE assignment_ID = ?
+                               ''', (new_status, assignment["assignment_ID"]))
+            
+        conn.commit()
+        return {
+            "success": True,
+            "message": f"Applied to {len(assignment_batch)} assignments.",
+            "assignments": [a["assignment_ID"] for a in assignment_batch]
+        }
+    
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": str(e)}
+    
+    finally:
         conn.close()
 
