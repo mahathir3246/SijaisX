@@ -17,6 +17,8 @@ def create_database():
         FOREIGN KEY (school_ID) REFERENCES School(school_ID)
     );
 
+                             
+                             
 
     CREATE TABLE SubstituteCoordinator (
         teacher_ID TEXT PRIMARY KEY,
