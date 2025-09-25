@@ -499,8 +499,44 @@ export async function update_class_info(classID: string, teacherID: string, upda
     }
 }
 
+// Function to delete assignment(s)
+export async function delete_assignments(
+    teacher_ID: string,
+    assignment_ids: string[]
+) {
+    if (!assignment_ids || assignment_ids.length === 0) {
+        console.warn("No assignment IDs provided for deletion");
+        return null;
+    }
+
+    try {
+        const response = await fetch(`${BASE_URL}/assignments/delete`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ teacher_ID, assignment_ids }),
+        });
+
+        if (!response.ok) {
+            console.error(`DELETE /assignments/delete failed:`, await response.text());
+            return null;
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            console.log(`Deleted ${result.deleted_count} assignments:`, result.deleted_ids);
+        }
+
+        return result;
+
+    } catch (err) {
+        console.error(`DELETE /assignments/delete failed:`, err);
+        return null;
+    }
+}
 
 
+// login function
 export async function login(email: string, password: string) {
     try {
         const response = await fetch(`${BASE_URL}/login`, {

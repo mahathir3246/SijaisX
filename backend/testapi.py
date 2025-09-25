@@ -1,108 +1,107 @@
 import sqlite3
-from collections import defaultdict
-import backend.src.get_function_specifications.get_specifications_queries as queries
+import os
+from backend.src.assignment_functions.assignment_queries import create_batch_assignment, volunteer_for_batch_assignment
+import backend.src.assignment_functions.assignment_queries as queries
 
-# --- Mock DB connection ---
+DB_PATH = "test_assignments.db"
+
+# --- Ensure clean start ---
+if os.path.exists(DB_PATH):
+    os.remove(DB_PATH)
+
+# --- Mock DB connection (file-based) ---
 def mock_get_db_connection():
-    conn = sqlite3.connect(":memory:")
+    conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
-# Patch in our mock connection function
-queries.get_db_connection = mock_get_db_connection
-
-# --- Setup test data ---
-def setup_test_db(conn):
+# --- Setup test DB ---
+def setup_test_db():
+    conn = mock_get_db_connection()
     cursor = conn.cursor()
 
     # Create tables
-    cursor.execute("""
-        CREATE TABLE School (
-            school_ID TEXT PRIMARY KEY,
-            school_name TEXT
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE Teacher (
-            teacher_ID TEXT PRIMARY KEY,
-            name TEXT,
-            email TEXT
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE Class (
-            class_ID TEXT PRIMARY KEY,
-            subject TEXT,
-            grade TEXT,
-            beginning_time TEXT,
-            ending_time TEXT,
-            duration INTEGER,
-            room TEXT,
-            school_ID TEXT
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE Assignment (
-            assignment_ID TEXT PRIMARY KEY,
-            date TEXT,
-            status TEXT,
-            notes TEXT,
-            teacher_ID TEXT,
-            class_ID TEXT,
-            substitute_ID TEXT
-        )
-    """)
-    cursor.execute("""
-        CREATE TABLE VolunteersInSchool (
-            substitute_ID TEXT,
-            school_ID TEXT
-        )
-    """)
+    cursor.execute("""CREATE TABLE School (school_ID TEXT PRIMARY KEY, school_name TEXT)""")
+    cursor.execute("""CREATE TABLE Teacher (teacher_ID TEXT PRIMARY KEY, name TEXT, email TEXT)""")
+    cursor.execute("""CREATE TABLE Class (class_ID TEXT PRIMARY KEY, subject TEXT, grade TEXT, beginning_time TEXT, ending_time TEXT, duration INTEGER, room TEXT, school_ID TEXT)""")
+    cursor.execute("""CREATE TABLE Assignment (assignment_ID TEXT PRIMARY KEY, date TEXT, status TEXT, notes TEXT, teacher_ID TEXT, class_ID TEXT, substitute_ID TEXT)""")
+    cursor.execute("""CREATE TABLE VolunteersInSchool (substitute_ID TEXT, school_ID TEXT)""")
+    cursor.execute("""CREATE TABLE AssignmentVolunteers (assignment_ID TEXT, substitute_ID TEXT)""")
+    cursor.execute("""CREATE TABLE Teaches (teacher_ID TEXT, class_ID TEXT)""")
 
-    # Insert data
+    # Insert schools
     cursor.execute("INSERT INTO School VALUES ('school_001', 'Test High School')")
     cursor.execute("INSERT INTO School VALUES ('school_002', 'Central Primary')")
 
+    # Insert teacher
     cursor.execute("INSERT INTO Teacher VALUES ('teacher_001', 'Laura Niemi', 'laura@school.fi')")
-    cursor.execute("INSERT INTO Teacher VALUES ('teacher_002', 'Mikko Saarinen', 'mikko@school.fi')")
 
-    cursor.execute("""
-        INSERT INTO Class VALUES 
+    # Insert classes
+    cursor.execute("""INSERT INTO Class VALUES 
         ('class_001', 'Mathematics', '8A', '09:00', '09:45', 45, 'Room 204', 'school_001'),
-        ('class_002', 'Physics', '8A', '10:00', '10:45', 45, 'Lab 3', 'school_001'),
-        ('class_003', 'Chemistry', '9B', '11:00', '11:45', 45, 'Lab 1', 'school_002')
-    """)
+        ('class_002', 'Physics', '8A', '10:00', '10:45', 45, 'Lab 3', 'school_001')""")
 
-    cursor.execute("""
-        INSERT INTO Assignment VALUES
-        ('assign_001', '2025-08-20', 'searching', 'Focus on algebra revision', 'teacher_001', 'class_001', NULL),
-        ('assign_002', '2025-08-20', 'pending', 'Chapter 5 experiments', 'teacher_001', 'class_002', NULL),
-        ('assign_003', '2025-08-21', 'searching', 'Organic chemistry intro', 'teacher_002', 'class_003', NULL),
-        ('assign_004', '2025-08-22', 'accepted', 'Already taken assignment', 'teacher_002', 'class_003', 'sub_001')
-    """)
+    # Map teacher to classes
+    cursor.execute("INSERT INTO Teaches VALUES ('teacher_001', 'class_001')")
+    cursor.execute("INSERT INTO Teaches VALUES ('teacher_001', 'class_002')")
 
-    # Volunteer-substitute mappings
+    # Volunteers
     cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_001', 'school_001')")
-    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_001', 'school_002')")
-    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_002', 'school_002')")
+    cursor.execute("INSERT INTO VolunteersInSchool VALUES ('sub_002', 'school_001')")
 
     conn.commit()
+    conn.close()
 
 # --- Test runner ---
-def run_test(substitute_ID):
-    conn = mock_get_db_connection()
-    setup_test_db(conn)
-    queries.get_db_connection = lambda: conn  # always return this populated DB
+def run_batch_test():
+    setup_test_db()
+    queries.get_db_connection = mock_get_db_connection  # patch to use our file DB
 
-    result = queries.get_available_assignments_of_sub_as_batch(substitute_ID)
-    #result = queries.get_assignments_accepted_by_sub_as_batch(substitute_ID)
-    #replace result with the function needed for testing, possibly change the datatables
-    
-    print(f"Testing available assignments for substitute_ID={substitute_ID}")
+    # Step 1: Teacher creates batch assignments
+    teacher_ID = "teacher_001"
+    assignments = [
+        {"class_ID": "class_001", "date": "2025-09-15", "notes": "Algebra practice"},
+        {"class_ID": "class_002", "date": "2025-09-16", "notes": "Physics experiments"}
+    ]
+    print("Creating batch assignments...")
+    result = create_batch_assignment(teacher_ID, assignments)
     print(result)
     print("-" * 50)
 
+    if not result["success"]:
+        return
+
+    # Step 2: Sub volunteer applies to the batch
+    substitute_ID = "sub_001"
+    assignment_batch = [{"assignment_ID": aid} for aid in result["assignments"]]
+    print(f"Substitute {substitute_ID} volunteering for batch...")
+    volunteer_result = volunteer_for_batch_assignment(substitute_ID, assignment_batch)
+    print(volunteer_result)
+    print("-" * 50)
+
+    # Step 3: Another sub volunteer
+    substitute_ID2 = "sub_002"
+    print(f"Substitute {substitute_ID2} volunteering for batch...")
+    volunteer_result2 = volunteer_for_batch_assignment(substitute_ID2, assignment_batch)
+    print(volunteer_result2)
+    print("-" * 50)
+
+    # Step 4: Show final assignments and volunteers
+    conn = mock_get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM Assignment")
+    assignments_data = cursor.fetchall()
+    print("Final assignments table:")
+    for a in assignments_data:
+        print(dict(a))
+
+    cursor.execute("SELECT * FROM AssignmentVolunteers")
+    volunteers_data = cursor.fetchall()
+    print("Final AssignmentVolunteers table:")
+    for v in volunteers_data:
+        print(dict(v))
+    conn.close()
+
+
 if __name__ == "__main__":
-    run_test("sub_001")  # Should return batches from both schools (assign_001, assign_002, assign_003)
-    run_test("sub_002")  # Should return batches only from school_002 (assign_003)
-    run_test("sub_fake") # Should return error: No schools found
+    run_batch_test()
