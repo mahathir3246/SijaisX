@@ -143,4 +143,13 @@ def generate_unique_assignment_id(
     )
     return make_unique_id("Assignment", "assignment_ID", base)
 
+def generate_unique_batch_id(teacher_id: str) -> str:
+    timestamp = str(int(time.time() * 1000))  # milliseconds since epoch
+    base = (
+        "ba_" +
+        slugify(teacher_id)[0:2] + "_" +
+        timestamp[-6:]  # Use last 6 digits of timestamp
+    )
+    return make_unique_id("Batch", "batch_ID", base)
+
 
