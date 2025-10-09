@@ -10,6 +10,7 @@ __pycache__/
 
 # Database file
 main_database.db
+database.db
 
 # Node modules
 node_modules/

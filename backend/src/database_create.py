@@ -107,7 +107,7 @@ def create_database():
         FOREIGN KEY (class_ID) REFERENCES Class(class_ID),
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID),
         FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
-        FOREIGN KEY (batch_ID) REFERENCES Batch(batch_ID) ON DELETE SET CASCADE
+        FOREIGN KEY (batch_ID) REFERENCES Batch(batch_ID) ON DELETE CASCADE
     );
 
     CREATE TABLE Teaches (
