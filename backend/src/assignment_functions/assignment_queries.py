@@ -1,5 +1,6 @@
 from ..db import get_db_connection
 from ..insert_data.add_data import add_assignment
+from ..insert_data.ID_generator import generate_unique_batch_id
 
 def volunteer_for_assignment(substitute_ID, assignment_ID):
     conn = get_db_connection()
@@ -171,8 +172,13 @@ def create_batch_assignment(teacher_ID, assignment_data):
     conn = get_db_connection()
     cursor = conn.cursor()
     created_assignments = []
-
+    batch_ID = generate_unique_batch_id(teacher_ID)
     try:
+        cursor.execute('''
+                        INSERT INTO Batch (batch_ID, teacher_ID)
+                        VALUES (?, ?)
+                        ''', (batch_ID, teacher_ID)
+                        )
         # iterate through each assignment
         for assignment in assignment_data:
             class_ID = assignment.get("class_ID")
@@ -199,6 +205,7 @@ def create_batch_assignment(teacher_ID, assignment_data):
                 teacher_ID=teacher_ID,
                 substitute_ID=None,
                 notes=notes,
+                batch_ID=batch_ID,
                 conn=conn  # pass shared connection
             )
             if not result["success"]:
@@ -209,6 +216,7 @@ def create_batch_assignment(teacher_ID, assignment_data):
 
         conn.commit()
         return {"success": True, "message": f"{len(assignment_data)} assignments created.",
+                "batch_ID": batch_ID,
                 "assignments": created_assignments}
         
     except Exception as e:
@@ -218,77 +226,71 @@ def create_batch_assignment(teacher_ID, assignment_data):
     finally: 
         conn.close()
 
-def volunteer_for_batch_assignment(substitute_ID, assignment_batch):
+def volunteer_for_batch_assignment(substitute_ID, batch_ID):
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-        for assignment in assignment_batch:
-            cursor.execute('''
-                           SELECT A.status, C.school_ID
-                           FROM Assignment AS A
-                           JOIN Class AS C ON A.class_ID = C.class_ID
-                           WHERE A.assignment_ID = ?
-                           ''', (assignment["assignment_ID"],))
-            result = cursor.fetchone()
-            if not result:
-                conn.rollback()
-                return {"success": False, "error": f"Assignment {assignment['assignment_ID']} not found"}
-            
-            status, school_ID = result
-            if status not in ('searching', 'pending'):
-                conn.rollback()
-                return {"success": False, "error": f"Assignment {assignment['assignment_ID']} not open for volunteers"}
-            
-            cursor.execute('''
-                           SELECT 1
-                           FROM VolunteersInSchool
-                           WHERE substitute_ID = ? AND school_ID = ?
-                           ''', (substitute_ID, school_ID))
-            if not cursor.fetchone():
-                conn.rollback()
-                return {"success": False, "error": f"Substitute not approved for school {school_ID} in assignment {assignment['assignment_ID']}"}
-            
-            cursor.execute('''
-                           SELECT 1
-                           FROM AssignmentVolunteers
-                           WHERE assignment_ID = ? AND substitute_ID = ?
-                           ''', (assignment["assignment_ID"], substitute_ID))
-            if cursor.fetchone():
-                conn.rollback()
-                return {"success": False, "error": f"Already volunteered for assignment {assignment['assignment_ID']}"}
-            
-            cursor.execute('''
-                           INSERT INTO AssignmentVolunteers (assignment_ID, substitute_ID)
-                           VALUES (?, ?)
-                           ''', (assignment["assignment_ID"], substitute_ID))
-            
-            cursor.execute('''
-                           SELECT COUNT(*)
-                           FROM AssignmentVolunteers
-                           WHERE assignment_ID = ?
-                           ''', (assignment["assignment_ID"],))
-            total_volunteers = cursor.fetchone()[0]
+        # 1. Check if the batch exists and get its assignments and status
+        cursor.execute('''
+            SELECT status
+            FROM Batch
+            WHERE batch_ID = ?
+        ''', (batch_ID,))
+        batch_info = cursor.fetchone()
+        if not batch_info:
+            return {"success": False, "error": f"Batch {batch_ID} not found"}
+        
+        batch_status = batch_info[0]
+        if batch_status not in ('searching', 'pending'):
+            return {"success": False, "error": f"Batch {batch_ID} is not open for volunteers"}
 
-            new_status = 'pending' if (total_volunteers > 0 and status == 'searching') else status
-            if new_status != status:
-                cursor.execute('''
-                               UPDATE Assignment
-                               SET status = ?
-                               WHERE assignment_ID = ?
-                               ''', (new_status, assignment["assignment_ID"]))
-            
+        # 2. Check if substitute already volunteered for this batch
+        cursor.execute('''
+            SELECT 1
+            FROM BatchVolunteers
+            WHERE batch_ID = ? AND substitute_ID = ?
+        ''', (batch_ID, substitute_ID))
+        if cursor.fetchone():
+            return {"success": False, "error": "Already volunteered for this batch"}
+
+        # 3. Check that substitute is allowed for all schools in this batch
+        cursor.execute('''
+            SELECT DISTINCT C.school_ID
+            FROM Assignment AS A
+            JOIN Class AS C ON A.class_ID = C.class_ID
+            WHERE A.batch_ID = ?
+        ''', (batch_ID,))
+        schools = [row[0] for row in cursor.fetchall()]
+
+        for school_ID in schools:
+            cursor.execute('''
+                SELECT 1
+                FROM VolunteersInSchool
+                WHERE substitute_ID = ? AND school_ID = ?
+            ''', (substitute_ID, school_ID))
+            if not cursor.fetchone():
+                return {"success": False, "error": f"Substitute not approved for school {school_ID}"}
+
+        # 4. Add substitute to BatchVolunteers
+        cursor.execute('''
+            INSERT INTO BatchVolunteers (batch_ID, substitute_ID)
+            VALUES (?, ?)
+        ''', (batch_ID, substitute_ID))
+
+        # 5. Update status of all assignments in this batch if needed
+        cursor.execute('''
+            UPDATE Assignment
+            SET status = 'pending'
+            WHERE batch_ID = ? AND status = 'searching'
+        ''', (batch_ID,))
+
         conn.commit()
-        return {
-            "success": True,
-            "message": f"Applied to {len(assignment_batch)} assignments.",
-            "assignments": [a["assignment_ID"] for a in assignment_batch]
-        }
-    
+        return {"success": True, "message": "Applied to batch successfully", "batch_ID": batch_ID}
+
     except Exception as e:
         conn.rollback()
         return {"success": False, "error": str(e)}
-    
+
     finally:
         conn.close()
-

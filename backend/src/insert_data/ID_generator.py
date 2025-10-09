@@ -148,8 +148,6 @@ def generate_unique_batch_id(teacher_id: str) -> str:
     base = (
         "ba_" +
         slugify(teacher_id)[0:2] + "_" +
-        timestamp[-6:]  # Use last 6 digits of timestamp
+        timestamp[-2:]  # Use last 2 digits of timestamp
     )
     return make_unique_id("Batch", "batch_ID", base)
-
-
