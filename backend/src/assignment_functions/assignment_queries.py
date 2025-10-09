@@ -165,8 +165,6 @@ def get_assignment_volunteers(assignment_ID):
     finally:
         conn.close()
 
-
-
 def create_batch_assignment(teacher_ID, assignment_data):
     
     conn = get_db_connection()

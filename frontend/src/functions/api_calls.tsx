@@ -82,15 +82,14 @@ export async function get_assignment_volunteers(assignmentID: string) {
 }
 
 // this is to get volunteers for a batch of assignments
-export async function get_batch_of_assignment_volunteers(assignmentIDs: string[]) {
-    const idsParam = assignmentIDs.join(',');
+// Fetch volunteers for a given batch
+export async function get_batch_of_assignment_volunteers(batchID: string) {
     return await fetchData<{
         success: boolean,
         volunteers: { substitute_ID: string, name: string, email: string }[]
-    }>(
-        `${BASE_URL}/get_specifications/get_batch_volunteers/${idsParam}`
-    );
+    }>(`${BASE_URL}/get_specifications/get_batch_volunteers/${batchID}`);
 }
+
 
 // function to get classes for a specific teacher of a specific range
 export async function get_teacher_classes_within_range(teacher_ID: string, start_date: string, end_date: string) {
