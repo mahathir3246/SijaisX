@@ -103,9 +103,11 @@ def create_database():
         class_ID TEXT NOT NULL,
         teacher_ID TEXT NOT NULL,
         substitute_ID TEXT,
+        batch_ID TEXT,
         FOREIGN KEY (class_ID) REFERENCES Class(class_ID),
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID),
-        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID)
+        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID),
+        FOREIGN KEY (batch_ID) REFERENCES Batch(batch_ID) ON DELETE CASCADE
     );
 
     CREATE TABLE Teaches (
@@ -133,14 +135,30 @@ def create_database():
     );
                              
     CREATE TABLE AssignmentVolunteers (
-    assignment_ID TEXT NOT NULL,
-    substitute_ID TEXT NOT NULL,
-    PRIMARY KEY (assignment_ID, substitute_ID),
-    FOREIGN KEY (assignment_ID) REFERENCES Assignment(assignment_ID) ON DELETE CASCADE,
-    FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID) ON DELETE CASCADE
+        assignment_ID TEXT NOT NULL,
+        substitute_ID TEXT NOT NULL,
+        PRIMARY KEY (assignment_ID, substitute_ID),
+        FOREIGN KEY (assignment_ID) REFERENCES Assignment(assignment_ID) ON DELETE CASCADE,
+        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID) ON DELETE CASCADE
+    );
+                             
+    CREATE TABLE Batch (
+        batch_ID TEXT PRIMARY KEY,
+        creation_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')) DEFAULT 'searching',
+        teacher_ID TEXT NOT NULL
     );
 
-                            ''')
+    CREATE TABLE BatchVolunteers (
+        batch_ID TEXT NOT NULL,
+        substitute_ID TEXT NOT NULL,
+        PRIMARY KEY (batch_ID, substitute_ID),
+        FOREIGN KEY (batch_ID) REFERENCES Batch(batch_ID) ON DELETE CASCADE,
+        FOREIGN KEY (substitute_ID) REFERENCES Substitute(substitute_ID) ON DELETE CASCADE
+    );                         
+
+                             
+                             ''')
     except sqlite3.Error as e:
         print("Error while creating database: ", e)
     finally:

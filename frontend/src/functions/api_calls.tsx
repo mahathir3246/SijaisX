@@ -81,6 +81,16 @@ export async function get_assignment_volunteers(assignmentID: string) {
     );
 }
 
+// this is to get volunteers for a batch of assignments
+// Fetch volunteers for a given batch
+export async function get_batch_of_assignment_volunteers(batchID: string) {
+    return await fetchData<{
+        success: boolean,
+        volunteers: { substitute_ID: string, name: string, email: string }[]
+    }>(`${BASE_URL}/get_specifications/get_batch_volunteers/${batchID}`);
+}
+
+
 // function to get classes for a specific teacher of a specific range
 export async function get_teacher_classes_within_range(teacher_ID: string, start_date: string, end_date: string) {
     const url = `${BASE_URL}/get_specifications/teacher_classes/${teacher_ID}?start_date=${start_date}&end_date=${end_date}`;
@@ -379,14 +389,14 @@ export async function add_substitute_to_assignment_list(assignmentID: string, su
 }
 
 // Function to add substitute to batch of assignments
-export async function add_substitute_to_assignment_batch(substituteID: string, assignmentBatch: string[]) {
-    const formattedBatch = assignmentBatch.map(id => ({ assignment_ID: id }));
+export async function add_substitute_to_batch(substituteID: string, batchID: string) {
     try {
         const response = await fetch(`${BASE_URL}/assignments/volunteer_batch`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ substitute_ID: substituteID, assignment_batch: formattedBatch }),
+            body: JSON.stringify({ substitute_ID: substituteID, batch_ID: batchID }),
         });
+
         if (!response.ok) {
             console.error(`POST /assignments/volunteer_batch failed:`, await response.text());
             return null;
@@ -397,6 +407,7 @@ export async function add_substitute_to_assignment_batch(substituteID: string, a
         return null;
     }
 }
+
 
 // Function to update assignment status in the API
 export async function update_assignment_status(assignmentID: string, updatedData: {

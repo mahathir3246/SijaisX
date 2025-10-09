@@ -65,10 +65,9 @@ def api_get_available_batch_for_substitute(substitute_ID):
         return jsonify(result), 400
     return jsonify(result), 200
 
-@get_specifications_bp.route("/api/get_specifications/get_batch_volunteers/<string:assignment_IDs>", methods=["GET"])
-def api_get_batch_volunteers(assignment_IDs):
-    assignment_list = assignment_IDs.split(',')    
-    result = get_batch_volunteers(assignment_list)
+@get_specifications_bp.route("/api/get_specifications/get_batch_volunteers/<string:batch_ID>", methods=["GET"])
+def api_get_batch_volunteers(batch_ID):
+    result = get_batch_volunteers(batch_ID)
     if not result["success"]:
         return jsonify(result), 400
     return jsonify(result), 200

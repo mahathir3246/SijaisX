@@ -358,23 +358,20 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
     finally:
         conn.close()
 
-def get_batch_volunteers(assignment_IDs):
-    if not assignment_IDs:
-        return {"success": False, "error": "No assignment IDs provided"}
+def get_batch_volunteers(batch_ID: str):
+    if not batch_ID:
+        return {"success": False, "error": "No batch ID provided"}
 
     conn = get_db_connection()
     cursor = conn.cursor()
 
     try:
-        placeholders = ', '.join(['?'] * len(assignment_IDs))
-        cursor.execute(f'''
+        cursor.execute('''
             SELECT Sub.substitute_ID, Sub.name, Sub.email
-            FROM AssignmentVolunteers AS AV
-            JOIN Substitute AS Sub ON AV.substitute_ID = Sub.substitute_ID
-            WHERE AV.assignment_ID IN ({placeholders})
-            GROUP BY Sub.substitute_ID
-            HAVING COUNT(DISTINCT AV.assignment_ID) = ?
-        ''', (*assignment_IDs, len(assignment_IDs)))
+            FROM BatchVolunteers AS BV
+            JOIN Substitute AS Sub ON BV.substitute_ID = Sub.substitute_ID
+            WHERE BV.batch_ID = ?
+        ''', (batch_ID,))
 
         result = cursor.fetchall()
 

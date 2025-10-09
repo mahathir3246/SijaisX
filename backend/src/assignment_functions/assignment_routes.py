@@ -65,9 +65,13 @@ def create_batch():
 def volunteer_batch():
     data = request.json
     substitute_ID = data.get("substitute_ID")
-    assignment_batch = data.get("assignment_batch", [])
-    result = volunteer_for_batch_assignment(substitute_ID, assignment_batch)
-    
+    batch_ID = data.get("batch_ID")
+
+    if not substitute_ID or not batch_ID:
+        return jsonify({"success": False, "error": "Missing substitute_ID or batch_ID"}), 400
+
+    result = volunteer_for_batch_assignment(substitute_ID, batch_ID)
+
     if not result["success"]:
         return jsonify(result), 400
     return jsonify(result), 200
