@@ -1,3 +1,4 @@
+from collections import defaultdict
 from ..db import get_db_connection
 
 # get a particular teacher's classes within a specific time range
@@ -17,19 +18,22 @@ def get_teacher_classes_within_range(teacher_ID, start_date, end_date):
         classes = cursor.fetchall()
         if not classes:
             return {"success": False, "error": "No classes found"}
+        
+        grouped = defaultdict(list)
+        for row in classes:
+            date_key = str(row[3]).split(" ")[0]  # Extract the date
+            grouped[date_key].append({
+                "class_ID": row[0],
+                "subject": row[1],
+                "grade": row[2],
+                "beginning_time": row[3],
+                "ending_time": row[4],
+                "room": row[5]
+            })
+        
         return {
             "success": True,
-            "classes": [
-                {
-                    "class_ID": row[0],
-                    "subject": row[1],
-                    "grade": row[2],
-                    "beginning_time": row[3],
-                    "ending_time": row[4],
-                    "room": row[5]
-                }
-                for row in classes
-            ]
+            "classes": dict(grouped)
         }
     
     except Exception as e:
