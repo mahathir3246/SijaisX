@@ -1,3 +1,4 @@
+from collections import defaultdict
 from ..db import get_db_connection
 
 # get a particular teacher's classes within a specific time range
@@ -17,19 +18,22 @@ def get_teacher_classes_within_range(teacher_ID, start_date, end_date):
         classes = cursor.fetchall()
         if not classes:
             return {"success": False, "error": "No classes found"}
+        
+        grouped = defaultdict(list)
+        for row in classes:
+            date_key = str(row[3]).split(" ")[0]  # Extract the date
+            grouped[date_key].append({
+                "class_ID": row[0],
+                "subject": row[1],
+                "grade": row[2],
+                "beginning_time": row[3],
+                "ending_time": row[4],
+                "room": row[5]
+            })
+        
         return {
             "success": True,
-            "classes": [
-                {
-                    "class_ID": row[0],
-                    "subject": row[1],
-                    "grade": row[2],
-                    "beginning_time": row[3],
-                    "ending_time": row[4],
-                    "room": row[5]
-                }
-                for row in classes
-            ]
+            "classes": dict(grouped)
         }
     
     except Exception as e:
@@ -358,7 +362,7 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
     finally:
         conn.close()
 
-def get_batch_volunteers(batch_ID: str):
+def get_batch_volunteers(batch_ID: str, requester_ID: str):
     if not batch_ID:
         return {"success": False, "error": "No batch ID provided"}
 
@@ -366,6 +370,19 @@ def get_batch_volunteers(batch_ID: str):
     cursor = conn.cursor()
 
     try:
+        cursor.execute('SELECT DISTINCT teacher_ID FROM Assignment WHERE batch_ID = ?', (batch_ID,))
+        rows = cursor.fetchall()
+        if not rows:
+            return {"success": False, "error": "No assignments found for this batch"}
+
+        batch_teacher_IDs = [r[0] for r in rows]
+
+        cursor.execute('SELECT 1 FROM SubstituteCoordinator WHERE teacher_ID = ?', (requester_ID,))
+        is_subcoord = cursor.fetchone() is not None
+
+        if requester_ID not in batch_teacher_IDs and not is_subcoord:
+            return {"success": False, "error": "Access denied"}
+
         cursor.execute('''
             SELECT Sub.substitute_ID, Sub.name, Sub.email
             FROM BatchVolunteers AS BV
@@ -374,7 +391,6 @@ def get_batch_volunteers(batch_ID: str):
         ''', (batch_ID,))
 
         result = cursor.fetchall()
-
         if not result:
             return {"success": False, "error": "No volunteers found for the given batch"}
 
@@ -385,7 +401,7 @@ def get_batch_volunteers(batch_ID: str):
                 for r in result
             ]
         }
-
+    
     except Exception as e:
         return {"success": False, "error": str(e)}
     finally:
