@@ -82,13 +82,15 @@ export async function get_assignment_volunteers(assignmentID: string) {
 }
 
 // this is to get volunteers for a batch of assignments
-// Fetch volunteers for a given batch
-export async function get_batch_of_assignment_volunteers(batchID: string) {
+// Fetch volunteers for a given batch (only accessible by the teacher or subcoord)
+export async function get_batch_of_assignment_volunteers(batchID: string, requester_ID: string) {
     return await fetchData<{
         success: boolean,
-        volunteers: { substitute_ID: string, name: string, email: string }[]
-    }>(`${BASE_URL}/get_specifications/get_batch_volunteers/${batchID}`);
+        volunteers?: { substitute_ID: string, name: string, email: string }[],
+        error?: string
+    }>(`${BASE_URL}/get_specifications/get_batch_volunteers/${batchID}?requester_ID=${requester_ID}`);
 }
+
 
 
 // function to get classes for a specific teacher of a specific range

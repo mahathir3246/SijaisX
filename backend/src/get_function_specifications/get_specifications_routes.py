@@ -67,7 +67,11 @@ def api_get_available_batch_for_substitute(substitute_ID):
 
 @get_specifications_bp.route("/api/get_specifications/get_batch_volunteers/<string:batch_ID>", methods=["GET"])
 def api_get_batch_volunteers(batch_ID):
-    result = get_batch_volunteers(batch_ID)
+    requester_ID = request.args.get("requester_ID")  # e.g. /api/.../123?requester_ID=T001
+    if not requester_ID:
+        return jsonify({"success": False, "error": "Not logged in"}), 401
+    result = get_batch_volunteers(batch_ID, requester_ID)
     if not result["success"]:
-        return jsonify(result), 400
+        status = 403 if result["error"] == "Access denied" else 400
+        return jsonify(result), status
     return jsonify(result), 200
