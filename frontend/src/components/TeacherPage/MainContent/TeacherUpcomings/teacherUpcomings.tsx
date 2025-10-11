@@ -78,7 +78,7 @@ const TeacherUpcomings = () => {
                     const processedJobs = cardContentfetcher(response.assignments)
                     setJobs(processedJobs)
                 }else {
-                    setError('Failed to fetch assignments');
+                    setError('No assignments');
                 }
             }catch(error){
                 setError("Error")
