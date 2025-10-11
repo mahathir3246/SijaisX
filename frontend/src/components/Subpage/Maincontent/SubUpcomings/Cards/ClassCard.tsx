@@ -1,16 +1,22 @@
 import { Panel } from "rsuite";
 import styles from "../../../../../scss_stylings/card.module.scss";
-import { SubstitutionFE } from '../subUpcomings';
+import { SubstitutionFE } from '../SubstituteJobLists';
 
 interface ClassCardProps {
     substitution: SubstitutionFE;
+}
+
+const statusGradient = {
+    searching: styles.g1, // Blue gradient for available jobs
+    pending: styles.g3,
+    accepted: styles.g2   // Green gradient for accepted jobs
 }
 
 const ClassCard = ({ substitution }: ClassCardProps) => (
     <Panel
         bordered
         bodyFill
-        className={`${styles.card} ${styles.g0}`} // Always gray (g0)
+        className={`${styles.card} ${statusGradient[substitution.status]}`} 
     >
         <div className={styles.inner}>
             <h5 className={styles.title}>{substitution.school_name}</h5>

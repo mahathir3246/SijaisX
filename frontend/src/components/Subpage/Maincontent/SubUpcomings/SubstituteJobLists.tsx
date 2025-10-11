@@ -3,8 +3,8 @@ import '../../../../scss_stylings/card.module.scss';
 import { useState,useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';
 import SubUpcomingsCardGallery from './Cards/SubUpcomingsCardGallery';
-import { get_batch_of_available_assignments_for_substitute } from '../../../../functions/api_calls';
 import { Loader} from 'rsuite';
+import { get_batch_of_assignments_for_substitute, get_batch_of_available_assignments_for_substitute } from '../../../../functions/api_calls';
 
 //This is the way data comes in from backend
 export interface SubstitutionBE{
@@ -29,17 +29,18 @@ export interface SubstitutionBE{
 //These are the data I want to show in UI
 
 export interface SubstitutionFE{
-    date: string,//date
-    school_name: string,//school
-    beginning_time: string,//
-    ending_time: string,//
-    amount_of_hours: string,//
-    grade: string,//
-    subject: string,//
+    date: string,
+    school_name: string,
+    beginning_time: string,
+    ending_time: string,
+    amount_of_hours: string,
+    grade: string,
+    subject: string,
     teacher_name: string,
+    status: 'searching' | 'pending' | 'accepted'
 }
 
-export function cardContents(SubstitutionList: SubstitutionBE[]): SubstitutionFE[]{
+export function cardContents(SubstitutionList: SubstitutionBE[], status: 'searching' | 'pending' | 'accepted'): SubstitutionFE[]{
     return SubstitutionList.map(substitution =>{
         const school = substitution.school_name
         const dateObj = new Date(substitution.date);
@@ -60,17 +61,21 @@ export function cardContents(SubstitutionList: SubstitutionBE[]): SubstitutionFE
             amount_of_hours:hours,
             grade: grade,
             subject: subject,
-            teacher_name: teacher
+            teacher_name: teacher,
+            status: status
 
         }
     })
 }
-const SubUpcomings = () => {
 
+
+interface SubUpcomingsProps{
+    apiFunction?: (subID:string) => Promise<any>;
+}
+const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_for_substitute }: SubUpcomingsProps) => {
     const [substitutions, setSubstitutions] = useState<SubstitutionFE[]>([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
 
     const subID = getUserID()
 
@@ -83,23 +88,32 @@ const SubUpcomings = () => {
                     return;
                 }
                 
-                const response = await get_batch_of_available_assignments_for_substitute(subID)
+                const response = await apiFunction(subID)
 
                 if (response && response.success){
-                    const processed = cardContents(response.batches);
+                    let status: 'searching' | 'pending' | 'accepted' = 'pending';
+                    
+                    if(apiFunction === get_batch_of_available_assignments_for_substitute){
+                        status = 'searching'
+                    }else if(apiFunction === get_batch_of_assignments_for_substitute){
+                        status = 'accepted'
+                    }else{
+                        status = 'pending'
+                    }
+                    const processed = cardContents(response.batches, status);
                     setSubstitutions(processed)
                 }else{
                     setError('Failed to fetch Substitutions');
                 }
             }catch(error){
-                setError("Error")
+                setError(`Error: ${error}`)
             }finally {
                 setLoading(false);
             }
      }
      fetchAvailableSubs()
     
-    },[])
+    },[apiFunction])
 
     if (loading) {
         return <Loader size="lg" center />;
@@ -110,9 +124,6 @@ const SubUpcomings = () => {
             <SubUpcomingsCardGallery substitutions={substitutions} />
         </div>
     );
-
 };
 
-
-
-export default SubUpcomings;
+export default SubstituteJobLists;

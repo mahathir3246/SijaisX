@@ -1,6 +1,6 @@
 import ClassCard from './ClassCard';
 import styles from "../../../../../scss_stylings/card.module.scss";
-import { SubstitutionFE } from '../subUpcomings';
+import { SubstitutionFE } from '../SubstituteJobLists';
 
 interface GalleryProps {
     substitutions: SubstitutionFE[];
