@@ -20,6 +20,8 @@ const ClassCard = ({ substitution }: ClassCardProps) => (
             <span className={styles.title}>{substitution.amount_of_hours}</span>
             <span className={styles.smallertext}>{substitution.subject}</span>
             <span className={styles.smallertext}>{substitution.grade}</span>
+
+            <button className={styles.applyButton}>Apply</button>
         </div>
     </Panel>
 

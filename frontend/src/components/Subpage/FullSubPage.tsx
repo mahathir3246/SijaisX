@@ -2,10 +2,12 @@ import NavigationBar from './Navbar/SubPageNavBar';
 import Footer from './SubFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
 import SubstituteProfile from './Maincontent/subProfile';
+import SubApplied from './Maincontent/SubUpcomings/subApplied';
 import SubUpcomings from './Maincontent/SubUpcomings/subUpcomings';
 import CalendarCard from './Maincontent/Calendar';
 import teacherstyles from "../../scss_stylings/teacher.module.scss"
 import { Grid,Col, Row } from 'rsuite';
+
 
 
  const FullHomePage = () => {
@@ -30,6 +32,12 @@ import { Grid,Col, Row } from 'rsuite';
                                     <h3 className={teacherstyles.profile}>Your job posts</h3>
                                 </div>
                                 <SubUpcomings/>
+                                
+                                {/* NEW SECTION - Applied Jobs */}
+                                <div className={teacherstyles.jobPostHeadline} style={{ marginTop: '40px' }}>
+                                    <h3 className={teacherstyles.profile}>Applied Jobs</h3>
+                                </div>
+                                <SubApplied/>
                             </div>
                         </Col>
 
