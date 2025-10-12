@@ -106,7 +106,7 @@ export async function get_teacher_classes_within_range(teacher_ID: string, start
         const data = await response.json();
 
         // Optional: Validate data shape     chatgpt
-        if (!Array.isArray(data.classes)) {
+        if (!data.classes || typeof data.classes !== 'object') {
             console.error("Unexpected data format:", data);
             return null;
         }
