@@ -10,7 +10,7 @@
     }
   }
   .body {
-    max-height: 70vh;
+    max-height:70vh;
     overflow-y: auto;
   }
 }
@@ -463,4 +463,67 @@
     opacity: 0.6;
     cursor: not-allowed;
   }
+}
+
+.scheduleJobWrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.classesScrollArea {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    max-height: calc(60vh - 100px); /* Adjust based on your modal height */
+}
+
+.fixedButtonArea {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e5e5;
+    background: white;
+    flex-shrink: 0;
+}
+
+
+.excludedCard {
+    opacity: 0.5;
+    border: 2px dashed #ff4d4f !important;
+}
+
+.deleteButton {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    
+    &:hover {
+        background-color: #ff7875;
+    }
+}
+
+.restoreButton {
+    background-color: #52c41a;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    
+    &:hover {
+        background-color: #73d13d;
+    }
+}
+
+.buttonSection {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
 }

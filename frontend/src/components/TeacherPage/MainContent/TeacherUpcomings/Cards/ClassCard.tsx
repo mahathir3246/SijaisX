@@ -7,8 +7,8 @@ import { Job } from "../teacherUpcomings";
 type TagColour = NonNullable<TagProps['color']>
 
 const statusColour:  Record<Job['status'], TagColour> = {
-    Pending: 'gray',
-    Searching: 'cyan',
+    Pending: 'blue',
+    Searching: 'orange',
     Accepted: 'green',
     Revoked: 'red'
 }
