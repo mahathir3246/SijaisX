@@ -178,7 +178,7 @@ def insert_school(school_ID, school_name):
         if conn:
             conn.close()
 
-def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes = None, conn = None):
+def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes = None, conn = None, batch_ID = None):
     
     close_conn = False
     if conn is None:
@@ -189,9 +189,9 @@ def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substit
         cursor = conn.cursor()
 
         cursor.execute('''
-            INSERT INTO Assignment (assignment_ID, date, notes, status, class_ID, teacher_ID, substitute_ID)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-        ''', (assignment_ID, date, notes, 'searching', class_ID, teacher_ID, substitute_ID))
+            INSERT INTO Assignment (assignment_ID, date, notes, status, class_ID, teacher_ID, substitute_ID, batch_ID)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (assignment_ID, date, notes, 'searching', class_ID, teacher_ID, substitute_ID, batch_ID))
 
         if close_conn:
             conn.commit()

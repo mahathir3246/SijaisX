@@ -122,10 +122,10 @@ def add_class(subject, grade, beginning_time, ending_time, room, duration, schoo
         print("Database error: ", e)
         return False
     
-def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, conn):
+def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, conn, batch_ID):
     assignment_ID = idg.generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID)
     try:
-        success = insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes, conn)
+        success = insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes, conn, batch_ID)
         if success:
             return {"success": True}
         else:
