@@ -127,7 +127,7 @@ def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, con
     try:
         success = insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes, conn, batch_ID)
         if success:
-            return {"success": True}
+            return {"success": True, "assignment_ID": assignment_ID}
         else:
             return {"success": False, "error": f"Insertion failed for class {class_ID}"}
     
