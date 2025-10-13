@@ -15,6 +15,8 @@ export interface ClassesFE{
     notes: string,
     duration: number,
     onNotesChange?: (classId: string, notes: string) => void
+    onToggleExclude?: () => void,
+    isExcluded?: boolean
 
 }
 
@@ -29,7 +31,9 @@ export default function ClassCard({
     subject,
     notes,
     duration,
-    onNotesChange
+    onNotesChange,
+    onToggleExclude,
+    isExcluded = false
 
 }: ClassesFE) {
 
@@ -204,6 +208,16 @@ export default function ClassCard({
                     </Col>
                 </Row>
                 <div className={styles.buttonSection}>
+                    {/* Delete/Restore button */}
+                    {onToggleExclude && (
+                        <button
+                            className={isExcluded ? styles.restoreButton : styles.deleteButton}
+                            onClick={onToggleExclude}
+                        >
+                            {isExcluded ? '↩️ Restore' : '🗑️ Exclude'}
+                        </button>
+                    )}
+    
                     {/* If not editing, show Edit button */}
                     {!isEditing ? (
                         <button

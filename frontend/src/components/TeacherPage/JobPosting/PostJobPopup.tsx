@@ -1,11 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
-import { Modal, Message, toaster, Button } from 'rsuite';
+import { useState, useEffect } from 'react';
+import { Modal } from 'rsuite';
 import ScheduleJobMode from './ScheduleJobMode';
 import styles from "../../../scss_stylings/postJobPopup.module.scss"
-import { getUserID } from '../../../functions/auth';
-import { create_batch_assignment, create_class, get_teacher_info } from '../../../functions/api_calls';
-import { TeacherData } from '../MainContent/teacherProfile';
-
 
 
 export interface Props { 
@@ -17,8 +13,6 @@ export default function PostJobModal({ open, onClose }: Props) {
     // Add mode selection state
     const [mode, setMode] = useState<'schedule' | 'custom'>('schedule');
     // Keep teacher ID logic
-
-    const teacherID = getUserID() || "";
 
     // Reset state when modal opens/closes
     useEffect(() => {

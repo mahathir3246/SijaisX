@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { Button, DateRangePicker, Loader, Message, toaster } from 'rsuite';
+import { useState, useEffect } from 'react';
+import { Button, DateRangePicker } from 'rsuite';
 import { format } from 'date-fns';
 import { get_teacher_classes_within_range } from '../../../functions/api_calls';
 import styles from "../../../scss_stylings/postJobPopup.module.scss";
@@ -34,6 +34,7 @@ export default function ScheduleJobMode({}) {
     }[]}>({});
     const [range, setRange] = useState<[Date, Date] | null>(null);
     const [loading, setLoading] = useState(false);
+    const [excludedClasses, setExcludedClasses] = useState<Set<string>>(new Set());
     const teacherId= getUserID();
 
     const datesInBetween = (start: Date, end:Date) => {
@@ -69,8 +70,6 @@ export default function ScheduleJobMode({}) {
 
     const [assignmentNotes, setAssignmentNotes] = useState<{[key: string]: string}>({});
 
-    // ... existing code (remove the classCardRefs line)
-
     const handleNotesChange = (classId: string, notes: string) => {
         setAssignmentNotes(prev => ({
             ...prev,
@@ -78,6 +77,17 @@ export default function ScheduleJobMode({}) {
         }));
     };
 
+    const handleToggleExclude = (classId: string) => {
+        setExcludedClasses(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(classId)) {
+                newSet.delete(classId);
+            } else {
+                newSet.add(classId);
+            }
+            return newSet;
+        });
+    };
 
     const handleSubmit = async () => {
         if (!range) return;
@@ -89,10 +99,6 @@ export default function ScheduleJobMode({}) {
         }
 
         try {
-            // Get today's date in YYYY-MM-DD format
-            //const today = new Date().toISOString().split('T')[0];
-            
-            // Collect all assignments from all dates
             const allAssignments: any[] = [];
             
             datesInBetween(range[0], range[1]).forEach((date) => {
@@ -100,12 +106,14 @@ export default function ScheduleJobMode({}) {
                 
                 if (classesForDate) {
                     classesForDate.forEach((cls) => {
-                        allAssignments.push({
-                            class_ID: cls.class_ID,
-                            date: date,
-                            notes: assignmentNotes[cls.class_ID] || "",
-                            status: "searching"
-                        });
+                        if (!excludedClasses.has(cls.class_ID)) {
+                            allAssignments.push({
+                                class_ID: cls.class_ID,
+                                date: date,
+                                notes: assignmentNotes[cls.class_ID] || "",
+                                status: "searching"
+                            });
+                        }
                     });
                 }
             });
@@ -165,6 +173,8 @@ export default function ScheduleJobMode({}) {
                                         notes=""
                                         duration={45}
                                         onNotesChange={handleNotesChange}
+                                        onToggleExclude={() => handleToggleExclude(cls.class_ID)}
+                                        isExcluded={excludedClasses.has(cls.class_ID)}
                                     />
                                 ))}
                             </div>
