@@ -123,7 +123,7 @@ def add_class(subject, grade, beginning_time, ending_time, room, duration, schoo
         return False
     
 def add_assignment(date, status, class_ID, teacher_ID, substitute_ID, notes, conn, batch_ID):
-    assignment_ID = idg.generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID)
+    assignment_ID = idg.generate_unique_assignment_id(date, notes, status, class_ID, teacher_ID, substitute_ID, conn=conn)
     try:
         success = insert.insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substitute_ID, notes, conn, batch_ID)
         if success:

@@ -202,7 +202,7 @@ def insert_assignment(assignment_ID, date, status, class_ID, teacher_ID, substit
         if close_conn:
             conn.rollback()
         print("Database error:", e)
-        return False
+        raise
 
     finally:
         if close_conn:

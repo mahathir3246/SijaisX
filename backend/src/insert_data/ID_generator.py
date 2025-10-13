@@ -10,15 +10,20 @@ def slugify(text):
     # Simple slugify: remove non-alphanumeric, make lowercase
     return re.sub(r'[^a-zA-Z0-9]', '', text.lower())
 
-def make_unique_id(table: str, column: str, base_id: str) -> str:
-    conn = get_db_connection()
+def make_unique_id(table: str, column: str, base_id: str, conn=None) -> str:
+    close_conn = False
+    if conn is None:
+        conn = get_db_connection()
+        close_conn = True
+    
     cursor = conn.cursor()
     unique_id = base_id
     counter = 1
     while True:
         cursor.execute(f"SELECT 1 FROM {table} WHERE {column} = ?", (unique_id,))
         if cursor.fetchone() is None:
-            conn.close()
+            if close_conn:
+                conn.close()
             return unique_id
         unique_id = f"{base_id}{counter}"
         counter += 1
@@ -128,7 +133,8 @@ def generate_unique_assignment_id(
         status: str,
         class_id: str,
         teacher_id: str,
-        substitute_id: str | None
+        substitute_id: str | None,
+        conn=None
 ) -> str:
     # Add a timestamp to make each assignment unique
     timestamp = str(int(time.time() * 1000))  # milliseconds since epoch
@@ -141,7 +147,7 @@ def generate_unique_assignment_id(
         (slugify(substitute_id)[0:2] if substitute_id else "na") + "_" +
         timestamp[-6:]  # Use last 6 digits of timestamp
     )
-    return make_unique_id("Assignment", "assignment_ID", base)
+    return make_unique_id("Assignment", "assignment_ID", base, conn)
 
 def generate_unique_batch_id(teacher_id: str) -> str:
     timestamp = str(int(time.time() * 1000))  # milliseconds since epoch
