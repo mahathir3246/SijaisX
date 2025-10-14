@@ -313,7 +313,7 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
         batches = {}
         for (school_ID,) in school_IDs:
             cursor.execute('''
-                           SELECT S.school_name, A.date, C.subject, C.grade, 
+                           SELECT S.school_name, A.date, A.batch_ID, C.subject, C.grade, 
                            C.beginning_time, C.ending_time, C.duration, C.room,
                            A.notes, T.name AS teacher_name, T.email AS teacher_email
                            FROM Assignment AS A
@@ -336,6 +336,7 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
                         "school_name": row["school_name"],
                         "teacher_name": row["teacher_name"],
                         "teacher_email": row["teacher_email"],
+                        "batch_ID": row["batch_ID"],
                         "classes": []
                     }
                 batches[key]["classes"].append({
