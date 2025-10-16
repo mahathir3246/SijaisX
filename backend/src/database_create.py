@@ -146,7 +146,7 @@ def create_database():
         batch_ID TEXT PRIMARY KEY,
         creation_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')) DEFAULT 'searching',
-        teacher_ID TEXT NOT NULL
+        teacher_ID TEXT NOT NULL,
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID)
     );
 

@@ -8,6 +8,8 @@ try:
     cursor.executescript("""
     INSERT INTO School Values('sc_joni1','Jokiniemen Koulu');
     INSERT INTO Teacher Values('t_mikavanhamki_joni','Mika Vanhamäki','+3584125499', 'mika.vanhamaki@eduvantaa.fi', '1234', 'sc_joni1' );
+    INSERT INTO Substitute VALUES('sub_granitzogjani', 'Granit Zogjani', '+358401234567', 'granit.zogjani@email.com', '123', 5, 'Ammattikorkeakoulu', NULL, NULL);
+    INSERT INTO VolunteersInSchool VALUES('sub_granitzogjani', 'sc_joni1'); 
     INSERT INTO Class VALUES("cl_ma_7a_202507210815_202507210900_dur_45_rm_a101", "Mathematics", "7A", "2025-07-21 08:15", "2025-07-21 09:00", "45", "A101", "sc_joni1");
     INSERT INTO Teaches Values("t_mikavanhamki_joni" , "cl_ma_7a_202507210815_202507210900_dur_45_rm_a101");
     INSERT INTO Class VALUES("cl_ch_8b_202507210900_202507210945_dur_45_rm_b204", "Chemistry", "8B", "2025-07-21 09:00", "2025-07-21 09:45", "45", "B204", "sc_joni1");
