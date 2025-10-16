@@ -177,6 +177,24 @@ export async function get_all_assignments_available_to_sub(substitute_ID: string
     }
 }
 
+// Function to get all applied batches of a substitute
+export async function get_all_applied_batches_of_substitute(substitute_ID: string) {
+    const url = `${BASE_URL}/get_specifications/get_applied_batches_of_substitute/${substitute_ID}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch all assignments available to sub: ${response.statusText}`);
+            return null; 
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Connection error:", error);
+        return null;
+    }
+}
+
+
 // Funtion to get all schools of a substitute
 export async function get_all_schools_of_substitute(substitute_ID: string) {
     const url = `${BASE_URL}/get_specifications/all_schools_of_substitute/${substitute_ID}`;

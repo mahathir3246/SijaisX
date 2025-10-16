@@ -270,6 +270,7 @@ def get_assignments_accepted_by_sub_as_batch(substitute_ID):
                     "school_name": row["school_name"],
                     "teacher_name": row["teacher_name"],
                     "teacher_email": row["teacher_email"],
+                    "batch_ID": row["batch_ID"] if "batch_ID" in row.keys() else None,
                     "classes": []
                 }
             batches[key]["classes"].append({
@@ -368,6 +369,61 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
     
     finally:
         conn.close()
+
+def get_all_applied_batches_of_sub(substitute_ID):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+
+    try:
+        cursor.execute('''
+                       SELECT DISTINCT BV.batch_ID, S.school_name, A.date, C.subject, C.grade, 
+                           C.beginning_time, C.ending_time, C.duration, C.room,
+                           A.notes, T.name AS teacher_name, T.email AS teacher_email
+                       FROM BatchVolunteers AS BV
+                       JOIN Assignment AS A ON A.batch_ID = BV.batch_ID
+                       JOIN Teacher AS T ON T.teacher_ID = A.teacher_ID
+                       JOIN Class AS C ON C.class_ID = A.class_ID
+                       JOIN School AS S ON S.school_ID = C.school_ID
+                       WHERE BV.substitute_ID = ?
+                       ORDER BY A.date ASC, S.school_name, C.beginning_time
+                       ''', (substitute_ID,))
+        result = cursor.fetchall()
+
+        if not result:
+            return {"success": False, "error": "No applied batches found"}
+        
+        batches = {}
+        for row in result:
+                key = (row["date"], row["school_name"], row["teacher_name"])
+                if key not in batches:
+                    batches[key] = {
+                        "date": row["date"],
+                        "school_name": row["school_name"],
+                        "teacher_name": row["teacher_name"],
+                        "teacher_email": row["teacher_email"],
+                        "batch_ID": row["batch_ID"],
+                        "classes": []
+                    }
+                batches[key]["classes"].append({
+                    "subject": row["subject"],
+                    "grade": row["grade"],
+                    "beginning_time": row["beginning_time"],
+                    "ending_time": row["ending_time"],
+                    "duration": row["duration"],
+                    "room": row["room"],
+                    "notes": row["notes"],
+                })
+        # convert dict to list for json
+        result_list = list(batches.values())
+        
+        return {"success": True, "batches": result_list}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
+
+
 
 def get_batch_volunteers(batch_ID: str, requester_ID: str):
     if not batch_ID:
