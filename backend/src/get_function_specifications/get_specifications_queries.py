@@ -392,7 +392,6 @@ def get_all_applied_batches_of_sub(substitute_ID):
 
         if not result:
             return {"success": False, "error": "No applied batches found"}
-        # checked
         
         batches = {}
         for row in result:
