@@ -320,9 +320,15 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
                            JOIN Teacher AS T ON T.teacher_ID = A.teacher_ID
                            JOIN Class AS C ON C.class_ID = A.class_ID
                            JOIN School AS S ON S.school_ID = C.school_ID
-                           WHERE C.school_ID = ? AND A.status IN ('searching', 'pending')
+                           WHERE C.school_ID = ? 
+                            AND A.status IN ('searching', 'pending')
+                            AND A.batch_ID NOT IN (
+                                SELECT DISTINCT batch_ID
+                                FROM BatchVolunteers
+                                WHERE substitute_ID = ?
+                           )
                            ORDER BY A.date ASC, S.school_name, C.beginning_time
-                           ''', (school_ID,))
+                           ''', (school_ID, substitute_ID))
             result = cursor.fetchall()
 
             if not result:
