@@ -94,7 +94,7 @@ def update_batch_status(batch_ID):
     if new_status == "accepted" and not substitute_ID:
         return jsonify({"success": False, "error": "substitute_ID is required for accepting"}), 400
 
-    result = update_status_of_batch(batch_ID, teacher_ID, new_status, substitute_ID)
+    result = update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID)
 
     if not result["success"]:
         return jsonify(result), 400

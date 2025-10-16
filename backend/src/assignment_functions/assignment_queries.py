@@ -304,7 +304,7 @@ def update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID=None)
                         SELECT teacher_ID
                         FROM Batch
                         WHERE batch_ID = ?
-                       ''', (batch_ID))
+                       ''', (batch_ID,))
         result = cursor.fetchone()
         
         if result:
@@ -411,4 +411,4 @@ def update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID=None)
         return {"success": False, "error": str(e)}
     finally:
         conn.close()
-        
+
