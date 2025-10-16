@@ -2,7 +2,8 @@ from flask import Blueprint, request, jsonify
 from .get_specifications_queries import (get_teacher_classes_within_range, get_all_assignment_of_teacher,
                                          get_all_assignments_of_school, get_all_assignments_available_to_sub,
                                          get_all_schools_of_sub, get_assignments_accepted_by_sub_as_batch,
-                                         get_available_assignments_of_sub_as_batch, get_batch_volunteers)
+                                         get_available_assignments_of_sub_as_batch, get_batch_volunteers,
+                                         get_all_applied_batches_of_sub)
 
 get_specifications_bp = Blueprint("get_specifications_bp", __name__)
 
@@ -74,4 +75,11 @@ def api_get_batch_volunteers(batch_ID):
     if not result["success"]:
         status = 403 if result["error"] == "Access denied" else 400
         return jsonify(result), status
+    return jsonify(result), 200
+
+@get_specifications_bp.route("/api/get_specifications/get_applied_batches_of_substitute/<string:substitute_ID>", methods=["GET"])
+def api_get_applied_batches_of_substitute(substitute_ID):
+    result = get_all_applied_batches_of_sub(substitute_ID)
+    if not result["success"]:
+        return jsonify(result), 400
     return jsonify(result), 200
