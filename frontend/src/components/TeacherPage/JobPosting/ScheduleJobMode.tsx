@@ -109,7 +109,7 @@ export default function ScheduleJobMode({}) {
                         if (!excludedClasses.has(cls.class_ID)) {
                             allAssignments.push({
                                 class_ID: cls.class_ID,
-                                date: date,
+                                date: format(date, 'yyyy-MM-dd'),
                                 notes: assignmentNotes[cls.class_ID] || "",
                                 status: "searching"
                             });

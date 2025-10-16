@@ -22,7 +22,8 @@ export interface SubstitutionBE{
     date: string;
     school_name: string,
     teacher_email: string,
-    teacher_name: string
+    teacher_name: string,
+    batch_ID: string
 }
 
 
@@ -37,7 +38,8 @@ export interface SubstitutionFE{
     grade: string,
     subject: string,
     teacher_name: string,
-    status: 'searching' | 'pending' | 'accepted'
+    status: 'searching' | 'pending' | 'accepted',
+    batch_ID: string
 }
 
 export function cardContents(SubstitutionList: SubstitutionBE[], status: 'searching' | 'pending' | 'accepted'): SubstitutionFE[]{
@@ -62,7 +64,8 @@ export function cardContents(SubstitutionList: SubstitutionBE[], status: 'search
             grade: grade,
             subject: subject,
             teacher_name: teacher,
-            status: status
+            status: status,
+            batch_ID: substitution.batch_ID
 
         }
     })
@@ -79,41 +82,47 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
 
     const subID = getUserID()
 
-    useEffect(()=>{
-        const fetchAvailableSubs = async () =>{
-            try{
-                if (!subID) {
-                    setError('No Substitute ID found');
-                    setLoading(false);
-                    return;
-                }
-                
-                const response = await apiFunction(subID)
-
-                if (response && response.success){
-                    let status: 'searching' | 'pending' | 'accepted' = 'pending';
-                    
-                    if(apiFunction === get_batch_of_available_assignments_for_substitute){
-                        status = 'searching'
-                    }else if(apiFunction === get_batch_of_assignments_for_substitute){
-                        status = 'accepted'
-                    }else{
-                        status = 'pending'
-                    }
-                    const processed = cardContents(response.batches, status);
-                    setSubstitutions(processed)
-                }else{
-                    setError('Failed to fetch Substitutions');
-                }
-            }catch(error){
-                setError(`Error: ${error}`)
-            }finally {
+    const fetchAvailableSubs = async () => {
+        try{
+            if (!subID) {
+                setError('No Substitute ID found');
                 setLoading(false);
+                return;
             }
-     }
-     fetchAvailableSubs()
-    
+            
+            const response = await apiFunction(subID)
+
+            if (response && response.success){
+                let status: 'searching' | 'pending' | 'accepted' = 'pending';
+                
+                if(apiFunction === get_batch_of_available_assignments_for_substitute){
+                    status = 'searching'
+                }else if(apiFunction === get_batch_of_assignments_for_substitute){
+                    status = 'accepted'
+                }else{
+                    status = 'pending'
+                }
+                const processed = cardContents(response.batches, status);
+                setSubstitutions(processed)
+            }else{
+                setError('Failed to fetch Substitutions');
+            }
+        }catch(error){
+            setError(`Error: ${error}`)
+        }finally {
+            setLoading(false);
+        }
+    }
+
+    useEffect(()=>{
+        fetchAvailableSubs()
     },[apiFunction])
+
+    const handleApply = () => {
+        // Refresh the list after successful application
+        setLoading(true);
+        fetchAvailableSubs();
+    };
 
     if (loading) {
         return <Loader size="lg" center />;
@@ -121,7 +130,10 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
 
     return (
         <div>
-            <SubUpcomingsCardGallery substitutions={substitutions} />
+            <SubUpcomingsCardGallery 
+                substitutions={substitutions} 
+                onApply={handleApply}
+            />
         </div>
     );
 };

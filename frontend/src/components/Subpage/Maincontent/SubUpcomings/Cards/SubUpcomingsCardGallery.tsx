@@ -4,9 +4,10 @@ import { SubstitutionFE } from '../SubstituteJobLists';
 
 interface GalleryProps {
     substitutions: SubstitutionFE[];
+    onApply?: () => void
 }
 
-const SubUpcomingsCardGallery = ({ substitutions }: GalleryProps) => {
+const SubUpcomingsCardGallery = ({ substitutions, onApply }: GalleryProps) => {
     return (
         <div className={`${styles.galleryWrapper} ${styles.substituteCardRail}`}>  
             <div className={styles.substituteCardContainer}>
@@ -15,7 +16,9 @@ const SubUpcomingsCardGallery = ({ substitutions }: GalleryProps) => {
                         key={`${substitution.date}-${substitution.school_name}-${substitution.teacher_name}-${index}`}
                         className={styles.cardWrapper}
                     >
-                        <ClassCard substitution={substitution} />
+                        <ClassCard 
+                            substitution={substitution}
+                            onApply={onApply} />
                     </div>
                 ))}
             </div>

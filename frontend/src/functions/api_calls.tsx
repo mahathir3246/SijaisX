@@ -389,7 +389,7 @@ export async function add_substitute_to_assignment_list(assignmentID: string, su
     }
 }
 
-// Function to add substitute to batch of assignments
+// Function to add substitute to batch of assignments // this is the apply function for subs
 export async function add_substitute_to_batch(substituteID: string, batchID: string) {
     try {
         const response = await fetch(`${BASE_URL}/assignments/volunteer_batch`, {

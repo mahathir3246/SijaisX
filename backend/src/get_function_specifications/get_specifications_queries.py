@@ -313,16 +313,22 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
         batches = {}
         for (school_ID,) in school_IDs:
             cursor.execute('''
-                           SELECT S.school_name, A.date, C.subject, C.grade, 
+                           SELECT S.school_name, A.date, A.batch_ID, C.subject, C.grade, 
                            C.beginning_time, C.ending_time, C.duration, C.room,
                            A.notes, T.name AS teacher_name, T.email AS teacher_email
                            FROM Assignment AS A
                            JOIN Teacher AS T ON T.teacher_ID = A.teacher_ID
                            JOIN Class AS C ON C.class_ID = A.class_ID
                            JOIN School AS S ON S.school_ID = C.school_ID
-                           WHERE C.school_ID = ? AND A.status IN ('searching', 'pending')
+                           WHERE C.school_ID = ? 
+                            AND A.status IN ('searching', 'pending')
+                            AND A.batch_ID NOT IN (
+                                SELECT DISTINCT batch_ID
+                                FROM BatchVolunteers
+                                WHERE substitute_ID = ?
+                           )
                            ORDER BY A.date ASC, S.school_name, C.beginning_time
-                           ''', (school_ID,))
+                           ''', (school_ID, substitute_ID))
             result = cursor.fetchall()
 
             if not result:
@@ -336,6 +342,7 @@ def get_available_assignments_of_sub_as_batch(substitute_ID):
                         "school_name": row["school_name"],
                         "teacher_name": row["teacher_name"],
                         "teacher_email": row["teacher_email"],
+                        "batch_ID": row["batch_ID"],
                         "classes": []
                     }
                 batches[key]["classes"].append({
