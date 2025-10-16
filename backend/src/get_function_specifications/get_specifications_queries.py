@@ -270,6 +270,7 @@ def get_assignments_accepted_by_sub_as_batch(substitute_ID):
                     "school_name": row["school_name"],
                     "teacher_name": row["teacher_name"],
                     "teacher_email": row["teacher_email"],
+                    "batch_ID": row["batch_ID"] if "batch_ID" in row.keys() else None,
                     "classes": []
                 }
             batches[key]["classes"].append({
@@ -414,9 +415,6 @@ def get_all_applied_batches_of_sub(substitute_ID):
                 })
         # convert dict to list for json
         result_list = list(batches.values())
-
-        if not result_list:
-            return {"success": False, "error": "No batches found for this substitute"}
         
         return {"success": True, "batches": result_list}
     except Exception as e:
