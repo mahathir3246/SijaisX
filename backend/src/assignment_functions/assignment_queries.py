@@ -292,3 +292,123 @@ def volunteer_for_batch_assignment(substitute_ID, batch_ID):
 
     finally:
         conn.close()
+
+def update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID=None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # validate either teacher owns this batch or that they are a substitute coordinator
+        is_owner = False
+        cursor.execute('''
+                        SELECT teacher_ID
+                        FROM Batch
+                        WHERE batch_ID = ?
+                       ''', (batch_ID,))
+        result = cursor.fetchone()
+        
+        if result:
+            batch_teacher_ID = result[0]
+            if batch_teacher_ID == teacher_ID:
+                is_owner = True
+
+        is_subcoord = False
+        cursor.execute('''
+                        SELECT 1
+                        FROM SubstituteCoordinator
+                        WHERE teacher_ID = ?
+                       ''', (teacher_ID,))
+        if cursor.fetchone():
+            is_subcoord = True
+
+        if not (is_owner or is_subcoord):
+            return {"success": False, "error": "Unauthorized ID to make updates to this batch"}
+        
+        # update status of batch
+        if new_status == "accepted":
+            if not substitute_ID:
+                return {"success": False, "error": "No substitute specified"}
+
+            # check if sub volunteered // sanity check
+            cursor.execute('''
+                           SELECT 1
+                           FROM BatchVolunteers
+                           WHERE batch_ID = ? and substitute_ID = ?
+                           ''', (batch_ID, substitute_ID))
+            
+            if not cursor.fetchone():
+                return {"success": False, "error": "Substitute did not apply for this batch"}
+            
+            # accept and update all assignments in batch
+            cursor.execute('''
+                           UPDATE Assignment
+                           SET status = ?, substitute_ID = ?
+                           WHERE batch_ID = ?
+                           ''', (new_status, substitute_ID, batch_ID))
+            
+            # clear volunteer lists after accepting
+            cursor.execute('''
+                           DELETE FROM AssignmentVolunteers
+                           WHERE assignment_ID IN (
+                                                    SELECT assignment_ID
+                                                    FROM Assignment
+                                                    WHERE batch_ID = ?
+                                                )
+                           ''', (batch_ID,))
+            # clear batch volunteer list
+            cursor.execute('''
+                           DELETE FROM BatchVolunteers
+                           WHERE batch_ID = ?
+                           ''', (batch_ID,))
+            
+            #update batch status
+            cursor.execute('''
+                           UPDATE Batch
+                           SET status = ?
+                           WHERE batch_ID = ?
+                           ''', (new_status, batch_ID))
+            
+
+        # if revoked
+        elif new_status == "revoked":
+            # revoke all assignments in batch
+            cursor.execute('''
+                           UPDATE Assignment
+                           SET status = ?, substitute_ID = NULL
+                           WHERE batch_ID = ?
+                           ''', (new_status, batch_ID))
+            
+            # clear volunteer lists after revoking
+            cursor.execute('''
+                           DELETE FROM AssignmentVolunteers
+                           WHERE assignment_ID IN (
+                                                    SELECT assignment_ID
+                                                    FROM Assignment
+                                                    WHERE batch_ID = ?
+                                                )
+                           ''', (batch_ID,))
+            # clear batch volunteer list
+            cursor.execute('''
+                           DELETE FROM BatchVolunteers
+                           WHERE batch_ID = ?
+                           ''', (batch_ID,))
+            
+            #update batch status
+            cursor.execute('''
+                           UPDATE Batch
+                           SET status = ?
+                           WHERE batch_ID = ?
+                           ''', (new_status, batch_ID))
+        
+        # any other case
+        else:
+            return {"success": False, "error": "Invalid status change"}
+        
+        conn.commit()
+        return {"success": True, "message": f"Batch {batch_ID} updated to {new_status}"}
+    except Exception as e:
+        conn.rollback()
+        return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
+

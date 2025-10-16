@@ -452,6 +452,29 @@ export async function update_assignment_status(assignmentID: string, updatedData
     }
 }
 
+// Function to update batch status
+export async function update_batch_status(batchID: string, updatedData: {
+    teacher_ID: string;
+    status: string;
+    substitute_ID?: string; // Only required for "accepted"
+}) {
+    try {
+        const response = await fetch(`${BASE_URL}/assignments/batch/${batchID}/status`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedData),
+        });
+        if (!response.ok) {
+            console.error(`PATCH /assignments/batch/${batchID}/status failed:`, await response.text());
+            return null;
+        }
+        return await response.json();
+    } catch (err) {
+        console.error(`PATCH /assignments/batch/${batchID}/status failed:`, err);
+        return null;
+    }
+}
+
 // Function to update teacher profile
 export async function update_teacher_profile(teacherID: string, updatedData: {
     name?: string;
