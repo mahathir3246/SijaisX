@@ -4,7 +4,7 @@ import { useState,useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';
 import SubUpcomingsCardGallery from './Cards/SubUpcomingsCardGallery';
 import { Loader} from 'rsuite';
-import { get_batch_of_assignments_for_substitute, get_batch_of_available_assignments_for_substitute } from '../../../../functions/api_calls';
+import { get_batch_of_assignments_for_substitute, get_batch_of_available_assignments_for_substitute, get_all_applied_batches_of_substitute } from '../../../../functions/api_calls';
 
 //This is the way data comes in from backend
 export interface SubstitutionBE{
@@ -99,7 +99,7 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
                     status = 'searching'
                 }else if(apiFunction === get_batch_of_assignments_for_substitute){
                     status = 'accepted'
-                }else{
+                }else if(apiFunction === get_all_applied_batches_of_substitute){
                     status = 'pending'
                 }
                 const processed = cardContents(response.batches, status);
