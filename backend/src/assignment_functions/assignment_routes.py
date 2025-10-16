@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from .assignment_queries import volunteer_for_assignment, update_assignment_status, get_assignment_volunteers, create_batch_assignment, volunteer_for_batch_assignment
+from .assignment_queries import (volunteer_for_assignment, update_assignment_status, get_assignment_volunteers, 
+                                create_batch_assignment, volunteer_for_batch_assignment, update_status_of_batch)
 
 assignment_bp = Blueprint("assignment_bp", __name__)
 
@@ -71,6 +72,29 @@ def volunteer_batch():
         return jsonify({"success": False, "error": "Missing substitute_ID or batch_ID"}), 400
 
     result = volunteer_for_batch_assignment(substitute_ID, batch_ID)
+
+    if not result["success"]:
+        return jsonify(result), 400
+    return jsonify(result), 200
+
+@assignment_bp.route("/api/assignments/batch/<batch_ID>/status", methods=["PATCH"])
+def update_batch_status(batch_ID):
+    data = request.json
+    teacher_ID = data.get("teacher_ID")
+    new_status = data.get("status")
+    substitute_ID = data.get("substitute_ID")  # None if not accepting
+
+    # check
+    if not teacher_ID:
+        return jsonify({"success": False, "error": "teacher_ID is required"}), 400
+    if not new_status:
+        return jsonify({"success": False, "error": "status is required"}), 400
+
+    # Extra check
+    if new_status == "accepted" and not substitute_ID:
+        return jsonify({"success": False, "error": "substitute_ID is required for accepting"}), 400
+
+    result = update_status_of_batch(batch_ID, teacher_ID, new_status, substitute_ID)
 
     if not result["success"]:
         return jsonify(result), 400
