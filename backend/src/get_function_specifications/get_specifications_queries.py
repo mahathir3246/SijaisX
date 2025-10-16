@@ -374,6 +374,7 @@ def get_all_applied_batches_of_sub(substitute_ID):
     conn = get_db_connection()
     cursor = conn.cursor()
 
+
     try:
         cursor.execute('''
                        SELECT DISTINCT BV.batch_ID, S.school_name, A.date, C.subject, C.grade, 
@@ -391,6 +392,7 @@ def get_all_applied_batches_of_sub(substitute_ID):
 
         if not result:
             return {"success": False, "error": "No applied batches found"}
+        # checked
         
         batches = {}
         for row in result:
