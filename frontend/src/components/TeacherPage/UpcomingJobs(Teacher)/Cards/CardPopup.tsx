@@ -1,10 +1,11 @@
-import { Modal, Tag, Divider, SelectPicker } from 'rsuite';
+import { Modal, Tag, Divider } from 'rsuite';
 import { Assignment } from '../teacherUpcomings';
 import styles from "../../../../scss_stylings/TeacherAssignmentPopup.module.scss";
 import { useState, useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';
 import { get_batch_of_assignment_volunteers } from '../../../../functions/api_calls';
 import VolunteerSelector from './VolunteerSelector';
+import { delete_assignments } from '../../../../functions/api_calls';
 
 export interface AssignmentDetailsModalProps {
     open: boolean;
@@ -63,6 +64,20 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
     const formatTime = (timeString: string) => {
         return timeString.slice(11, 16);
     };
+
+    const handleDelete = async () => {
+        if (!assignment) return;
+        
+        const teacherID = getUserID();
+        if (!teacherID) return;
+        
+        if (confirm('Delete this assignment?')) {
+            const assignmentIds = assignment.classes.map(cls => cls.assignment_ID);
+            await delete_assignments(teacherID, assignmentIds);
+            onClose();
+        }
+    };
+
 
     if (!assignment) return null;
     
@@ -186,6 +201,13 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
 
             <Modal.Footer className={styles.footer}>
                 <div className={styles.actions}>
+                    <button 
+                        className={styles.deleteButton} 
+                        onClick={handleDelete}
+                        style={{ backgroundColor: '#e74c3c', color: 'white', marginRight: '10px' }}
+                    >
+                        Delete Assignment
+                    </button>
                     <button className={styles.closeButton} onClick={onClose}>
                         Close
                     </button>

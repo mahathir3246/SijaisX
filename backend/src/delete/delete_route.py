@@ -3,7 +3,7 @@ from .delete_query import delete_assignments_query, is_subcoord
 
 delete_bp = Blueprint("delete_bp", __name__)
 
-@delete_bp.route("/assignments/delete", methods=["DELETE"])
+@delete_bp.route("/api/assignments/delete", methods=["DELETE"])
 def delete_assignments():
     data = request.json
     assignment_ids = data.get("assignment_ids", [])

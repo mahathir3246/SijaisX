@@ -135,11 +135,27 @@ const TeacherUpcomings = () => {
         <div>
             <div className={`${styles.galleryWrapper} ${styles.cardRail}`}>  
                 <div className={styles.cardContainer}>
-                {jobs.map((job, index) => (
-                    <div key={`${job.date}-${job.beginning_time}-${job.subject}-${index}`}>
-                        <ClassCard job={job} onClick={() => handleCardClick(job)} />
-                    </div>
-                ))}
+                {jobs.map((job, index) => {
+                    const correspondingAssignment = assignments.find(assignment => {
+                        const dateObj = new Date(assignment.date);
+                        const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+                        const formattedDate = dateObj.toLocaleDateString('fi-FI');
+                        const date = `${formattedDate} ${dayOfWeek}`;
+                        const beginning_time = assignment.classes[0].beginning_time.slice(11,16);
+                        return date === job.date && beginning_time === job.beginning_time;
+                    });
+                    const assignmentIds = correspondingAssignment?.classes.map(c => c.assignment_ID) || [];
+                    
+                    return (
+                        <div key={`${job.date}-${job.beginning_time}-${job.subject}-${index}`}>
+                            <ClassCard 
+                                job={job} 
+                                onClick={() => handleCardClick(job)}
+                                assignmentIds={assignmentIds}
+                            />
+                        </div>
+                    );
+                })}
                 </div>
 
                 <AssignmentDetailsModal 
@@ -153,8 +169,8 @@ const TeacherUpcomings = () => {
               onRowClick={(rowData) => handleCardClick(rowData)}
               data={jobs}
               autoHeight
-              style={{ marginTop: 20,     /* 10 px space above the table    */
-                    minHeight: 280 }}  /* never shrink below 280 px      */>
+              style={{ marginTop: 20,
+                    minHeight: 280 }}>
 
 
                 <Column flexGrow={2}>
