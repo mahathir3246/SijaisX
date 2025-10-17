@@ -34,6 +34,13 @@
   font-weight: bold;
 }
 
+.delete {
+  cursor: pointer;
+  margin-top: 0.75rem;
+  font-weight: bold;
+  background-color: red;
+}
+
 .galleryWrapper { 
   padding: 0 .5rem;
   margin: 1rem 0; /* adds top and bottom margin */

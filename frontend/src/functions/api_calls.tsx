@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api";
+const BASE_URL = "http://localhost:5001/api";
 
 async function fetchData<T>(url: string): Promise<T | null> {
     try {

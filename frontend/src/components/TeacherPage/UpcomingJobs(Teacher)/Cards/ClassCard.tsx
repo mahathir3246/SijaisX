@@ -1,6 +1,8 @@
 import { Panel, TagProps,Tag } from "rsuite";
 import styles from "../../../../scss_stylings/card.module.scss"
 import { Job } from "../teacherUpcomings";
+import { getUserID } from "../../../../functions/auth";
+import { delete_assignments } from "../../../../functions/api_calls";
 
 
 
@@ -21,9 +23,22 @@ const statusGradient: Record<Job['status'], string> = {
 }
 type ClassCardProps = { 
     job: Job;
-    onClick: () => void };
+    onClick: () => void;
+    assignmentIds?: string[]; };
+    
 
-export default function ClassCard({ job, onClick }: ClassCardProps) {
+export default function ClassCard({ job, onClick, assignmentIds }: ClassCardProps) {
+    const handleDelete = async(e: React.MouseEvent) => {   
+        e.stopPropagation(); // Prevent card click  
+        if (!assignmentIds || assignmentIds.length === 0) return;
+        
+        const teacherID = getUserID();
+        if (!teacherID) return;
+        
+        if (confirm(`Delete assignment on ${job.date}?`)) {
+            await delete_assignments(teacherID, assignmentIds);
+        }
+    };
     return(
         <Panel
             bordered
@@ -46,6 +61,13 @@ export default function ClassCard({ job, onClick }: ClassCardProps) {
                     color={statusColour[job.status]}
                 >
                     {job.status}
+                </Tag>
+                <Tag
+                    size="sm"
+                    className={styles.delete}
+                    onClick={handleDelete}
+                >
+                    Delete Assignment?
                 </Tag>
                 {job.status === 'Pending' && (
                     <div style={{ 
