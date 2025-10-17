@@ -1,6 +1,9 @@
-import { Modal, Tag, Divider } from 'rsuite';
+import { Modal, Tag, Divider, SelectPicker } from 'rsuite';
 import { Assignment } from '../teacherUpcomings';
 import styles from "../../../../scss_stylings/TeacherAssignmentPopup.module.scss";
+import { useState, useEffect } from 'react';
+import { getUserID } from '../../../../functions/auth';
+import { get_batch_of_assignment_volunteers } from '../../../../functions/api_calls';
 
 export interface AssignmentDetailsModalProps {
     open: boolean;
@@ -8,9 +11,48 @@ export interface AssignmentDetailsModalProps {
     assignment: Assignment | null;
 }
 
+interface Volunteer {
+    substitute_ID: string;
+    name: string;
+    email: string;
+}
 
 export default function AssignmentDetailsModal({ open, onClose, assignment }: AssignmentDetailsModalProps) {
     if (!assignment) return null;
+    const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
+    const [selectedVolunteer, setSelectedVolunteer] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const fetchVolunteers = async () => {
+        if (!assignment) return;
+        
+        setLoading(true);
+        try {
+            const teacherID = getUserID();
+            if (!teacherID) {
+                throw new Error('No teacher ID found');
+            }
+
+            // Check if assignment has a batch_ID
+            if (assignment.batch_ID) {
+                // Use batch volunteers API
+                const response = await get_batch_of_assignment_volunteers(assignment.batch_ID, teacherID);
+                if (response && response.volunteers) {
+                    setVolunteers(response.volunteers);
+                }
+            }
+        } catch (error) {
+            console.error('Error fetching volunteers:', error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (open && assignment && assignment.status === 'pending') {
+            fetchVolunteers();
+        }
+    }, [open, assignment]);
 
     const formatDate = (dateString: string) => {
         const dateObj = new Date(dateString);
@@ -83,7 +125,54 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
                             ))}
                         </div>
                     </div>
+                    {assignment.status === 'pending' && (
+                        <>
+                            <Divider className={styles.divider} />
+                            <div className={styles.applicantsSection}>
+                                <h4 className={styles.sectionTitle}>
+                                    Applicants ({volunteers.length})
+                                </h4>
+                                
+                                {loading ? (
+                                    <div style={{ textAlign: 'center', padding: '20px' }}>
+                                        Loading applicants...
+                                    </div>
+                                ) : volunteers.length > 0 ? (
+                                    <div className={styles.applicantsList}>
+                                        <div style={{ marginBottom: '16px' }}>
+                                            <label style={{ 
+                                                display: 'block', 
+                                                marginBottom: '8px', 
+                                                fontWeight: '600',
+                                            }}>
+                                                Available substitutes:
+                                            </label>
+                                            <SelectPicker
+                                                data={volunteers.map(vol => ({
+                                                    label: `${vol.name} (${vol.email})`,
+                                                    value: vol.substitute_ID
+                                                }))}
+                                                value={selectedVolunteer}
+                                                onChange={setSelectedVolunteer}
+                                                placeholder="Choose a substitute..."
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div style={{ 
+                                        textAlign: 'center', 
+                                        padding: '20px',
+                                        fontStyle: 'italic'
+                                    }}>
+                                        No applicants yet
+                                    </div>
+                                )}
+                            </div>
+                        </>
+                    )}
 
+                    <Divider className={styles.divider} />
                     <Divider className={styles.divider} />
 
                     <div className={styles.summarySection}>

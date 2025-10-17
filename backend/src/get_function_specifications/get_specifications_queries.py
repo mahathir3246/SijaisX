@@ -52,7 +52,7 @@ def get_all_assignment_of_teacher(teacher_ID):
                        SELECT A.assignment_ID, A.date, A.notes,
                               C.subject, C.grade, C.beginning_time, 
                               C.ending_time, C.room, S.school_name, SUB.name AS substitute_name,
-                              A.status
+                              A.status, A.batch_ID
                               FROM Assignment AS A
                               JOIN Class AS C ON A.class_ID = C.class_ID
                               JOIN School AS S ON C.school_ID = S.school_ID
@@ -74,7 +74,10 @@ def get_all_assignment_of_teacher(teacher_ID):
                 grouped_result[date] = {
                     "date": date,
                     "classes": [],
-                    "status": "accepted"    # use for priority list overlap
+                    "status": "accepted",    # use for priority list overlap
+                    "batch_ID": row[11]  # Make sure this line is added
+
+                    
                 }
 
             grouped_result[date]["classes"].append({  # add the info for the date

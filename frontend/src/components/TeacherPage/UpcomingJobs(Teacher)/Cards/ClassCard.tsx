@@ -47,6 +47,15 @@ export default function ClassCard({ job, onClick }: ClassCardProps) {
                 >
                     {job.status}
                 </Tag>
+                {job.status === 'Pending' && (
+                    <div style={{ 
+                        marginTop: '8px', 
+                        fontSize: '1rem', 
+                        fontStyle: 'italic'
+                    }}>
+                        Click to see applicants
+                    </div>
+                )}
             </div>
         </Panel>
     )

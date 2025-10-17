@@ -13,6 +13,7 @@ const { Column, HeaderCell, Cell } = Table;
 
 export interface Assignment {
   date: string;
+  batch_ID?: string;
   classes: {
     assignment_ID: string;
     subject: string;
