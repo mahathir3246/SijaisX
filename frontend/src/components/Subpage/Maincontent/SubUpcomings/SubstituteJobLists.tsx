@@ -2,7 +2,8 @@
 import '../../../../scss_stylings/card.module.scss';
 import { useState,useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';
-import SubUpcomingsCardGallery from './Cards/SubUpcomingsCardGallery';
+import styles from "../../../../scss_stylings/card.module.scss";
+import ClassCard from './Cards/ClassCard';
 import { Loader} from 'rsuite';
 import { get_batch_of_assignments_for_substitute, get_batch_of_available_assignments_for_substitute, get_all_applied_batches_of_substitute } from '../../../../functions/api_calls';
 
@@ -130,10 +131,20 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
 
     return (
         <div>
-            <SubUpcomingsCardGallery 
-                substitutions={substitutions} 
-                onApply={handleApply}
-            />
+            <div className={`${styles.galleryWrapper} ${styles.substituteCardRail}`}>  
+                <div className={styles.substituteCardContainer}>
+                    {substitutions.map((substitution, index) => (
+                        <div
+                            key={`${substitution.date}-${substitution.school_name}-${substitution.teacher_name}-${index}`}
+                            className={styles.cardWrapper}
+                        >
+                            <ClassCard 
+                                substitution={substitution}
+                                onApply={handleApply} />
+                        </div>
+                    ))}
+                </div>
+            </div>
         </div>
     );
 };

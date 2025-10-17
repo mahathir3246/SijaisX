@@ -1,42 +1,45 @@
 
 import { Table } from 'rsuite';
-import '../../../scss_stylings/teacher.module.scss';
-import { useState , useEffect} from 'react';
+import '../../../scss_stylings/card.module.scss'
+import styles from "../../../scss_stylings/card.module.scss"
+import AssignmentDetailsModal from './Cards/CardPopup';
+import { useEffect, useState } from 'react';
+import { get_all_assignments_of_teacher } from '../../../functions/api_calls';
 import { getUserID } from '../../../functions/auth';
-import { get_all_assignments_of_school, get_teacher_info } from '../../../functions/api_calls';
-import { TeacherData } from './teacherProfile';
+import ClassCard from './Cards/ClassCard';
+
+
 const { Column, HeaderCell, Cell } = Table;
 
-export interface SchoolAssignment {
+export interface Assignment {
   date: string;
   classes: {
     assignment_ID: string;
     subject: string;
     grade: string;
+    notes?: string;
     beginning_time: string;
     ending_time: string;
     room: string;
     school_name: string;
     substitute_name: string | null;
-    teacher_name:string
   }[];
   status: 'accepted' | 'pending' | 'searching' | 'revoked';
 }
 
-
-export interface SchoolJob {
-  teacher_name: string
+export interface Job {
   date: string,
   beginning_time : string,
   ending_time: string,
   grade: string,
   subject: string,
   status: string,
+  classCount: number
 }
 
-export function schoolContentFetcher(assignmentList:SchoolAssignment[]): SchoolJob[]{
+
+export function cardContentfetcher(assignmentList:Assignment[]): Job[]{
   return assignmentList.map(assignment =>{
-    const teacher_name = [...new Set(assignment.classes.map(cls => cls.teacher_name))].join(", ");
     const grades = [...new Set(assignment.classes.map(c=> c.grade))].join(",")
     const subjects = [...new Set(assignment.classes.map(c=> c.subject))].join(",")
     const dateObj = new Date(assignment.date);
@@ -47,20 +50,24 @@ export function schoolContentFetcher(assignmentList:SchoolAssignment[]): SchoolJ
     const beginning_time = assignment.classes[0].beginning_time.slice(11,16)
     const ending_time= assignment.classes[assignment.classes.length-1].ending_time.slice(11,16)
     return{
-      teacher_name:teacher_name,
       date:date,
       beginning_time:beginning_time,
       ending_time:ending_time,
       grade: grades,
       subject: subjects,
-      status:status
+      status:status,
+      classCount: assignment.classes.length
     }
 
   })
 }
 
-const SchoolUpcomings = () => {
-    const [jobs,setJobs] = useState<SchoolJob[]>([]);
+
+const TeacherUpcomings = () => {
+    const [jobs,setJobs] = useState<Job[]>([]);
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
+    const [modalOpen, setModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -69,24 +76,15 @@ const SchoolUpcomings = () => {
             try {
                 const teacherID = getUserID();
                 if (!teacherID) {
-                    setError('No school ID found');
-                    return;
-                }
-                const teacherInfo = await get_teacher_info(teacherID) as TeacherData;
-                if (!teacherInfo) {
-                    setError('Failed to fetch teacher info');
+                    setError('No teacher ID found');
                     return;
                 }
 
-                const schoolID = teacherInfo.school_ID;
-                if (!schoolID) {
-                    setError('No school ID found for teacher');
-                    return;
-                }
-                const response = await get_all_assignments_of_school(schoolID);
+                const response = await get_all_assignments_of_teacher(teacherID);
 
                 if(response && response.success){
-                    const processedJobs = schoolContentFetcher(response.assignments)
+                    setAssignments(response.assignments);
+                    const processedJobs = cardContentfetcher(response.assignments)
                     setJobs(processedJobs)
                 }else {
                     setError('Failed to fetch assignments');
@@ -100,8 +98,33 @@ const SchoolUpcomings = () => {
         fetchAssignments()
     },[])
 
+    const handleCardClick = (job: Job) => {
+        // Find the corresponding assignment from the original data
+        const correspondingAssignment = assignments.find(assignment => {
+            const dateObj = new Date(assignment.date);
+            const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+            const formattedDate = dateObj.toLocaleDateString('fi-FI');
+            const date = `${formattedDate} ${dayOfWeek}`;
+            const beginning_time = assignment.classes[0].beginning_time.slice(11,16);
+            
+            return date === job.date && beginning_time === job.beginning_time;
+        });
+
+        if (correspondingAssignment) {
+            setSelectedAssignment(correspondingAssignment);
+            setModalOpen(true);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedAssignment(null);
+    };
+
+
+
     if (loading) {
-        return <div>Loading assignments...</div>;
+    return <div>Loading assignments...</div>;
     }
 
     if (error) {
@@ -109,10 +132,29 @@ const SchoolUpcomings = () => {
     }
     return(
         <div>
+            <div className={`${styles.galleryWrapper} ${styles.cardRail}`}>  
+                <div className={styles.cardContainer}>
+                {jobs.map((job, index) => (
+                    <div key={`${job.date}-${job.beginning_time}-${job.subject}-${index}`}>
+                        <ClassCard job={job} onClick={() => handleCardClick(job)} />
+                    </div>
+                ))}
+                </div>
+
+                <AssignmentDetailsModal 
+                    open={modalOpen} 
+                    onClose={handleCloseModal} 
+                    assignment={selectedAssignment} 
+                />
+            </div>
             <Table 
-              bordered data={jobs}
+              bordered 
+              onRowClick={(rowData) => handleCardClick(rowData)}
+              data={jobs}
               autoHeight
-              style={{ minHeight: 280 }}>
+              style={{ marginTop: 20,     /* 10 px space above the table    */
+                    minHeight: 280 }}  /* never shrink below 280 px      */>
+
 
                 <Column flexGrow={2}>
                     <HeaderCell>Date</HeaderCell>
@@ -128,20 +170,18 @@ const SchoolUpcomings = () => {
                     <HeaderCell>To</HeaderCell>
                     <Cell dataKey='ending_time'/>
                 </Column>
-
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Teacher</HeaderCell>
-                    <Cell dataKey="teacher_name"/>               
+                
+                <Column flexGrow={1}>
+                    <HeaderCell>Amount</HeaderCell>
+                    <Cell dataKey='classCount'/>
                 </Column>
-
 
                 <Column flexGrow={2}>
                     <HeaderCell>Class</HeaderCell>
                     <Cell dataKey="grade"/>               
                 </Column>
 
-                <Column flexGrow={2}>
+                <Column flexGrow={3}>
                     <HeaderCell>Subject</HeaderCell>
                     <Cell dataKey="subject" />
                 </Column>
@@ -156,4 +196,4 @@ const SchoolUpcomings = () => {
     )
 };
 
-export default SchoolUpcomings;
+export default TeacherUpcomings;

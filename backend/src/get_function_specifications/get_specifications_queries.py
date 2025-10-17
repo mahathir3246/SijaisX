@@ -79,6 +79,7 @@ def get_all_assignment_of_teacher(teacher_ID):
 
             grouped_result[date]["classes"].append({  # add the info for the date
                 "assignment_ID": row[0],
+                "notes": row[2],
                 "subject": row[3],
                 "grade": row[4],
                 "beginning_time": row[5],
