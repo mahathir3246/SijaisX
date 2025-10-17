@@ -4,6 +4,7 @@ import styles from "../../../../scss_stylings/TeacherAssignmentPopup.module.scss
 import { useState, useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';
 import { get_batch_of_assignment_volunteers } from '../../../../functions/api_calls';
+import VolunteerSelector from './VolunteerSelector';
 
 export interface AssignmentDetailsModalProps {
     open: boolean;
@@ -18,9 +19,7 @@ interface Volunteer {
 }
 
 export default function AssignmentDetailsModal({ open, onClose, assignment }: AssignmentDetailsModalProps) {
-    if (!assignment) return null;
     const [volunteers, setVolunteers] = useState<Volunteer[]>([]);
-    const [selectedVolunteer, setSelectedVolunteer] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
     const fetchVolunteers = async () => {
@@ -65,6 +64,8 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
         return timeString.slice(11, 16);
     };
 
+    if (!assignment) return null;
+    
     return (
         <Modal size="lg" open={open} onClose={onClose} className={styles.modal}>
             <Modal.Header className={styles.header}>
@@ -137,35 +138,13 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
                                     <div style={{ textAlign: 'center', padding: '20px' }}>
                                         Loading applicants...
                                     </div>
-                                ) : volunteers.length > 0 ? (
-                                    <div className={styles.applicantsList}>
-                                        <div style={{ marginBottom: '16px' }}>
-                                            <label style={{ 
-                                                display: 'block', 
-                                                marginBottom: '8px', 
-                                                fontWeight: '600',
-                                            }}>
-                                                Available substitutes:
-                                            </label>
-                                            <SelectPicker
-                                                data={volunteers.map(vol => ({
-                                                    label: `${vol.name} (${vol.email})`,
-                                                    value: vol.substitute_ID
-                                                }))}
-                                                value={selectedVolunteer}
-                                                onChange={setSelectedVolunteer}
-                                                placeholder="Choose a substitute..."
-                                                style={{ width: '100%' }}
-                                            />
-                                        </div>
-                                    </div>
                                 ) : (
-                                    <div style={{ 
-                                        textAlign: 'center', 
-                                        padding: '20px',
-                                        fontStyle: 'italic'
-                                    }}>
-                                        No applicants yet
+                                    <div className={styles.applicantsList}>
+                                        <VolunteerSelector 
+                                            volunteers={volunteers}
+                                            batchID={assignment.batch_ID || ''}
+                                            onAcceptSuccess={onClose}
+                                        />
                                     </div>
                                 )}
                             </div>
