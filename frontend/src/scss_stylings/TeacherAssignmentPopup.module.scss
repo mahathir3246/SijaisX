@@ -1,0 +1,229 @@
+.modal {
+  .header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 8px 8px 0 0;
+    
+    h4 {
+      margin: 0;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+  }
+
+  .body {
+    padding: 0;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+
+  .content {
+    padding: 24px;
+  }
+
+  .headerSection {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .dateTitle {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  .statusTag {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+
+  .divider {
+    margin: 20px 0;
+    border-color: #e5e5e5;
+  }
+
+  .sectionTitle {
+    margin-bottom: 16px;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  .classesSection {
+    margin-bottom: 24px;
+  }
+
+  .classesList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .classCard {
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #f9f9f9;
+    transition: box-shadow 0.2s ease;
+
+    &:hover {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .classInfo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .infoRow {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .infoLabel {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+  }
+
+  .infoValue {
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  .timeInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .substituteInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #e8f5e8;
+    border-radius: 4px;
+    border-left: 3px solid #28a745;
+  }
+
+  .substituteName {
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .notesInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #fff3cd;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
+  }
+
+  .notesText {
+    color: #856404;
+    font-style: italic;
+  }
+
+  .summarySection {
+    margin-top: 24px;
+  }
+
+  .summaryGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .summaryItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+  }
+
+  .summaryLabel {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+  }
+
+  .summaryValue {
+    color: #333;
+    font-size: 0.95rem;
+  }
+
+  .footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #e5e5e5;
+    border-radius: 0 0 8px 8px;
+    padding: 16px 24px;
+  }
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  .closeButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .modal {
+    .content {
+      padding: 16px;
+    }
+
+    .headerSection {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .classInfo {
+      grid-template-columns: 1fr;
+    }
+
+    .summaryGrid {
+      grid-template-columns: 1fr;
+    }
+
+    .dateTitle {
+      font-size: 1.25rem;
+    }
+  }
+}

@@ -1,10 +1,10 @@
 import NavigationBar from './Navbar/teacherPageNavBar';
 import Footer from './Footer/teacherFooter';
 import globalstyles from "../../scss_stylings/globals.module.scss";
-import TeacherProfile from './MainContent/teacherProfile';
-import TeacherUpcomings from './MainContent/TeacherUpcomings/teacherUpcomings';
-import SchoolUpcomings from './MainContent/schoolupcomings';
-import CalendarCard from './MainContent/Calendar';
+import TeacherProfile from './TeacherProfile/teacherProfile';
+import TeacherUpcomings from './UpcomingJobs(Teacher)/teacherUpcomings';
+import SchoolUpcomings from './UpcomingJobs(School)/schoolupcomings';
+import CalendarCard from './Calendar/Calendar';
 import teacherstyles from "../../scss_stylings/teacher.module.scss"
 import { Grid,Col, Row, Button } from 'rsuite';
 import { Plus } from '@rsuite/icons';
