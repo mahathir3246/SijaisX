@@ -44,7 +44,8 @@ export interface SubstitutionFE{
 }
 
 export function cardContents(SubstitutionList: SubstitutionBE[], status: 'searching' | 'pending' | 'accepted'): SubstitutionFE[]{
-    return SubstitutionList.map(substitution =>{
+    return SubstitutionList
+        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).map(substitution =>{
         const school = substitution.school_name
         const dateObj = new Date(substitution.date);
         const dayOfWeek= dateObj.toLocaleDateString("en-US", {weekday: "long"});

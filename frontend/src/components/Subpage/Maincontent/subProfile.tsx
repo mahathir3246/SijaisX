@@ -10,7 +10,7 @@ import {
 } from 'rsuite';
 import subStyles from '../../../scss_stylings/substitute.module.scss';
 import { getUserID } from '../../../functions/auth';
-import { get_substitute_info , update_substitute_profile} from '../../../functions/api_calls';
+import { get_substitute_info , update_substitute_profile, get_all_schools_of_substitute} from '../../../functions/api_calls';
 import { useEffect, useState } from 'react';
 
 const SubstituteProfile = () => {
@@ -23,9 +23,9 @@ const SubstituteProfile = () => {
     email:string,
     password:string,
     experience: number,
-
   }
   const [substitute, setSubstitute] = useState<SubstituteData | null>(null);
+  const [schools, setSchools] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -135,6 +135,29 @@ const SubstituteProfile = () => {
     getSubstituteData()
   } , []); 
 
+  useEffect(() => {
+  const getSchoolsData = async () => {
+    try {
+      const substitute_id = getUserID();
+      
+      if (!substitute_id || substitute_id === "") {
+        return;
+      }
+
+      const schoolsResponse = await get_all_schools_of_substitute(substitute_id);
+      
+      if (schoolsResponse && schoolsResponse.success) {
+        const schoolNames = schoolsResponse.schools?.map((school: any) => school.school_name) || [];
+        setSchools(schoolNames);
+      }
+    } catch (err) {
+      console.error('Error fetching schools:', err);
+    }
+  };
+  
+  getSchoolsData();
+}, []);
+
   if (loading) {
   return (
     <Panel bordered className={subStyles.profileContainer}>
@@ -178,10 +201,10 @@ const SubstituteProfile = () => {
                     <div>
                       <label>Name:</label>
                       <Input 
-                      className={subStyles.name}
-                      value={name}
-                      onChange={setName}
-                      placeholder='Enter your name'
+                        className={subStyles.name}
+                        value={name}
+                        onChange={setName}
+                        placeholder='Enter your name'
                       />
                     </div>
                     <div>
@@ -196,10 +219,10 @@ const SubstituteProfile = () => {
                     <div>
                     <label>email:</label>
                     <Input 
-                    className={subStyles.phone_number}
-                    value={email}
-                    onChange={setEmail}
-                    placeholder='Enter your email'
+                      className={subStyles.phone_number}
+                      value={email}
+                      onChange={setEmail}
+                      placeholder='Enter your email'
                     />
                     </div>
                     </>
@@ -210,6 +233,7 @@ const SubstituteProfile = () => {
                   <h3 className={subStyles.name}>{substitute.name || 'Unknown Teacher'}</h3>
                   <p className={subStyles.email}>{substitute.email || 'No email'}</p>
                   <p className={subStyles.phone}>{substitute.phone_number || 'No phone'}</p>
+                  <p className={subStyles.schools}><strong>Schools:</strong> {schools.length > 0 ? schools.join(', ') : 'No schools assigned'}</p>
                   </>
                   }
 

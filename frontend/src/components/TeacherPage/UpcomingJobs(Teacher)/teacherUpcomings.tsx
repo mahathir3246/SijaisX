@@ -40,7 +40,9 @@ export interface Job {
 
 
 export function cardContentfetcher(assignmentList:Assignment[]): Job[]{
-  return assignmentList.map(assignment =>{
+  return assignmentList
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).
+  map(assignment =>{
     const grades = [...new Set(assignment.classes.map(c=> c.grade))].join(",")
     const subjects = [...new Set(assignment.classes.map(c=> c.subject))].join(",")
     const dateObj = new Date(assignment.date);

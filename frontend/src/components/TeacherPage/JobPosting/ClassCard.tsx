@@ -160,7 +160,7 @@ export default function ClassCard({
                                 onChange={value=>{
                                     const datePart = editedValues.ending_time.slice(0, 10)  // Use editedValues, not beginning_time
                                     const newTime = `${datePart} ${value}`
-                                    handelEdit("beginning_time", newTime)
+                                    handelEdit("ending_time", newTime)
                                 }}
                             />
                         </div>

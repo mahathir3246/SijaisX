@@ -33,14 +33,21 @@ export interface SchoolJob {
   grade: string,
   subject: string,
   status: string,
-  classCount: number
+  classCount: number,
+  substitute_name: string | null
 }
 
 export function schoolContentFetcher(assignmentList:SchoolAssignment[]): SchoolJob[]{
-  return assignmentList.map(assignment =>{
+  return assignmentList
+  .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()).
+  map(assignment =>{
     const teacher_name = [...new Set(assignment.classes.map(cls => cls.teacher_name))].join(", ");
     const grades = [...new Set(assignment.classes.map(c=> c.grade))].join(",")
     const subjects = [...new Set(assignment.classes.map(c=> c.subject))].join(",")
+    const substitute_name = assignment.classes[0].substitute_name;
+    const displaySubstitute = substitute_name && substitute_name.trim() !== "" 
+      ? substitute_name 
+      : "No substitute yet";
     const dateObj = new Date(assignment.date);
     const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' }); // Gets "Monday", "Tuesday", etc.
     const formattedDate = dateObj.toLocaleDateString('fi-FI'); // Gets "DD.MM.YYYY"
@@ -56,7 +63,9 @@ export function schoolContentFetcher(assignmentList:SchoolAssignment[]): SchoolJ
       grade: grades,
       subject: subjects,
       status:status,
-      classCount: assignment.classes.length
+      classCount: assignment.classes.length,
+      substitute_name: displaySubstitute
+      
     }
 
   })
@@ -169,6 +178,11 @@ const SchoolUpcomings = () => {
                 <Column flexGrow={2}>
                     <HeaderCell>Teacher</HeaderCell>
                     <Cell dataKey="teacher_name"/>               
+                </Column>
+
+                <Column flexGrow={2}>
+                    <HeaderCell>Substitute</HeaderCell>
+                    <Cell dataKey="substitute_name"/>               
                 </Column>
 
 
