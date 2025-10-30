@@ -79,6 +79,7 @@ interface SubUpcomingsProps{
 }
 const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_for_substitute }: SubUpcomingsProps) => {
     const [substitutions, setSubstitutions] = useState<SubstitutionFE[]>([])
+    const [originalData, setOriginalData] = useState<SubstitutionBE[]>([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -106,6 +107,7 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
                 }
                 const processed = cardContents(response.batches, status);
                 setSubstitutions(processed)
+                setOriginalData(response.batches)
             }else{
                 setError('Failed to fetch Substitutions');
             }
@@ -141,6 +143,7 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
                         >
                             <ClassCard 
                                 substitution={substitution}
+                                originalData={originalData[index]}
                                 onApply={handleApply} />
                         </div>
                     ))}
