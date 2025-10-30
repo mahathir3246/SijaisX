@@ -599,8 +599,9 @@ export async function cancel_application_for_batch(substitute_ID: string, batch_
         });
 
         if (!response.ok) {
-            console.error(`POST /cancel_accepted_batch_application failed:`, await response.text());
-            return null;
+            const errorText = await response.text();
+            console.error(`POST /cancel_accepted_batch_application failed:`, errorText);
+            return { success: false, error: errorText, status: response.status };
         }
 
         return await response.json();
@@ -610,6 +611,7 @@ export async function cancel_application_for_batch(substitute_ID: string, batch_
         return null;
     }
 }
+
 // login function
 export async function login(email: string, password: string) {
     try {
