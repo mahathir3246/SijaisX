@@ -589,6 +589,29 @@ export async function delete_assignments(
 }
 
 
+// cancel application for a batch by a sub who was accepted for the batch
+export async function cancel_application_for_batch(substitute_ID: string, batch_ID: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/cancel_accepted_batch_application`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ substitute_ID, batch_ID }),
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error(`POST /cancel_accepted_batch_application failed:`, errorText);
+            return { success: false, error: errorText, status: response.status };
+        }
+
+        return await response.json();
+
+    } catch (err) {
+        console.error(`POST /cancel_accepted_batch_application failed:`, err);
+        return null;
+    }
+}
+
 // login function
 export async function login(email: string, password: string) {
     try {

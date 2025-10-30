@@ -99,7 +99,7 @@ def create_database():
         assignment_ID TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         notes TEXT,
-        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')), 
+        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked', 'completed')), 
         class_ID TEXT NOT NULL,
         teacher_ID TEXT NOT NULL,
         substitute_ID TEXT,
@@ -145,7 +145,7 @@ def create_database():
     CREATE TABLE Batch (
         batch_ID TEXT PRIMARY KEY,
         creation_date TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')) DEFAULT 'searching',
+        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked', 'completed')) DEFAULT 'searching',
         teacher_ID TEXT NOT NULL,
         FOREIGN KEY (teacher_ID) REFERENCES Teacher(teacher_ID)
     );

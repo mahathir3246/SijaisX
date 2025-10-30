@@ -87,7 +87,7 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
         if assignment_teacher_ID != teacher_ID:
             return {"success": False, "error": "Unauthorized"}
 
-        if new_status == "accepted":
+        if new_status == "completed":
             if not substitute_ID:
                 return {"success": False, "error": "No substitute specified"}
 
@@ -99,7 +99,7 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
             if not cursor.fetchone():
                 return {"success": False, "error": "Substitute did not apply for this assignment"}
 
-            # Accept sub
+            # update status of assignment
             cursor.execute('''
                 UPDATE Assignment
                 SET status = ?, substitute_ID = ?
@@ -111,6 +111,25 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
                 DELETE FROM AssignmentVolunteers
                 WHERE assignment_ID = ?
             ''', (assignment_ID,))
+
+        elif new_status == "accepted":
+            if not substitute_ID:
+                return {"success": False, "error": "No substitute specified"}
+
+            # Confirm sub actually applied
+            cursor.execute('''
+                SELECT 1 FROM AssignmentVolunteers
+                WHERE assignment_ID = ? AND substitute_ID = ?
+            ''', (assignment_ID, substitute_ID))
+            if not cursor.fetchone():
+                return {"success": False, "error": "Substitute did not apply for this assignment"}
+
+            # update status of assignment
+            cursor.execute('''
+                UPDATE Assignment
+                SET status = ?, substitute_ID = ?
+                WHERE assignment_ID = ?
+            ''', (new_status, substitute_ID, assignment_ID))
 
         elif new_status == "revoked":
             # Revoke previously accepted sub
@@ -137,7 +156,6 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
 
     finally:
         conn.close()
-
 
 
 # Get assignment volunteers
@@ -325,7 +343,7 @@ def update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID=None)
             return {"success": False, "error": "Unauthorized ID to make updates to this batch"}
         
         # update status of batch
-        if new_status == "accepted":
+        if new_status == "completed":
             if not substitute_ID:
                 return {"success": False, "error": "No substitute specified"}
 
@@ -367,8 +385,35 @@ def update_status_of_batch(teacher_ID, batch_ID, new_status, substitute_ID=None)
                            SET status = ?
                            WHERE batch_ID = ?
                            ''', (new_status, batch_ID))
-            
 
+        # if accepeted
+        elif new_status == "accepted":
+            if not substitute_ID:
+                return {"success": False, "error": "No substitute specified"}
+
+            # check if sub volunteered // sanity check
+            cursor.execute('''
+                           SELECT 1
+                           FROM BatchVolunteers
+                           WHERE batch_ID = ? and substitute_ID = ?
+                           ''', (batch_ID, substitute_ID))
+            
+            if not cursor.fetchone():
+                return {"success": False, "error": "Substitute did not apply for this batch"}
+            
+            # accept and update all assignments in batch
+            cursor.execute('''
+                           UPDATE Assignment
+                           SET status = ?, substitute_ID = ?
+                           WHERE batch_ID = ?
+                           ''', (new_status, substitute_ID, batch_ID))
+            
+            #update batch status
+            cursor.execute('''
+                           UPDATE Batch
+                           SET status = ?
+                           WHERE batch_ID = ?
+                           ''', (new_status, batch_ID))
         # if revoked
         elif new_status == "revoked":
             # revoke all assignments in batch

@@ -11,6 +11,7 @@ from .edit_class_functions.edit_class_routes import edit_class_info_bp
 from .get_function_specifications.get_specifications_routes import get_specifications_bp
 from .sub_to_volunteer.sub_to_volunteer_route import sub_to_list_bp
 from .delete.delete_route import delete_bp
+from .cancel_application.cancel_application_routes import cancel_application_bp
 
 
 app = Flask(__name__)
@@ -76,6 +77,7 @@ app.register_blueprint(edit_class_info_bp)
 app.register_blueprint(get_specifications_bp)
 app.register_blueprint(sub_to_list_bp)
 app.register_blueprint(delete_bp)
+app.register_blueprint(cancel_application_bp)
 
 @app.route("/api/login", methods=['POST'])
 def password_check():
