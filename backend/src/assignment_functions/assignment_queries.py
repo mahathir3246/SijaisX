@@ -158,7 +158,6 @@ def update_assignment_status(assignment_ID, teacher_ID, new_status, substitute_I
         conn.close()
 
 
-
 # Get assignment volunteers
 def get_assignment_volunteers(assignment_ID):
     conn = get_db_connection()
