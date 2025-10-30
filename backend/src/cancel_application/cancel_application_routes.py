@@ -8,5 +8,7 @@ def cancel_accepted_batch_application():
     data = request.json
     substitute_ID = data.get("substitute_ID")
     batch_ID = data.get("batch_ID")
+    if not substitute_ID or not batch_ID:
+        return jsonify({"success": False, "error": "substitute_ID and batch_ID are required"}), 400
     result = cancel_confirmed_application_for_batch(substitute_ID, batch_ID)
     return jsonify(result)
