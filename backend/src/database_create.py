@@ -99,7 +99,7 @@ def create_database():
         assignment_ID TEXT PRIMARY KEY,
         date TEXT NOT NULL,
         notes TEXT,
-        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked')), 
+        status TEXT NOT NULL CHECK (status IN ('accepted', 'pending', 'searching', 'revoked', 'completed')), 
         class_ID TEXT NOT NULL,
         teacher_ID TEXT NOT NULL,
         substitute_ID TEXT,
