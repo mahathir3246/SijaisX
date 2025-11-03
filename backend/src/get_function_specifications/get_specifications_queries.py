@@ -473,3 +473,41 @@ def get_batch_volunteers(batch_ID: str, requester_ID: str):
         return {"success": False, "error": str(e)}
     finally:
         conn.close()
+
+def get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime = None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('''
+            SELECT batch_ID
+            FROM Batch
+            WHERE teacher_ID = ? 
+                AND status = 'completed'
+        ''', (teacher_ID,))
+        completed_batches = [row['batch_ID'] for row in cursor.fetchall()]
+        
+        if current_datetime:
+            cursor.execute('''
+                SELECT b.batch_ID
+                FROM Batch AS b
+                JOIN Assignment AS a ON b.batch_ID = a.batch_ID
+                JOIN Class AS c ON a.class_ID = c.class_ID
+                WHERE b.teacher_ID = ?
+                    AND b.status != 'completed'
+                GROUP BY b.batch_ID
+                HAVING MAX(datetime(c.ending_time)) <= datetime(?)
+            ''', (teacher_ID, current_datetime))
+            by_time_completed = [row['batch_ID'] for row in cursor.fetchall()]
+        else:
+            by_time_completed = []
+        
+        all_batches = list(set(completed_batches + by_time_completed))
+        return all_batches
+    
+    except Exception as e:
+        print("Error in get_batch_of_completed_or_after_current_time")
+        return {"success": False, "error": str(e)}
+    
+    finally:
+        conn.close()
