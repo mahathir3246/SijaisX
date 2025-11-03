@@ -66,7 +66,7 @@ def get_all_assignment_of_teacher(teacher_ID):
         
         # create a result list
         grouped_result = {}
-        priority = {"searching": 3, "revoked": 2, "pending": 1, "accepted": 0}
+        priority = {"searching": 4, "revoked": 3, "pending": 2, "accepted": 1, "completed": 0}
 
         for row in result:
             date = row[1]
@@ -135,7 +135,7 @@ def get_all_assignments_of_school(school_ID):
         
         # create result list
         grouped_result = {}
-        priority = {"searching": 3, "revoked": 2, "pending": 1, "accepted": 0}
+        priority = {"searching": 4, "revoked": 3, "pending": 2, "accepted": 1, "completed": 0}
 
         for row in result:
             date = row[1]
