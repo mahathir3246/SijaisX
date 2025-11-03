@@ -503,10 +503,10 @@ def get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime =
             by_time_completed = []
         
         all_batches = list(set(completed_batches + by_time_completed))
-        return all_batches
+        return {"success": True, "batches": all_batches}
     
     except Exception as e:
-        print("Error in get_batch_of_completed_or_after_current_time")
+        print("Error in get_batch_of_completed_and_after_current_time", e)
         return {"success": False, "error": str(e)}
     
     finally:
