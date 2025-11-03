@@ -249,6 +249,24 @@ export async function get_batch_of_available_assignments_for_substitute(substitu
     }
 }
 
+// Function to get completed batches <- Granit tämä
+export async function get_completed_batches_for_teacher(teacher_ID: string, current_datetime: string) {
+    const url = `${BASE_URL}/get_specifications/get_completed_batches/${teacher_ID}?current_datetime=${encodeURIComponent(current_datetime)}`;
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            console.error(`Failed to fetch completed batches: ${response.statusText}`);
+            return null; 
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Database connection error:", error);
+        return null;
+    }
+}
+
+
 // Functions to post data to API
 export async function create_teacher(teacherData: {
     name: string;

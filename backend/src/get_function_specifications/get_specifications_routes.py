@@ -1,9 +1,7 @@
 from flask import Blueprint, request, jsonify
-from .get_specifications_queries import (get_teacher_classes_within_range, get_all_assignment_of_teacher,
-                                         get_all_assignments_of_school, get_all_assignments_available_to_sub,
-                                         get_all_schools_of_sub, get_assignments_accepted_by_sub_as_batch,
-                                         get_available_assignments_of_sub_as_batch, get_batch_volunteers,
-                                         get_all_applied_batches_of_sub)
+from .get_specifications_queries import *
+from datetime import datetime
+
 
 get_specifications_bp = Blueprint("get_specifications_bp", __name__)
 
@@ -83,3 +81,26 @@ def api_get_applied_batches_of_substitute(substitute_ID):
     if not result["success"]:
         return jsonify(result), 400
     return jsonify(result), 200
+
+@get_specifications_bp.route("/api/get_specifications/get_completed_batches/<string:teacher_ID>", methods=["GET"])
+def api_get_completed_batches(teacher_ID):
+    try:
+        current_datetime = request.args.get("current_datetime")
+        if current_datetime:
+            try:
+                current_datetime_obj = datetime.fromisoformat(
+                    current_datetime.replace("Z", "+00:00")
+                )
+                # SQLite-compatible format: "YYYY-MM-DD HH:MM:SS"
+                current_datetime = current_datetime_obj.strftime("%Y-%m-%d %H:%M:%S")
+
+            except ValueError:
+                return jsonify({"success": False,"error": f"Invalid datetime format: {current_datetime}"}), 400
+
+        batches = get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime)
+        return jsonify({"success": True, "batches": batches}), 200
+
+    except Exception as e:
+        print("Error in api_get_completed_batches:", e)
+        return jsonify({"success": False, "error": str(e)}), 500
+

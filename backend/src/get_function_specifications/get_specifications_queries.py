@@ -66,7 +66,7 @@ def get_all_assignment_of_teacher(teacher_ID):
         
         # create a result list
         grouped_result = {}
-        priority = {"searching": 3, "revoked": 2, "pending": 1, "accepted": 0}
+        priority = {"searching": 4, "revoked": 3, "pending": 2, "accepted": 1, "completed": 0}
 
         for row in result:
             date = row[1]
@@ -135,7 +135,7 @@ def get_all_assignments_of_school(school_ID):
         
         # create result list
         grouped_result = {}
-        priority = {"searching": 3, "revoked": 2, "pending": 1, "accepted": 0}
+        priority = {"searching": 4, "revoked": 3, "pending": 2, "accepted": 1, "completed": 0}
 
         for row in result:
             date = row[1]
@@ -471,5 +471,43 @@ def get_batch_volunteers(batch_ID: str, requester_ID: str):
     
     except Exception as e:
         return {"success": False, "error": str(e)}
+    finally:
+        conn.close()
+
+def get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime = None):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute('''
+            SELECT batch_ID
+            FROM Batch
+            WHERE teacher_ID = ? 
+                AND status = 'completed'
+        ''', (teacher_ID,))
+        completed_batches = [row['batch_ID'] for row in cursor.fetchall()]
+        
+        if current_datetime:
+            cursor.execute('''
+                SELECT b.batch_ID
+                FROM Batch AS b
+                JOIN Assignment AS a ON b.batch_ID = a.batch_ID
+                JOIN Class AS c ON a.class_ID = c.class_ID
+                WHERE b.teacher_ID = ?
+                    AND b.status != 'completed'
+                GROUP BY b.batch_ID
+                HAVING MAX(datetime(c.ending_time)) <= datetime(?)
+            ''', (teacher_ID, current_datetime))
+            by_time_completed = [row['batch_ID'] for row in cursor.fetchall()]
+        else:
+            by_time_completed = []
+        
+        all_batches = list(set(completed_batches + by_time_completed))
+        return {"success": True, "batches": all_batches}
+    
+    except Exception as e:
+        print("Error in get_batch_of_completed_and_after_current_time", e)
+        return {"success": False, "error": str(e)}
+    
     finally:
         conn.close()
