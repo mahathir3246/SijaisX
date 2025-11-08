@@ -9,7 +9,6 @@ __pycache__/
 *.pyd
 
 # Database file
-main_database.db
 database.db
 
 # Node modules

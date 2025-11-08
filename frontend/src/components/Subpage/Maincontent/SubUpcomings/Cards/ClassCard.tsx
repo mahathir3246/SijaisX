@@ -1,12 +1,14 @@
 import { Panel, Button } from "rsuite";
 import styles from "../../../../../scss_stylings/card.module.scss";
-import { SubstitutionFE } from '../SubstituteJobLists';
+import { SubstitutionFE, SubstitutionBE } from '../SubstituteJobLists';
 import { add_substitute_to_batch } from '../../../../../functions/api_calls';
 import { getUserID } from '../../../../../functions/auth';
 import { useState } from 'react';
+import SubstitutionDetailsModal from './SubPopup';
 
 interface ClassCardProps {
     substitution: SubstitutionFE;
+    originalData: SubstitutionBE;
     onApply?: () => void;  // Callback to refresh the list after applying
 }
 
@@ -16,9 +18,10 @@ const statusGradient = {
     accepted: styles.g2   // Green gradient for accepted jobs
 }
 
-const ClassCard = ({ substitution, onApply }: ClassCardProps) => {
+const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
     const [isApplying, setIsApplying] = useState(false);
     const [applied, setApplied] = useState(false);
+    const [showPopup, setShowPopup] = useState(false);
     
     const handleApply = async () => {
         const substituteID = getUserID();
@@ -52,7 +55,9 @@ const ClassCard = ({ substitution, onApply }: ClassCardProps) => {
         <Panel
             bordered
             bodyFill
-            className={`${styles.card} ${statusGradient[substitution.status]}`} 
+            className={`${styles.card} ${statusGradient[substitution.status]}`}
+            onClick={() => setShowPopup(true)}
+            style={{ cursor: 'pointer' }}
         >
             <div className={styles.inner}>
                 <h5 className={styles.title}>{substitution.school_name}</h5>
@@ -86,6 +91,12 @@ const ClassCard = ({ substitution, onApply }: ClassCardProps) => {
                     </Button>
                 )}
             </div>
+            <SubstitutionDetailsModal
+                open={showPopup}
+                onClose={() => setShowPopup(false)}
+                substitution={originalData}
+                status={substitution.status}
+            />
         </Panel>
     );
 };
