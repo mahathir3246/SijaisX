@@ -14,3 +14,9 @@ database.db
 # Node modules
 node_modules/
 frontend/node_modules/
+
+# macOS Finder metadata
+.DS_Store
+
+# wget download logs
+wget-log
