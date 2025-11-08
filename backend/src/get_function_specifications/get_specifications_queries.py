@@ -249,7 +249,7 @@ def get_assignments_accepted_by_sub_as_batch(substitute_ID):
     try:
         #get all the assignments of a sub and arrange them based on date and school
         cursor.execute('''
-                       SELECT S.school_name, A.date, C.subject, C.grade, 
+                       SELECT S.school_name, A.date,A.batch_ID, C.subject, C.grade, 
                        C.beginning_time, C.ending_time, C.duration, C.room,
                        A.notes, T.name AS teacher_name, T.email AS teacher_email
                        FROM Assignment AS A
@@ -267,7 +267,7 @@ def get_assignments_accepted_by_sub_as_batch(substitute_ID):
         batches = {}
 
         for row in result:
-            key = (row["date"], row["school_name"],row["teacher_name"])
+            key = (row["date"], row["school_name"],row["teacher_name"], row["batch_ID"])
             if key not in batches:
                 batches[key] = {
                     "date": row["date"],

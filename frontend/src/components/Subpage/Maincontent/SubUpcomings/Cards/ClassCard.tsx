@@ -1,7 +1,7 @@
 import { Panel, Button } from "rsuite";
 import styles from "../../../../../scss_stylings/card.module.scss";
 import { SubstitutionFE, SubstitutionBE } from '../SubstituteJobLists';
-import { add_substitute_to_batch } from '../../../../../functions/api_calls';
+import { add_substitute_to_batch, cancel_application_for_batch } from '../../../../../functions/api_calls';
 import { getUserID } from '../../../../../functions/auth';
 import { useState } from 'react';
 import SubstitutionDetailsModal from './SubPopup';
@@ -20,10 +20,11 @@ const statusGradient = {
 
 const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
     const [isApplying, setIsApplying] = useState(false);
-    const [applied, setApplied] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const [isWithdrawing, setIsWithdrawing] = useState(false);
     
-    const handleApply = async () => {
+    const handleApply = async (e: React.MouseEvent) => {
+        e.stopPropagation();
         const substituteID = getUserID();
         if (!substituteID) {
             alert('You must be logged in to apply');
@@ -35,7 +36,6 @@ const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
             const result = await add_substitute_to_batch(substituteID, substitution.batch_ID);
             
             if (result && result.success) {
-                setApplied(true);
                 alert('Successfully applied for this job!');
                 if (onApply) {
                     onApply();  // Refresh the list
@@ -48,6 +48,30 @@ const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
             alert('An error occurred while applying');
         } finally {
             setIsApplying(false);
+        }
+    };
+
+    const handleWithdraw = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const substituteID = getUserID();
+        if (!substituteID) {
+            alert('You must be logged in to withdraw');
+            return;
+        }
+        try{
+            console.log('withdraw', { substituteID, batchID: substitution.batch_ID });
+            const result = await cancel_application_for_batch(substituteID, substitution.batch_ID);
+            if (result && result.success) {
+                alert('Successfully withdrawn from this job!');
+
+            } else {
+                alert(result?.error || 'Failed to withdraw from this job');
+            }
+        } catch (error) {
+            console.error('Error withdrawing from job:', error);
+            alert('An error occurred while withdrawing');
+        } finally {
+            setIsWithdrawing(false);
         }
     };
 
@@ -69,7 +93,7 @@ const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
                 <span className={styles.smallertext}>{substitution.grade}</span>
                 
                 {/* Only show Apply button for jobs with 'searching' status */}
-                {substitution.status === 'searching' && !applied && (
+                {substitution.status === 'searching' && (
                     <Button 
                         appearance="primary" 
                         onClick={handleApply}
@@ -81,13 +105,25 @@ const ClassCard = ({ substitution, originalData, onApply }: ClassCardProps) => {
                     </Button>
                 )}
                 
-                {applied && (
+                {substitution.status === 'pending' && (
                     <Button 
-                        appearance="ghost" 
+                        appearance="primary" 
                         disabled
                         style={{ marginTop: '10px', width: '100%' }}
                     >
-                        Applied ✓
+                        Applied
+                    </Button>
+                )}
+
+                {substitution.status === 'accepted' && (
+                    <Button 
+                        appearance="primary" 
+                        style={{ marginTop: '10px', width: '100%' }}
+                        onClick={handleWithdraw}
+                        loading={isWithdrawing}
+                        disabled={isWithdrawing}
+                    >
+                        Withdraw Application
                     </Button>
                 )}
             </div>
