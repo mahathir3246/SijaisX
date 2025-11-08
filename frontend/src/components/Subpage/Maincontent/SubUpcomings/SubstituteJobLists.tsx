@@ -5,7 +5,7 @@ import { getUserID } from '../../../../functions/auth';
 import styles from "../../../../scss_stylings/card.module.scss";
 import ClassCard from './Cards/ClassCard';
 import { Loader} from 'rsuite';
-import { get_batch_of_assignments_for_substitute, get_batch_of_available_assignments_for_substitute, get_all_applied_batches_of_substitute } from '../../../../functions/api_calls';
+import { get_batch_of_accepted_assignments_for_substitute, get_batch_of_available_assignments_for_substitute, get_all_applied_batches_of_substitute } from '../../../../functions/api_calls';
 
 //This is the way data comes in from backend
 export interface SubstitutionBE{
@@ -100,10 +100,10 @@ const SubstituteJobLists = ({ apiFunction = get_batch_of_available_assignments_f
                 
                 if(apiFunction === get_batch_of_available_assignments_for_substitute){
                     status = 'searching'
-                }else if(apiFunction === get_batch_of_assignments_for_substitute){
-                    status = 'accepted'
                 }else if(apiFunction === get_all_applied_batches_of_substitute){
                     status = 'pending'
+                }else if(apiFunction === get_batch_of_accepted_assignments_for_substitute){
+                    status = 'accepted'
                 }
                 const processed = cardContents(response.batches, status);
                 setSubstitutions(processed)
