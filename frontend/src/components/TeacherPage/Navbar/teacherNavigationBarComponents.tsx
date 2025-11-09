@@ -1,14 +1,12 @@
 "use client";
 import ResponsiveNav from "@rsuite/responsive-nav";
 import NoticeIcon from '@rsuite/icons/Notice';
-import { useState } from "react";
 import { Link } from 'react-router-dom';
 import navigationStyles from "../../../scss_stylings/navbar.module.scss";
 import ExitIcon from "@rsuite/icons/Exit";
 import { logout } from "../../../functions/auth";
 
 const NavigationBarComponents = () => {
-    const [openModal, setOpenModal] = useState(false); // State to control modal visibility
     const handleLogOut = () => {
       logout();
     }
@@ -24,9 +22,19 @@ const NavigationBarComponents = () => {
         <ResponsiveNav.Item className={navigationStyles.navLink}>
           <p className={navigationStyles.navItemSubContainer}>Kalenteri</p>
         </ResponsiveNav.Item>
+
+        <ResponsiveNav.Item 
+        as={Link}
+        to="/opettajille/past-jobs"
+        className={navigationStyles.navLink}
+        >
+          <p className={navigationStyles.navItemSubContainer}>Past Jobs</p>
+        </ResponsiveNav.Item>
+
         <ResponsiveNav.Item className={navigationStyles.navLink}>
           <p className={navigationStyles.navItemSubContainer}>Raportit</p>
         </ResponsiveNav.Item>
+
         <ResponsiveNav.Item
           as={Link}
           to="/"
@@ -37,6 +45,7 @@ const NavigationBarComponents = () => {
                 Ilmoitukset
             </span> 
         </ResponsiveNav.Item>
+
         <ResponsiveNav.Item
           as={Link}
           to="/"
@@ -44,6 +53,7 @@ const NavigationBarComponents = () => {
         >
           <span className={navigationStyles.navItemSubContainer}>Sijaislista</span>
         </ResponsiveNav.Item>
+        
         <ResponsiveNav.Item
           className={`${navigationStyles.logOut} ${navigationStyles.navLink}`}
           onClick={handleLogOut}

@@ -7,6 +7,7 @@ import FullOpePage from "./components/TeacherPage/FullOpePage";
 import RegisterPage from "./components/Register/registerpage"
 import LogIn from './components/Login/login';
 import ProtectedRoute from './components/Login/ProtectedRoute';
+import PastJobsPage from "./components/TeacherPage/PastJobs/PastJobsPage";
 
 function App() {
   return (
@@ -31,6 +32,15 @@ function App() {
             <ProtectedRoute
               requiredRole='teacher'
               pageElemenTtoShow = {<FullOpePage/>}/>
+          }
+        />
+
+        <Route
+          path="/opettajille/past-jobs"
+          element={
+            <ProtectedRoute
+              requiredRole='teacher'
+              pageElemenTtoShow = {<PastJobsPage/>}/>
           }
         />
       </Routes>
