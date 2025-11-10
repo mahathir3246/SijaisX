@@ -4,8 +4,8 @@ import "./App.css";
 import FullHomePage from "./components/HomePage/FullHomePage";
 import FullSijaisPage from "./components/Subpage/FullSubPage";
 import FullOpePage from "./components/TeacherPage/FullOpePage";
-import RegisterPage from "./components/Register/registerpage"
-import Login from './components/Login/loginForm';
+import RegisterPage from './components/Register/Register';
+import Login from './components/Login/login';
 import ProtectedRoute from './components/Login/ProtectedRoute';
 import TeacherNewPage from "./components/TeacherNew/FullOpePage";
 

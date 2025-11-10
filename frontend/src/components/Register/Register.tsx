@@ -5,7 +5,8 @@ import {
 } from 'rsuite';
 import CameraRetroIcon from '@rsuite/icons/legacy/CameraRetro';
 
-import styles from '../../scss_stylings/register.module.scss';
+import '../Login/Auth.scss';
+import Logo from '../../Logo/Logo';
 import { schoolsByLocation } from '../data/schoolLists';
 import { locations } from '../data/cities';
 import { create_teacher, create_substitute } from '../../functions/api_calls';
@@ -32,8 +33,9 @@ type FormData = {
   experience?: number;
   profile?: File[];
   picture? : File[];
+  highest_education?: string;
 }; 
-export default function RegistrationForm() {
+export default function RegisterPage() {
   const [formValue, setFormValue] = useState<FormData>({
   role: undefined,
   first_name: "",
@@ -48,7 +50,8 @@ export default function RegistrationForm() {
   grade: [],
   experience: 0,
   profile: [],
-  picture: []
+  picture: [],
+  highest_education: ""
 });
   const[formError,setFormError] = useState({});
   const formRef = useRef<FormInstance>(null);
@@ -97,7 +100,8 @@ export default function RegistrationForm() {
           phone_number: phone ?? "",
           email: email ?? "",
           password: password ?? "",
-          experience: experience ?? 0
+          experience: experience ?? 0,
+          highest_education: formValue.highest_education ?? null,
         };
 
         const subcreate = create_substitute(payloadForSub);
@@ -180,177 +184,193 @@ export default function RegistrationForm() {
       */
       experience: Schema.Types.NumberType(),
       profile: Schema.Types.ArrayType(),
-      picture: Schema.Types.ArrayType()
+      picture: Schema.Types.ArrayType(),
+      highest_education: Schema.Types.StringType()
+      .isRequired('Select your highest education')
+      .addRule(
+        (value) =>
+          ['Peruskoulu','Lukio','Ammattikoulu','Ammattikorkeakoulu','Alempi korkeakoulu','Ylempi korkeakoulu']
+            .includes(value),
+        'Invalid option'
+      ),
     })
   });
 
+  const educationOptions = [
+    { label: 'Peruskoulu', value: 'Peruskoulu' },
+    { label: 'Lukio', value: 'Lukio' },
+    { label: 'Ammattikoulu', value: 'Ammattikoulu' },
+    { label: 'Ammattikorkeakoulu', value: 'Ammattikorkeakoulu' },
+    { label: 'Alempi korkeakoulu', value: 'Alempi korkeakoulu' },
+    { label: 'Ylempi korkeakoulu', value: 'Ylempi korkeakoulu' },
+  ];
+
 
   return (
-    <div className={styles.pageBg}>
-      <FlexboxGrid justify="center" className={styles.teacherRegisterWrapper}>
-        <FlexboxGrid.Item colspan={24}>
-          <Panel bordered shaded className={styles.registerPanel} header="Registration Form">
-
-            <Form
-              fluid
-              ref={formRef} 
-              onSubmit={handleSubmit}
-              formValue={formValue}
-              onChange={(value) => setFormValue(value as FormData)}
-              onCheck={setFormError}
-              model={validationModel}
-              checkTrigger="blur"
-            >
-              {/* Select role */}
-              <Form.Group>
-                <Form.ControlLabel>Registering as</Form.ControlLabel>
-
-                <Form.Control
-                  name="role"                       // must match schema key
-                  accepter={SelectPicker}           // tell RSuite which widget to render
-                  data={roleOptions}
-                  placeholder="Choose…"             // shows “Choose…” when empty
-                  block
-                />
-              </Form.Group>
-
-              {/* Common fields */}
+    <div className="auth-container">
+      <div className="auth-card auth-card--wide">
+        <div className="auth-header">
+          <div className="auth-logo">
+            <Logo size="medium" />
+          </div>
+          <h1>Create Account</h1>
+          <p>Join the modern substitute teaching platform</p>
+        </div>
+  
+        <div className="auth-panel">
+          <Form
+            fluid
+            ref={formRef}
+            formValue={formValue}
+            onChange={(value) => setFormValue(value as FormData)}
+            onCheck={setFormError}
+            model={validationModel}
+            onSubmit={handleSubmit}
+            checkTrigger="blur"
+          >
+            <Form.Group>
+              <Form.ControlLabel>Registering as</Form.ControlLabel>
+              <Form.Control
+                name="role"
+                accepter={SelectPicker}
+                data={roleOptions}
+                placeholder="Choose…"
+                block
+              />
+            </Form.Group>
+  
+            <div className="form-row">
               <Form.Group>
                 <Form.ControlLabel>First Name</Form.ControlLabel>
                 <Form.Control name="first_name" />
               </Form.Group>
-
+  
               <Form.Group>
                 <Form.ControlLabel>Last Name</Form.ControlLabel>
                 <Form.Control name="last_name" />
               </Form.Group>
-
-              <Form.Group>
-                <Form.ControlLabel>Email</Form.ControlLabel>
-                <Form.Control name="email" type="email" placeholder='youremail@example.com' />
-              </Form.Group>
-
-              <Form.Group>
-                <Form.ControlLabel>Phone</Form.ControlLabel>
-                <Form.Control name="phone" placeholder="+358 40 1234567" />
-              </Form.Group>
-
+            </div>
+  
+            <Form.Group>
+              <Form.ControlLabel>Email</Form.ControlLabel>
+              <Form.Control name="email" type="email" placeholder="you@school.fi" />
+            </Form.Group>
+  
+            <Form.Group>
+              <Form.ControlLabel>Phone</Form.ControlLabel>
+              <Form.Control name="phone" placeholder="+358 40 1234567" />
+            </Form.Group>
+  
+            <div className="form-row">
               <Form.Group>
                 <Form.ControlLabel>Password</Form.ControlLabel>
-                <Form.Control name="password" type="password" autoComplete="new-password" placeholder='********'/>
+                <Form.Control
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Min. 8 characters"
+                />
               </Form.Group>
-
+  
               <Form.Group>
                 <Form.ControlLabel>Confirm Password</Form.ControlLabel>
-                <Form.Control name="confirmPassword" type="password" autoComplete="new-password" placeholder='********'/>
+                <Form.Control
+                  name="confirmPassword"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="Re-enter password"
+                />
               </Form.Group>
-              {isTeacher && (
-                <>
+            </div>
+  
+            {isTeacher && (
+              <>
                 <Form.Group>
                   <Form.ControlLabel>Location</Form.ControlLabel>
                   <Form.Control
-                    name="location"                         // it must match the schema key
-                    accepter={TagPicker}                    // tell Form which component to render
+                    name="location"
+                    accepter={TagPicker}
                     data={locations}
                     value={formValue.location}
-                    onChange={(vals) => {
-                      setFormValue({ ...formValue, location: vals });
-                    }}
-                    placeholder="Selct the location where the school is situated"
+                    onChange={(vals) => setFormValue({ ...formValue, location: vals })}
+                    placeholder="Select the location where the school is situated"
                     block
                   />
                 </Form.Group>
-
+  
                 <Form.Group>
                   <Form.ControlLabel>School</Form.ControlLabel>
                   <Form.Control
                     accepter={TagPicker}
-                    name = "school"
-                    data = {filteredSchools}
-                    value = {formValue.school}
+                    name="school"
+                    data={filteredSchools}
+                    value={formValue.school}
                     onChange={(selected) => setFormValue({ ...formValue, school: selected })}
                     block
                     disabled={!selectedCities.length}
-                    placeholder = "Pick a city"
+                    placeholder={
+                      selectedCities.length ? 'Select the school you work in' : 'Pick a city first'
+                    }
                   />
                 </Form.Group>
-                </>
-              )}
-              {/*Substitute-only fields */}
-              {isSubstitute && (
-                <>
-                  {/*
-                  <Form.Group>
-                    <Form.ControlLabel>Subject(s)</Form.ControlLabel>
-                    <Form.Control
-                      accepter={TagPicker}
-                      name="subject" 
-                      data={subjectOptions}
-                      value={formValue.subject}
-                      onChange={(selected) => setFormValue({ ...formValue, subject: selected })} 
-                      block
-                      placeholder = "Pick the subject(s) you teach"
-                    />
-                  </Form.Group>
+              </>
+            )}
+  
+            {isSubstitute && (
+              <>
+                <Form.Group>
+                  <Form.ControlLabel>Experience (Years)</Form.ControlLabel>
+                  <Form.Control name="experience" type="number" />
+                </Form.Group>
 
-                  <Form.Group>
-                    <Form.ControlLabel>Grade(s)</Form.ControlLabel>
-                    <Form.Control
-                      accepter={TagPicker}
-                      name="grade" 
-                      data={luokkasteOptions}
-                      value={formValue.grade}
-                      onChange={(selected) => setFormValue({ ...formValue, grade: selected })} 
-                      block
-                      placeholder = "Pick the grade you teach in"
-                    />
-                  </Form.Group>
-
-                  
-
-                  */}
-                  
-
-                  <Form.Group>
-                    <Form.ControlLabel>Experience (Years)</Form.ControlLabel>
-                    <Form.Control name="experience" type="number" />
-                  </Form.Group>
-
-
-                  <Form.Group>
-                    <Form.ControlLabel>Profile Picture</Form.ControlLabel>
-                    <Uploader multiple listType="picture" action="//jsonplaceholder.typicode.com/posts/">
-                      <button>
-                        <CameraRetroIcon />
-                      </button>
-                    </Uploader>
-                  </Form.Group>
-
-                  <Form.Group>
-                    <Form.ControlLabel>Attach a file(CV, cover letter etc..)</Form.ControlLabel>
-                    <Uploader action="//jsonplaceholder.typicode.com/posts/">
-                      <Button>Select files...</Button>
-                    </Uploader>
-                  </Form.Group>
-                </>
-              )}
-
-              {/* Submit */}
-              <Form.Group>
-                <Button
-                  appearance="primary"
-                  type="submit"
-                  block
-                  disabled={Object.keys(formError).length > 0}
-                >
-                  Register
-                </Button>
-              </Form.Group>
-            </Form>
-
-          </Panel>
-        </FlexboxGrid.Item>
-      </FlexboxGrid>
+                <Form.Group>
+                  <Form.ControlLabel>Highest Education</Form.ControlLabel>
+                  <Form.Control
+                    name="highest_education"
+                    accepter={SelectPicker}
+                    data={educationOptions}
+                    placeholder="Select your highest degree"
+                    block
+                  />
+                </Form.Group>
+  
+                <Form.Group>
+                  <Form.ControlLabel>Profile Picture</Form.ControlLabel>
+                  <Uploader multiple listType="picture" action="//jsonplaceholder.typicode.com/posts/">
+                    <button>
+                      <CameraRetroIcon />
+                    </button>
+                  </Uploader>
+                </Form.Group>
+  
+                <Form.Group>
+                  <Form.ControlLabel>Attach a file (CV, cover letter, etc.)</Form.ControlLabel>
+                  <Uploader action="//jsonplaceholder.typicode.com/posts/">
+                    <Button>Select files…</Button>
+                  </Uploader>
+                </Form.Group>
+              </>
+            )}
+  
+            <Form.Group>
+              <Button
+                appearance="primary"
+                type="submit"
+                block
+                disabled={Object.keys(formError).length > 0}
+              >
+                Create Account
+              </Button>
+            </Form.Group>
+          </Form>
+  
+          <div className="auth-footer">
+            <span>
+              Already have an account? <a href="/login">Sign in</a>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
