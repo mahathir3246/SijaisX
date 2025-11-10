@@ -1,0 +1,30 @@
+.sijais-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20px;
+    
+    &__image {
+      height: auto;
+      object-fit: contain;
+    }
+    
+    &--small {
+      .sijais-logo__image {
+        height: 32px;
+      }
+    }
+    
+    &--medium {
+      .sijais-logo__image {
+        height: 48px;
+      }
+    }
+    
+    &--large {
+      .sijais-logo__image {
+        height: 40px;
+      }
+    }
+  }
+  

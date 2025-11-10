@@ -1,9 +1,9 @@
-import { Panel, Form, Button, Input, Divider, useToaster, Message } from 'rsuite';
-import styles from '../../scss_stylings/login.module.scss';
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Panel, Form, Button, Message, useToaster } from 'rsuite';
+import Logo from '../../Logo/Logo';
+import "./Auth.scss"
 import { login } from '../../functions/api_calls';
-
 
 type LogInFormData = {
   email: string;
@@ -11,8 +11,9 @@ type LogInFormData = {
 }
 
 
-const LoginForm = () => {
+const Login = () => {
 
+  const navigate = useNavigate();
   const [formValue, setFormValue] = useState<LogInFormData>({
     email:"",
     password:"",
@@ -21,7 +22,6 @@ const LoginForm = () => {
   const [loading,setLoading] = useState(false);
   const formRef = useRef<any>(null);
   const toaster = useToaster();
-  const navigate = useNavigate();
 
 
   const handleSubmit = async() => {
@@ -77,68 +77,51 @@ const LoginForm = () => {
     }
   };
 
-  const handleCreateAccount = () => navigate("/register")
 
 
 
+  
   return (
-    <Panel className={styles.loginForm}>
-      <h5 className={styles.header}>Welcome to SijaisX!</h5>
-      <div className={styles.formClose}>
-        <Button appearance="subtle" />
-      </div>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-header">
+          <Logo size="large" />
+          <h1>Welcome Back</h1>
+          <p>Sign in to manage substitute teaching</p>
+        </div>
 
-      <div className={styles.loginContent}>
-        <h2 className={styles.loginTitle}>Sign In</h2>
-        <p className={styles.loginSubtitle}>
-          Enter your credentials to access your account
-        </p>
-
-        <Form 
+        <Panel bordered className="auth-panel">
+        <Form
           fluid
-          ref = {formRef}
+          ref={formRef}
           formValue={formValue}
           onChange={(value) => setFormValue(value as LogInFormData)}
           onSubmit={handleSubmit}
-          >
-          <Form.Group>
-            <Form.ControlLabel>Email Address</Form.ControlLabel>
-            <Form.Control
-              name="email"
-              type="email"
-              accepter={Input}
-              placeholder="Enter your email"
-              disabled={loading}
-            />
-          </Form.Group>
+        >
+            <Form.Group>
+              <Form.ControlLabel>Email Address</Form.ControlLabel>
+              <Form.Control name="email" type="email" placeholder="you@school.fi" />
+            </Form.Group>
 
-          <Form.Group>
-            <Form.ControlLabel>Password</Form.ControlLabel>
-            <Form.Control
-              name="password"
-              type="password"
-              accepter={Input}
-              placeholder="Enter your password"
-              disabled={loading}
-            />
-          </Form.Group>
+            <Form.Group>
+              <Form.ControlLabel>Password</Form.ControlLabel>
+              <Form.Control name="password" type="password" placeholder="Enter password" />
+            </Form.Group>
 
-          <Form.Group>
-            <Button appearance="primary" size="lg" block loading={loading} onClick={handleSubmit} type='submit'>
-              {loading ? 'Signing In...' : 'Sign In'}
+
+            <Button appearance="primary" block size="lg" type="submit">
+              Sign In
             </Button>
-          </Form.Group>
-        </Form>
+          </Form>
 
-        <Divider>or</Divider>
-
-        <div className={styles.authSwitch}>
-          <p>Don’t have an account?</p>
-          <Button appearance="link" onClick={handleCreateAccount}>Create Account</Button>
-        </div>
+          <div className="auth-footer">
+            <a href="/forgot-password">Forgot password?</a>
+            <span>Don't have an account? <a href="/register">Register</a></span>
+          </div>
+        </Panel>
       </div>
-    </Panel>
+    </div>
   );
 };
 
-export default LoginForm;
+export default Login;
