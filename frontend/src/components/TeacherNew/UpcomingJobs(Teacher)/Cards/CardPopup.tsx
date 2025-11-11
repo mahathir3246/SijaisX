@@ -1,5 +1,5 @@
 import { Modal, Tag, Divider } from 'rsuite';
-import { Assignment } from '../teacherUpcomings';
+import { Assignment } from './TeacherUpcomings';
 import styles from "../../../../scss_stylings/TeacherAssignmentPopup.module.scss";
 import { useState, useEffect } from 'react';
 import { getUserID } from '../../../../functions/auth';

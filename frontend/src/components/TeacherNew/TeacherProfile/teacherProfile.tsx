@@ -1,17 +1,12 @@
 
-import {
-  Avatar,
-  Panel,
-  Button,
-  Loader,
-  Input,
-  toaster,
-  Message
-} from 'rsuite';
 import teacherStyles from '../../../scss_stylings/teacher.module.scss';
 import { getUserID } from '../../../functions/auth';
 import { get_teacher_info, get_school_info , update_teacher_profile} from '../../../functions/api_calls';
 import { useEffect, useState } from 'react';
+import { Header, Loader,Content,toaster,Message, Button, Panel, Form, Input } from 'rsuite';
+import TeacherSidebar from '../TeacherSidebar';
+import Logo from '../../../Logo/Logo';
+
 
 
 export interface TeacherData{
@@ -31,6 +26,9 @@ const TeacherProfile = () => {
     school_name: string
   }
 
+  const [activeKey, setActiveKey] = useState('profile');
+  const [collapsed, setCollapsed] = useState(false);
+
   const [teacher, setTeacher] = useState<TeacherData | null>(null);
   const [school, setSchool] = useState<SchoolData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -39,26 +37,25 @@ const TeacherProfile = () => {
   //edit profile usestates
   const[isEditing, setIsEditing] = useState(false);
   const[isSaving, setIsSaving] = useState(false);
+
   const[name, setName] = useState("");
   const[email, setEmail]= useState("");
   const [phone, setPhone] = useState("");
 
   const handleEdit = () =>{
+    if (!teacher) return;
     setIsEditing(true)
-    if(teacher){
-      setName(teacher.name);
-      setEmail(teacher.email);
-      setPhone(teacher.phone_number);
-    }
+    setName(teacher.name ?? '');
+    setEmail(teacher.email ?? '');
+    setPhone(teacher.phone_number ?? '');
   }
 
   const handleCancel = () =>{
-    setIsEditing(false)
-    if(teacher){
-      setName(teacher.name);
-      setPhone(teacher.phone_number);
-      setEmail(teacher.email);
-    }
+    if (!teacher) return;
+    setIsEditing(false);
+    setName(teacher.name ?? '');
+    setEmail(teacher.email ?? '');
+    setPhone(teacher.phone_number ?? '');
   }
 
   const handleSave = async () => {
@@ -127,7 +124,10 @@ const TeacherProfile = () => {
         const teacherInfo = await get_teacher_info(teacherID);
 
         if(teacherInfo){
-          setTeacher(teacherInfo as TeacherData)
+          setTeacher(teacherInfo as TeacherData);
+          setName((teacherInfo as TeacherData).name ?? '');
+          setEmail((teacherInfo as TeacherData).email ?? '');
+          setPhone((teacherInfo as TeacherData).phone_number ?? '');
 
           const schoolInfo = await get_school_info((teacherInfo as TeacherData).school_ID);
           if (schoolInfo) {
@@ -179,6 +179,96 @@ const TeacherProfile = () => {
 
 
   return (
+    <div className={`dashboard-container ${collapsed ? 'sidebar-collapsed' : ''}`}>
+        <TeacherSidebar
+            activeKey={activeKey}
+            onSelect={setActiveKey}
+            collapsed={collapsed}
+            onToggle={() => setCollapsed((prev) => !prev)}
+          />
+      <div className="dashboard-main">
+        <Header className="dashboard-header">
+          <Logo size="small" showText={false} />
+          <div className="header-right">
+            <span className="page-title">Teacher Profile</span>
+          </div>
+        </Header>
+
+        <Content className="dashboard-content profile-content">
+          <Panel bordered className="profile-panel">
+            <h3>Personal Information</h3>
+            <p className="section-subtitle">Update your personal details</p>
+
+            <Form fluid>
+              <div className="form-row">
+              <Form.Group>
+                <Form.ControlLabel>Name</Form.ControlLabel>
+                <Input value={name} onChange={setName} disabled={!isEditing} />
+              </Form.Group>
+              </div>
+
+              <Form.Group>
+                <Form.ControlLabel>Email</Form.ControlLabel>
+                <Input value={email} onChange={setEmail} disabled={!isEditing}/>
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Phone Number</Form.ControlLabel>
+                <Input value={phone} onChange={setPhone} disabled={!isEditing} />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>School</Form.ControlLabel>
+                <Input value={school?.school_name ?? ''} disabled={true} />
+              </Form.Group>
+
+              {isEditing ? (
+                <>
+                  <Button appearance="primary" onClick={handleSave} loading={isSaving}>
+                    Save Changes
+                  </Button>
+                  <Button appearance="subtle" onClick={handleCancel} disabled={isSaving}>
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <Button appearance="primary" onClick={handleEdit}>
+                  Edit Profile
+                </Button>
+              )}
+            </Form>
+          </Panel>
+
+          <Panel bordered className="profile-panel">
+            <h3>Teaching Information</h3>
+            <p className="section-subtitle">Your subjects and grade levels</p>
+
+            <Form fluid>
+              <Form.Group>
+                <Form.ControlLabel>Primary Subjects</Form.ControlLabel>
+                <Input defaultValue="Mathematics, Physics" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Grade Levels</Form.ControlLabel>
+                <Input defaultValue="Grades 7-9" />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Years of Experience</Form.ControlLabel>
+                <Input type="number" defaultValue="8" />
+              </Form.Group>
+
+              <Button appearance="primary">Update Information</Button>
+            </Form>
+          </Panel>
+          </Content>
+      </div>
+    </div>
+
+    
+  );
+    {/*}
     <Panel 
     bordered
     className={teacherStyles.profileContainer}>
@@ -247,7 +337,7 @@ const TeacherProfile = () => {
               }
             </div>
     </Panel>
-  );
+    */}
 };
 
 export default TeacherProfile;

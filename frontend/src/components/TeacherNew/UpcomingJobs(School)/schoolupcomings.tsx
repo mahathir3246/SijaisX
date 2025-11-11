@@ -1,12 +1,11 @@
 
-import { Table } from 'rsuite';
-import '../../../scss_stylings/teacher.module.scss';
 import { useState , useEffect} from 'react';
+import styles from '../../../scss_stylings/card.module.scss';
 import SchoolAssignmentDetailsModal from './SchoolCardPopup';
 import { getUserID } from '../../../functions/auth';
 import { get_all_assignments_of_school, get_teacher_info } from '../../../functions/api_calls';
-import { TeacherData } from '../TeacherProfile/teacherProfile';
-const { Column, HeaderCell, Cell } = Table;
+import { TeacherData } from '../TeacherProfile/TeacherProfile';
+import SchoolJobsCard from './SchoolJobsCard';
 
 export interface SchoolAssignment {
   date: string;
@@ -116,21 +115,19 @@ const SchoolUpcomings = () => {
         fetchAssignments()
     },[])
 
-    const handleRowClick = (job: SchoolJob) => {
-    // Find the corresponding assignment from the original data
-        const correspondingAssignment = assignments.find(assignment => {
-            const dateObj = new Date(assignment.date);
-            const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-            const formattedDate = dateObj.toLocaleDateString('fi-FI');
-            const date = `${formattedDate} ${dayOfWeek}`;
-            const beginning_time = assignment.classes[0].beginning_time.slice(11,16);
-            
-            return date === job.date && beginning_time === job.beginning_time;
+    const handleCardClick = (job: SchoolJob) => {
+        const match = assignments.find((assignment) => {
+          const dateObj = new Date(assignment.date);
+          const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+          const formattedDate = dateObj.toLocaleDateString('fi-FI');
+          const composed = `${formattedDate} ${dayOfWeek}`;
+          const start = assignment.classes[0].beginning_time.slice(11, 16);
+          return composed === job.date && start === job.beginning_time;
         });
-
-        if (correspondingAssignment) {
-            setSelectedAssignment(correspondingAssignment);
-            setModalOpen(true);
+    
+        if (match) {
+          setSelectedAssignment(match);
+          setModalOpen(true);
         }
     };
 
@@ -146,70 +143,26 @@ const SchoolUpcomings = () => {
     if (error) {
         return <div>Error: {error}</div>;
     }
-    return(
-        <div>
-            <Table 
-              bordered data={jobs}
-              autoHeight
-              onRowClick={(rowData) => handleRowClick(rowData)}
-              style={{ minHeight: 280 }}>
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Date</HeaderCell>
-                    <Cell dataKey='date'/>
-                </Column>
-
-                <Column flexGrow={1}>
-                    <HeaderCell>From</HeaderCell>
-                    <Cell dataKey='beginning_time'/>
-                </Column>
-
-                <Column flexGrow={1}>
-                    <HeaderCell>To</HeaderCell>
-                    <Cell dataKey='ending_time'/>
-                </Column>
-
-                <Column flexGrow={1}>
-                    <HeaderCell>Amount</HeaderCell>
-                    <Cell dataKey="classCount"/>               
-                </Column>
-
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Teacher</HeaderCell>
-                    <Cell dataKey="teacher_name"/>               
-                </Column>
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Substitute</HeaderCell>
-                    <Cell dataKey="substitute_name"/>               
-                </Column>
-
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Class</HeaderCell>
-                    <Cell dataKey="grade"/>               
-                </Column>
-
-                <Column flexGrow={2}>
-                    <HeaderCell>Subject</HeaderCell>
-                    <Cell dataKey="subject" />
-                </Column>
-
-                <Column flexGrow={1}>
-                    <HeaderCell>Status</HeaderCell>
-                    <Cell dataKey='status'/>
-                </Column>
-
-            </Table>
-
-            <SchoolAssignmentDetailsModal 
-                open={modalOpen} 
-                onClose={handleCloseModal} 
-                assignment={selectedAssignment} 
-            />
+    return (
+        <div className={styles.galleryWrapper}>
+          <div className={styles.cardRail}>
+            <div className={styles.cardContainer}>
+              {jobs.map((job, index) => (
+                <div key={`${job.date}-${job.beginning_time}-${index}`} className={styles.cardWrapper}>
+                  <SchoolJobsCard job={job} onClick={() => handleCardClick(job)} />
+                </div>
+              ))}
+            </div>
+          </div>
+    
+          <SchoolAssignmentDetailsModal
+            open={modalOpen}
+            onClose={handleCloseModal}
+            assignment={selectedAssignment}
+          />
         </div>
-    )
-};
+      );
+    };
+    
 
 export default SchoolUpcomings;
