@@ -1,6 +1,6 @@
-import { SchoolJob } from "./schoolupcomings";
+import { SchoolJob } from "../SchoolJobHook";
 import { Button, Panel, Badge, TagProps } from 'rsuite';
-import "../TeacherDashboard.scss";
+import "../../TeacherDashboard.scss";
 type TagColour = NonNullable<TagProps['color']>;
 
 const statusColour: Record<SchoolJob['status'], TagColour> = {

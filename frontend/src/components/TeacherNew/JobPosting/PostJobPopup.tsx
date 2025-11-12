@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Modal } from 'rsuite';
+import { Message, Modal, toaster } from 'rsuite';
 import ScheduleJobMode from './ScheduleJobMode';
-import styles from "../../../scss_stylings/postJobPopup.module.scss"
+import"./PostJob.scss"
 
 
 export interface Props { 
@@ -27,44 +27,51 @@ export default function PostJobModal({ open, onClose }: Props) {
         setMode(newMode);
     };
 
+    const handleSubmitSuccess = () => {
+        toaster.push(<Message type="success">Job posted successfully!</Message>);
+        onClose();
+    };
+
+    const handleSubmitError = (message: string) => {
+        toaster.push(<Message type="error">{message}</Message>);
+    };
     return (
-        <Modal size="lg" open={open} onClose={onClose} className={styles.modal}>
-            <Modal.Header className={styles.header}>
+        <Modal size="lg" open={open} onClose={onClose} className="post-job-modal">
+            <Modal.Header className="post-job-modal__header">
                 <h4>Post a Job</h4>
             </Modal.Header>
 
-            <Modal.Body className={styles.body}>
-                {/* Add your mode selection UI here */}
-                <div className={styles.modeSelection}>
+            <Modal.Body className="post-job-modal__body">
+                <div className="mode-selection">
                     <button 
-                        className={`${styles.modeButton} ${mode === 'schedule' ? styles.activeMode : styles.inactiveMode}`}
+                        className={`mode-button ${mode === 'schedule' ? 'mode-button--active' : 'mode-button--inactive'}`}
                         onClick={() => handleModeChange('schedule')}
                     >
                         📅 Use My Schedule
                     </button>
                     <button 
-                        className={`${styles.modeButton} ${mode === 'custom' ? styles.activeMode : styles.inactiveMode}`}
+                        className={`mode-button ${mode === 'custom' ? 'mode-button--active' : 'mode-button--inactive'}`}
                         onClick={() => handleModeChange('custom')}
                     >
                         ✏️ Create Custom Job
                     </button>
                 </div>
 
-                {/* Mode Content */}
                 {mode === 'schedule' && (
-                    <ScheduleJobMode/>
+                    <ScheduleJobMode onSubmitSuccess={handleSubmitSuccess} onSubmitError={handleSubmitError} />
                 )}
 
                 {mode === 'custom' && (
-                    <div>Coming</div>
-                )}            </Modal.Body>
+                    <div className="empty-state">
+                        <p>Custom job creation coming soon...</p>
+                    </div>
+                )}
+            </Modal.Body>
 
-            <Modal.Footer className={styles.footer}>
-                <div className={styles.actions}>
-                    <button className={styles.closeButton} onClick={onClose}>
-                        Close
-                    </button>
-                </div>
+            <Modal.Footer className="post-job-modal__footer">
+                <button className="close-button" onClick={onClose}>
+                    Close
+                </button>
             </Modal.Footer>
         </Modal>
     );

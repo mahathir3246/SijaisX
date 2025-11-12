@@ -5,7 +5,7 @@ import './TeacherDashboard.scss';
 const navItems = [
   { eventKey: 'dashboard', label: 'My Dashboard', icon: <FiHome />, href: '/teacher/dashboard' },
   { eventKey: 'profile', label: 'My Profile', icon: <FiUser />, href: '/teacher/profile' },
-  { eventKey: 'post-job', label: 'Post a Job', icon: <FiPlusCircle />, href: '/teacher/post-job' },
+  { eventKey: 'post-job', label: 'Post a Job', icon: <FiPlusCircle /> },
   { eventKey: 'my-jobs', label: 'My Job Posts', icon: <FiBriefcase />, href: '/teacher/my-jobs' },
   { eventKey: 'school-jobs', label: 'School Jobs', icon: <FiBriefcase />, href: '/teacher/school-jobs' },
   { eventKey: 'history', label: 'Past Jobs', icon: <FiClock />, href: '/teacher/history' },
@@ -17,9 +17,16 @@ type TeacherSidebarProps = {
   onSelect: (key: string) => void;
   collapsed: boolean;
   onToggle: () => void;
+  onPostJobClick?: () => void;
 };
 
-export default function TeacherSidebar({ activeKey, onSelect, collapsed, onToggle }: TeacherSidebarProps) {
+export default function TeacherSidebar({
+  activeKey,
+  onSelect,
+  collapsed,
+  onToggle,
+  onPostJobClick,
+}: TeacherSidebarProps) {
   return (
     <Sidebar
       className={`dashboard-sidebar ${collapsed ? 'collapsed' : ''}`}
@@ -39,7 +46,21 @@ export default function TeacherSidebar({ activeKey, onSelect, collapsed, onToggl
   </div>
       <Nav vertical activeKey={activeKey} onSelect={onSelect}>
         {navItems.map((item) => (
-          <Nav.Item key={item.eventKey} eventKey={item.eventKey} icon={item.icon} href={item.href}>
+          <Nav.Item
+            key={item.eventKey}
+            eventKey={item.eventKey}
+            icon={item.icon}
+            href={item.eventKey === 'post-job' ? undefined : item.href}
+            onClick={
+              item.eventKey === 'post-job'
+                ? (event) => {
+                    event.preventDefault();
+                    onSelect(item.eventKey);
+                    onPostJobClick?.();
+                  }
+                : undefined
+            }
+          >
             {!collapsed && item.label}
           </Nav.Item>
         ))}

@@ -58,7 +58,7 @@ const Login = () => {
         );
         setTimeout(()=>{
           if(userData.role === "teacher"){
-            navigate("/opettajille");
+            navigate("/teacher/dashboard");
           } else if(userData.role === "substitute"){
             navigate("/sijaisille");
           }else{

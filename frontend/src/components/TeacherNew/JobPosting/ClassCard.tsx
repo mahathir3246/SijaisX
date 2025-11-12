@@ -1,8 +1,8 @@
 import { Grid, Row, Col, Input } from 'rsuite';
-import styles from '../../../scss_stylings/postJobPopup.module.scss';
 import { useState } from 'react';
 import { update_class_info } from '../../../functions/api_calls';
 import { getUserID } from '../../../functions/auth';
+import "./PostJob.scss"
 
 
 export interface ClassesFE{
@@ -48,7 +48,7 @@ export default function ClassCard({
         duration: duration
     })
 
-    const handelEdit = (field:string, value:string) =>{
+    const handleEdit = (field:string, value:string) =>{
         setEditedValues(prev=>({
             ...prev,
             [field]:value
@@ -100,118 +100,116 @@ export default function ClassCard({
         setIsEditing(false)
     }
     return (
-        <div className={`${styles.classCard}`}>
+        <div className={`class-card ${isExcluded ? 'class-card--excluded' : ''}`}>
             <Grid fluid>
                 <Row gutter={16}>
                     {/* Subject field */}
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Subject</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">Subject</label>
                             <Input
-                                className={styles.input}
+                                className="field-input"
                                 value={editedValues.subject}
                                 disabled={!isEditing}
-                                onChange={value=>handelEdit("subject", value)}
-
+                                onChange={value => handleEdit("subject", value)}
                             />
                         </div>
                     </Col>
 
                     {/* Grade field */}
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Grade</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">Grade</label>
                             <Input
-                                className={styles.input}
+                                className="field-input"
                                 value={editedValues.grade}
                                 disabled={!isEditing}
-                                onChange={value=>handelEdit("grade", value)}
+                                onChange={value => handleEdit("grade", value)}
                             />
                         </div>
                     </Col>
 
                     {/* Start time field */}
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Start Time</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">Start Time</label>
                             <Input
-                                className={`${styles.input} ${styles.timeInput}`}
+                                className="field-input"
                                 type="time"
-                                value={editedValues.beginning_time.slice(11,16)}
+                                value={editedValues.beginning_time.slice(11, 16)}
                                 disabled={!isEditing}
                                 onChange={value=>{
                                     const datePart = editedValues.beginning_time.slice(0, 10)  // Use editedValues, not beginning_time
                                     const newTime = `${datePart} ${value}`
-                                    handelEdit("beginning_time", newTime)
+                                    handleEdit("beginning_time", newTime)
                                 }}
                             />
                         </div>
                     </Col>
 
                     {/* End time field */}
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>End Time</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">End Time</label>
                             <Input
-                                className={`${styles.input} ${styles.timeInput}`}
+                                className="field-input"
                                 type="time"
-                                value={editedValues.ending_time.slice(11,16)}
+                                value={editedValues.ending_time.slice(11, 16)}
                                 disabled={!isEditing}
                                 onChange={value=>{
                                     const datePart = editedValues.ending_time.slice(0, 10)  // Use editedValues, not beginning_time
                                     const newTime = `${datePart} ${value}`
-                                    handelEdit("ending_time", newTime)
+                                    handleEdit("ending_time", newTime)
                                 }}
                             />
                         </div>
                     </Col>
 
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Duration</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">Duration (min)</label>
                             <Input
-                                className={`${styles.input}`}
+                                className="field-input"
                                 type="number"
                                 value={editedValues.duration}
                                 disabled={!isEditing}
-                                onChange={value=>handelEdit("duration", value)}
+                                onChange={value => handleEdit("duration", value)}
                             />
                         </div>
                     </Col>
 
                     {/* Room field */}
-                    <Col xs={12} sm={6}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Room</label>
+                    <Col xs={24} sm={12} md={8}>
+                        <div className="form-field">
+                            <label className="field-label">Room</label>
                             <Input
-                                className={styles.input}
+                                className="field-input"
                                 value={editedValues.room}
                                 disabled={!isEditing}
-                                onChange={value=>handelEdit("room", value)}
+                                onChange={value => handleEdit("room", value)}
                             />
                         </div>
                     </Col>
 
                     {/* Notes field - always editable (for Assignment table) */}
-                    <Col xs={12} sm={6}>
-                        <div className={`${styles.formGroup} ${styles.notesGroup}`}>
-                            <label className={styles.label}>Notes</label>
+                    <Col xs={24}>
+                        <div className="form-field">
+                            <label className="field-label">Notes</label>
                             <Input
                                 as="textarea"
-                                rows={2}
-                                className={`${styles.input} ${styles.textarea}`}
+                                rows={3}
+                                className="field-input field-textarea"
                                 placeholder="Add any special instructions for the substitute..."
                                 value={editedValues.notes}
-                                onChange={value=>handelEdit("notes", value)}
+                                onChange={value => handleEdit("notes", value)}
                             />
                         </div>
                     </Col>
                 </Row>
-                <div className={styles.buttonSection}>
-                    {/* Delete/Restore button */}
+                <div className="card-actions">
                     {onToggleExclude && (
                         <button
-                            className={isExcluded ? styles.restoreButton : styles.deleteButton}
+                            className={`action-button ${isExcluded ? 'action-button--restore' : 'action-button--exclude'}`}
                             onClick={onToggleExclude}
                         >
                             {isExcluded ? '↩️ Restore' : '🗑️ Exclude'}
@@ -221,8 +219,8 @@ export default function ClassCard({
                     {/* If not editing, show Edit button */}
                     {!isEditing ? (
                         <button
-                            className={styles.editButton}
-                            onClick={()=>setIsEditing(true)}
+                        className="action-button action-button--edit"
+                        onClick={() => setIsEditing(true)}
                         >
                             ✏️ Edit Class Info
                         </button>
@@ -230,13 +228,13 @@ export default function ClassCard({
                         // If editing, show Save and Cancel buttons
                         <>
                             <button
-                                className={styles.saveButton}
+                                className="action-button action-button--save"
                                 onClick={handleSave}
                             >
                                 💾 Save Changes
                             </button>
                             <button
-                                className={styles.cancelButton}
+                                className="action-button action-button--cancel"
                                 onClick={handleCancel}
                             >
                                 ❌ Cancel

@@ -1,6 +1,6 @@
 import { Button, Panel, Badge, TagProps } from 'rsuite';
 import '../../TeacherDashboard.scss';
-import { Job } from './TeacherUpcomings';
+import { Job } from '../TeacherJobsHook';
 import { getUserID } from '../../../../functions/auth';
 import { delete_assignments } from '../../../../functions/api_calls';
 

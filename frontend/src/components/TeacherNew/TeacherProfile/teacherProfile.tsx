@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { Header, Loader,Content,toaster,Message, Button, Panel, Form, Input } from 'rsuite';
 import TeacherSidebar from '../TeacherSidebar';
 import Logo from '../../../Logo/Logo';
+import PostJobModal from '../JobPosting/PostJobPopup';
 
 
 
@@ -41,6 +42,16 @@ const TeacherProfile = () => {
   const[name, setName] = useState("");
   const[email, setEmail]= useState("");
   const [phone, setPhone] = useState("");
+
+  const [postJobModalOpen, setPostJobModalOpen] = useState(false);
+
+  const handleSidebarSelect = (key: string) => {
+    if (key === 'post-job') {
+      setPostJobModalOpen(true);
+      return;
+    }
+    setActiveKey(key);
+  };
 
   const handleEdit = () =>{
     if (!teacher) return;
@@ -182,9 +193,10 @@ const TeacherProfile = () => {
     <div className={`dashboard-container ${collapsed ? 'sidebar-collapsed' : ''}`}>
         <TeacherSidebar
             activeKey={activeKey}
-            onSelect={setActiveKey}
+            onSelect={handleSidebarSelect}
             collapsed={collapsed}
             onToggle={() => setCollapsed((prev) => !prev)}
+            onPostJobClick={() => setPostJobModalOpen(true)}
           />
       <div className="dashboard-main">
         <Header className="dashboard-header">
@@ -264,6 +276,7 @@ const TeacherProfile = () => {
           </Panel>
           </Content>
       </div>
+      <PostJobModal open={postJobModalOpen} onClose={() => setPostJobModalOpen(false)} />
     </div>
 
     

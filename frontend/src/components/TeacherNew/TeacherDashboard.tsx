@@ -1,14 +1,24 @@
 import { useState } from 'react';
-import { Header, Content, Panel, Badge, Grid, Row, Col } from 'rsuite';
+import { Header, Content, Panel, Badge, Grid, Row, Col, Button } from 'rsuite';
 import Logo from '../../Logo/Logo';
 import './TeacherDashboard.scss';
 import TeacherUpcomings from './UpcomingJobs(Teacher)/Cards/TeacherUpcomings';
-import SchoolUpcomings from './UpcomingJobs(School)/schoolupcomings';
+import SchoolUpcomings from './UpcomingJobs(School)/Card/schoolupcomings';
 import TeacherSidebar from './TeacherSidebar';
-
+import { FiPlusCircle } from 'react-icons/fi';
+import PostJobModal from './JobPosting/PostJobPopup';
  const TeacherDashboard = () => {
     const [activeKey, setActiveKey] = useState('dashboard');
     const [collapsed, setCollapsed] = useState(false);
+    const [postJobModalOpen, setPostJobModalOpen] = useState(false);
+
+    const handleSidebarSelect = (key: string) => {
+      if (key === 'post-job') {
+        setPostJobModalOpen(true);
+        return;
+      }
+      setActiveKey(key);
+    };
   
     const jobStats = {
       searching: 2,
@@ -20,9 +30,10 @@ import TeacherSidebar from './TeacherSidebar';
       <div className={`dashboard-container ${collapsed ? 'sidebar-collapsed' : ''}`}>
         <TeacherSidebar
             activeKey={activeKey}
-            onSelect={setActiveKey}
+            onSelect={handleSidebarSelect}
             collapsed={collapsed}
             onToggle={() => setCollapsed((prev) => !prev)}
+            onPostJobClick={() => setPostJobModalOpen(true)}
           />
         <div className="dashboard-main">
           <Header className="dashboard-header">
@@ -34,9 +45,21 @@ import TeacherSidebar from './TeacherSidebar';
   
           <Content className="dashboard-content">
             <div className="welcome-section">
+              <div>
               <h3>Welcome! 👋</h3>
               <p>Manage your substitute requests and track ongoing jobs</p>
+              </div>
+              <Button 
+              appearance="primary" 
+              size="lg"
+              startIcon={<FiPlusCircle />}
+              onClick={() => setPostJobModalOpen(true)}
+              style={{ fontSize: '16px', fontWeight: 600 }}
+            >
+              Post a Job
+            </Button>
             </div>
+            
 
             <Grid fluid>
               <Row gutter={16}>
@@ -79,6 +102,7 @@ import TeacherSidebar from './TeacherSidebar';
   
          </Content>
         </div>
+        <PostJobModal open={postJobModalOpen} onClose={() => setPostJobModalOpen(false)} />
       </div>
     );
   };

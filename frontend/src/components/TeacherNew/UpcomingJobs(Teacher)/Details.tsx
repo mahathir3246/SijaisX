@@ -1,11 +1,11 @@
-import { Modal, Tag, Divider } from 'rsuite';
-import { Assignment } from './TeacherUpcomings';
-import styles from "../../../../scss_stylings/TeacherAssignmentPopup.module.scss";
+import { Modal, Divider, Button } from 'rsuite';
+import { Assignment } from './TeacherJobsHook';
+import styles from "../../../scss_stylings/TeacherAssignmentPopup.module.scss";
 import { useState, useEffect } from 'react';
-import { getUserID } from '../../../../functions/auth';
-import { get_batch_of_assignment_volunteers } from '../../../../functions/api_calls';
-import VolunteerSelector from './VolunteerSelector';
-import { delete_assignments } from '../../../../functions/api_calls';
+import { getUserID } from '../../../functions/auth';
+import { get_batch_of_assignment_volunteers } from '../../../functions/api_calls';
+import VolunteerSelector from './Cards/VolunteerSelector';
+import { delete_assignments } from '../../../functions/api_calls';
 
 export interface AssignmentDetailsModalProps {
     open: boolean;
@@ -82,48 +82,50 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
     if (!assignment) return null;
     
     return (
-        <Modal size="lg" open={open} onClose={onClose} className={styles.modal}>
-            <Modal.Header className={styles.header}>
-                <h4>Assignment Details</h4>
+        <Modal size="lg" open={open} onClose={onClose} className="job-details-modal">
+            <Modal.Header className="job-details-modal-header">
+                <Modal.Title>Assignment Details</Modal.Title>
             </Modal.Header>
 
-            <Modal.Body className={styles.body}>
-                <div className={styles.content}>
-                    <div className={styles.headerSection}>
-                        <h3 className={styles.dateTitle}>{formatDate(assignment.date)} </h3>
-                        <Tag size="lg" className={styles.statusTag}>
+            <Modal.Body className="job-details-modal-body">
+                <div className="job-details-content">
+                    <div className="details-top-section">
+                        <div className="date-info">
+                            <h3 className="date-title">{formatDate(assignment.date)}</h3>
+                        </div>
+                        <span className={`status-badge status-${assignment.status}`}>
                             {assignment.status}
-                        </Tag>
+                        </span>
                     </div>
 
                     <Divider className={styles.divider} />
 
-                    <div className={styles.classesSection}>
-                        <h4 className={styles.sectionTitle}>Classes ({assignment.classes.length})</h4>
-                        <div className={styles.classesList}>
+                    <div className="classes-section">
+                        <h4 className="section-title">Classes ({assignment.classes.length})</h4>
+                        <div className="classes-list">
                             {assignment.classes.map((cls) => (
-                                <div key={cls.assignment_ID} className={styles.classCard}>
-                                    <div className={styles.classInfo}>
-                                        <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>Subject:</span>
-                                            <span className={styles.infoValue}>{cls.subject}</span>
+                                <div key={cls.assignment_ID} className="class-card">
+                                    <div className="class-info-grid">
+                                        <div className="info-item">
+                                            <span className="info-label">Subject:</span>
+                                            <span className="info-value">{cls.subject}</span>
                                         </div>
-                                        <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>Grade:</span>
-                                            <span className={styles.infoValue}>{cls.grade}</span>
+                                        <div className="info-item">
+                                            <span className="info-label">Grade:</span>
+                                            <span className="info-value">{cls.grade}</span>
                                         </div>
-                                        <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>Room:</span>
-                                            <span className={styles.infoValue}>{cls.room}</span>
+                                        <div className="info-item">
+                                            <span className="info-label">Room:</span>
+                                            <span className="info-value">{cls.room}</span>
                                         </div>
-                                        <div className={styles.infoRow}>
-                                            <span className={styles.infoLabel}>School:</span>
-                                            <span className={styles.infoValue}>{cls.school_name}</span>
+                                        <div className="info-item">
+                                            <span className="info-label">School:</span>
+                                            <span className="info-value">{cls.school_name}</span>
                                         </div>
                                     </div>
-                                    <div className={styles.timeInfo}>
-                                        <span className={styles.infoLabel}>Time:</span>
-                                        <span className={styles.infoValue}>
+                                    <div className="time-section">
+                                        <span className="info-label">Time:</span>
+                                        <span className="info-value">
                                             {formatTime(cls.beginning_time)} - {formatTime(cls.ending_time)}
                                         </span>
                                     </div>
@@ -133,6 +135,7 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
                                             <span className={styles.substituteName}>{cls.substitute_name}</span>
                                         </div>
                                     )}
+
                                     <div className={styles.notesInfo}>
                                         <span className={styles.infoLabel}>Notes:</span>
                                         <span className={styles.notesText}>{cls.notes}</span>
@@ -169,48 +172,43 @@ export default function AssignmentDetailsModal({ open, onClose, assignment }: As
                     <Divider className={styles.divider} />
                     <Divider className={styles.divider} />
 
-                    <div className={styles.summarySection}>
-                        <h4 className={styles.sectionTitle}>Summary</h4>
-                        <div className={styles.summaryGrid}>
-                            <div className={styles.summaryItem}>
-                                <span className={styles.summaryLabel}>Total Classes:</span>
-                                <span className={styles.summaryValue}>{assignment.classes.length}</span>
-                            </div>
-                            <div className={styles.summaryItem}>
-                                <span className={styles.summaryLabel}>Time Range:</span>
-                                <span className={styles.summaryValue}>
-                                    {formatTime(assignment.classes[0].beginning_time)} - {formatTime(assignment.classes[assignment.classes.length - 1].ending_time)}
-                                </span>
-                            </div>
-                            <div className={styles.summaryItem}>
-                                <span className={styles.summaryLabel}>Subjects:</span>
-                                <span className={styles.summaryValue}>
-                                    {[...new Set(assignment.classes.map(c => c.subject))].join(', ')}
-                                </span>
-                            </div>
-                            <div className={styles.summaryItem}>
-                                <span className={styles.summaryLabel}>Grades:</span>
-                                <span className={styles.summaryValue}>
-                                    {[...new Set(assignment.classes.map(c => c.grade))].join(', ')}
-                                </span>
-                            </div>
+
+                    <div className="summary-section">
+                        <h4 className="section-title">Summary</h4>
+                        <div className="summary-grid">
+                        <div className="summary-item">
+                            <span className="summary-label">Total Classes:</span>
+                            <span className="summary-value">{assignment.classes.length}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-label">Time Range:</span>
+                            <span className="summary-value">{formatTime(assignment.classes[0].beginning_time)} - {formatTime(assignment.classes[assignment.classes.length - 1].ending_time)}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-label">Subjects:</span>
+                            <span className="summary-value">{[...new Set(assignment.classes.map(c => c.subject))].join(', ')}</span>
+                        </div>
+                        <div className="summary-item">
+                            <span className="summary-label">Grades:</span>
+                            <span className="summary-value">{[...new Set(assignment.classes.map(c => c.grade))].join(', ')}</span>
+                        </div>
                         </div>
                     </div>
                 </div>
             </Modal.Body>
 
-            <Modal.Footer className={styles.footer}>
+            <Modal.Footer className="job-details-modal-footer">
                 <div className={styles.actions}>
-                    <button 
-                        className={styles.deleteButton} 
+                    <Button 
+                        className="close-button"
                         onClick={handleDelete}
                         style={{ backgroundColor: '#e74c3c', color: 'white', marginRight: '10px' }}
                     >
                         Delete Assignment
-                    </button>
-                    <button className={styles.closeButton} onClick={onClose}>
-                        Close
-                    </button>
+                    </Button>
+                    <Button onClick={onClose} appearance="primary" className="close-button">
+                      Close
+                    </Button>
                 </div>
             </Modal.Footer>
         </Modal>

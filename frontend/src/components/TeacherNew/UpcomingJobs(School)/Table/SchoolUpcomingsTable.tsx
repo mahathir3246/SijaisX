@@ -1,18 +1,19 @@
 import { useState } from 'react';
+import { Header, Button, Table, Badge, Panel, Content } from 'rsuite';
+import "../../TeacherDashboard.scss"
 import TeacherSidebar from '../../TeacherSidebar';
 import Logo from '../../../../Logo/Logo';
-import { Header, Button, Table, Badge, Panel, Content } from 'rsuite';
-import '../../TeacherDashboard.scss';
-import AssignmentDetailsModal from '../Details';
-import { useTeacherJobs, getStatusColor, matchJobToAssignment, Job } from '../TeacherJobsHook';
+import SchoolAssignmentDetailsModal from '../Details';
+import { useSchoolJobs, getStatusColor, matchJobToAssignment, SchoolJob } from '../SchoolJobHook';
 import PostJobModal from '../../JobPosting/PostJobPopup';
 const { Column, HeaderCell, Cell } = Table;
 
-const TeacherUpcomingsTable = () => {
-  const { assignments, jobs, loading, error } = useTeacherJobs();
-  const [activeKey, setActiveKey] = useState('my-jobs');
+const SchoolUpcomingsTable = () => {
+  const { assignments, jobs, loading, error } = useSchoolJobs();
+  const [activeKey, setActiveKey] = useState('school-jobs');
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedAssignment, setSelectedAssignment] = useState<typeof assignments[number] | null>(null);
+  const [selectedAssignment, setSelectedAssignment] =
+    useState<ReturnType<typeof matchJobToAssignment>>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [postJobModalOpen, setPostJobModalOpen] = useState(false);
 
@@ -24,7 +25,8 @@ const TeacherUpcomingsTable = () => {
     setActiveKey(key);
   };
 
-  const handleRowClick = (job: Job) => {
+
+  const handleRowClick = (job: SchoolJob) => {
     const match = matchJobToAssignment(assignments, job);
     if (match) {
       setSelectedAssignment(match);
@@ -49,24 +51,25 @@ const TeacherUpcomingsTable = () => {
         onToggle={() => setCollapsed((prev) => !prev)}
         onPostJobClick={() => setPostJobModalOpen(true)}
       />
+
       <div className="dashboard-main">
         <Header className="dashboard-header">
           <Logo size="small" showText={false} />
           <div className="header-right">
-            <span className="page-title">My Jobs</span>
+            <span className="page-title">School Jobs</span>
           </div>
         </Header>
 
         <Content className="dashboard-content">
           <div className="section-header">
-            <h3>Your Substitute Requests</h3>
-            <p>Manage and track your job postings</p>
+            <h3>School-Wide Job Posts</h3>
+            <p>All substitute positions at your school</p>
           </div>
 
           <div className="school-jobs-section">
-            <h3>All upcoming job postings</h3>
+            <h3>All School Jobs</h3>
             <p className="section-subtitle">
-              Click ‘View Details’ to see class notes, applicants, or edit the assignment.
+              View every substitute job posting; open “View Details” for applicants and notes.
             </p>
 
             <Panel bordered>
@@ -98,6 +101,16 @@ const TeacherUpcomingsTable = () => {
                 </Column>
 
                 <Column flexGrow={2}>
+                  <HeaderCell>Teacher</HeaderCell>
+                  <Cell dataKey="teacher_name" />
+                </Column>
+
+                <Column flexGrow={2}>
+                  <HeaderCell>Substitute</HeaderCell>
+                  <Cell dataKey="substitute_name" />
+                </Column>
+
+                <Column flexGrow={2}>
                   <HeaderCell>Class</HeaderCell>
                   <Cell dataKey="grade" />
                 </Column>
@@ -107,15 +120,10 @@ const TeacherUpcomingsTable = () => {
                   <Cell dataKey="subject" />
                 </Column>
 
-                <Column flexGrow={2}>
-                  <HeaderCell>Substitute</HeaderCell>
-                  <Cell dataKey="substitute_name" />
-                </Column>
-
                 <Column flexGrow={2} align="center">
                   <HeaderCell>Status</HeaderCell>
                   <Cell>
-                    {(rowData: Job) => (
+                    {(rowData: SchoolJob) => (
                       <Badge
                         content={rowData.status}
                         style={{ backgroundColor: `var(--status-${getStatusColor(rowData.status)})` }}
@@ -138,7 +146,7 @@ const TeacherUpcomingsTable = () => {
         </Content>
       </div>
 
-      <AssignmentDetailsModal
+      <SchoolAssignmentDetailsModal
         open={modalOpen}
         onClose={handleCloseModal}
         assignment={selectedAssignment}
@@ -148,4 +156,4 @@ const TeacherUpcomingsTable = () => {
   );
 };
 
-export default TeacherUpcomingsTable;
+export default SchoolUpcomingsTable;
