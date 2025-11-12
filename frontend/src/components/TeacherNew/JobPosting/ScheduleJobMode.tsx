@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Button, DateRangePicker } from 'rsuite';
 import { format } from 'date-fns';
 import { get_teacher_classes_within_range } from '../../../functions/api_calls';
-import styles from "../../../scss_stylings/postJobPopup.module.scss";
 
 import { create_batch_assignment } from '../../../functions/api_calls';
 import ClassCard from './ClassCard';
@@ -21,9 +20,12 @@ export interface ClassesBE{
 }
 
 
+type Props = {
+    onSubmitSuccess?: () => void;
+    onSubmitError?: (message: string) => void;
+};
 
-
-export default function ScheduleJobMode({}) {
+export default function ScheduleJobMode({ onSubmitSuccess, onSubmitError }: Props) {
     const[classes, setClasses] = useState<{[date: string]: {
         beginning_time: string,
         class_ID: string,
@@ -130,35 +132,39 @@ export default function ScheduleJobMode({}) {
             
             if (result && result.success) {
                 console.log('Assignments created successfully');
+                onSubmitSuccess?.();
             } else {
+                onSubmitError?.(result?.error || 'Failed to create assignments');
                 console.error('Failed to create assignments:', result?.error);
             }
             
         } catch (error) {
             console.error('Error creating assignments:', error);
+            onSubmitError?.('Failed to create assignments. Please try again.');
         }
     };
 
 
     return (
-        <div className={styles.scheduleJobWrapper}>
-            {/* Scrollable area for classes only */}
-            <div className={styles.classesScrollArea}>
-                <div className={styles.dateSection}>
-                    <h6>Select the date/dates you want a substitute for:</h6>
-                    <DateRangePicker
-                        className={styles.datePicker}
-                        onChange={(value) => setRange(value as [Date, Date] | null)}
-                        placeholder="Choose date or date range"
-                        value={range}
-                    />
+        <div className="schedule-job-mode">
+            <div className="date-selection-section">
+                <h6 className="section-label">Select the date/dates you want a substitute for:</h6>
+                <DateRangePicker
+                    className="date-picker"
+                    onChange={(value) => setRange(value as [Date, Date] | null)}
+                    placeholder="Choose date or date range"
+                    value={range}
+                    format="yyyy-MM-dd"
+                    block
+                />
+            </div>
                     {loading && <div>Loading classes...</div>}
                     {range && datesInBetween(range[0], range[1]).map((date, dateIndex) => {
                         const classesForDate = classes[format(date, 'yyyy-MM-dd')];
                         
                         return (
-                            <div key={dateIndex}>
-                                <div className={styles.dateHeader}>
+                            <div key={dateIndex} className="date-group">
+                                <div className="date-header">
                                     <h6>{format(date, 'MMM dd, yyyy')}</h6>
                                 </div>
                                 {classesForDate?.map((cls, classIndex) => (
@@ -180,18 +186,21 @@ export default function ScheduleJobMode({}) {
                             </div>
                         );
                     })}
-                </div>
-            </div>
-            
-            {/* Fixed button area - outside scrollable content */}
-            <div className={styles.fixedButtonArea}>
-                <Button
-                    className={styles.saveButton}
-                    onClick={handleSubmit}
-                > 
-                    Submit Assignment
-                </Button>
-            </div>
+
+                    {range && (
+                        <div className="submit-section">
+                            <Button
+                                className="submit-button"
+                                appearance="primary"
+                                size="lg"
+                                onClick={handleSubmit}
+                            > 
+                                Submit Assignment
+                            </Button>
+                        </div>
+                    )}
         </div>
+
+        
     );
 }

@@ -41,9 +41,10 @@
   background-color: red;
 }
 
-.galleryWrapper { 
-  padding: 0 .5rem;
-  margin: 1rem 0; /* adds top and bottom margin */
+.galleryWrapper {
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+  width: 100%;
 }
 
 .avatars {
@@ -59,22 +60,28 @@
   justify-content: center;
 }
 
+.galleryWrapper {
+  padding: 0 0.5rem;
+  margin: 1rem 0;
+  width: 100%;
+}
+
 .cardRail {
+  width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding-bottom: 1rem; /* increased from .5rem to 1rem */
+  padding-bottom: 1rem;
   scroll-snap-type: x mandatory;
-  
-  /* cosmetic scrollbar */
-  &::-webkit-scrollbar { 
-    height: 8px; 
+
+  &::-webkit-scrollbar {
+    height: 8px;
   }
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, .2);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 4px;
   }
   &::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, .05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
   }
 }
@@ -82,9 +89,10 @@
 .cardContainer {
   display: flex;
   flex-wrap: nowrap;
-  gap: 2rem; /* 32px gap between cards */
-  min-width: min-content;
-  margin-bottom: 0.5rem; /* adds space between cards and scrollbar */
+  gap: 2rem;
+  width: max-content;        // <-- force intrinsic width
+  min-width: max-content;    // <-- make sure it won’t shrink
+  margin-bottom: 0.5rem;
 }
 
 .cardWrapper {

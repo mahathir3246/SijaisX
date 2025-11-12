@@ -3,11 +3,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import FullHomePage from "./components/HomePage/FullHomePage";
 import FullSijaisPage from "./components/Subpage/FullSubPage";
-import FullOpePage from "./components/TeacherPage/FullOpePage";
 import RegisterPage from './components/Register/Register';
-import Login from './components/Login/login';
+import Login from './components/Login/Login';
 import ProtectedRoute from './components/Login/ProtectedRoute';
-import TeacherNewPage from "./components/TeacherNew/FullOpePage";
+import TeacherDashboard from "./components/TeacherNew/TeacherDashboard";
+import TeacherProfile from "./components/TeacherNew/TeacherProfile/TeacherProfile";
+import TeacherUpcomingsTable from "./components/TeacherNew/UpcomingJobs(Teacher)/Table/TeacherUpcomings(table)";
+import SchoolUpcomingsTable from "./components/TeacherNew/UpcomingJobs(School)/Table/SchoolUpcomingsTable";
 
 function App() {
   return (
@@ -25,22 +27,39 @@ function App() {
             pageElemenTtoShow ={<FullSijaisPage/>}/>}
         />
 
-        <Route
-          path = "/opettajille"
-          element={
 
+        <Route
+          path="/teacher/dashboard"
+          element={
             <ProtectedRoute
               requiredRole='teacher'
-              pageElemenTtoShow = {<FullOpePage/>}/>
+              pageElemenTtoShow = {<TeacherDashboard/>}/>
           }
         />
 
         <Route
-          path="/opettajille/new"
+          path="/teacher/profile"
           element={
             <ProtectedRoute
               requiredRole='teacher'
-              pageElemenTtoShow = {<TeacherNewPage/>}/>
+              pageElemenTtoShow = {<TeacherProfile/>}/>
+          }
+        />
+
+        <Route
+          path="/teacher/my-jobs"
+          element={
+            <ProtectedRoute
+              requiredRole='teacher'
+              pageElemenTtoShow = {<TeacherUpcomingsTable/>}/>
+          }
+        />
+        <Route
+          path="/teacher/school-jobs"
+          element={
+            <ProtectedRoute
+              requiredRole='teacher'
+              pageElemenTtoShow = {<SchoolUpcomingsTable/>}/>
           }
         />
       </Routes>
