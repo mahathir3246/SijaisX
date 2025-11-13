@@ -49,16 +49,25 @@ def cancel_confirmed_application_for_batch(substitute_ID: str, batch_ID: str):
         # Apply the new statuses in bulk
         status_updates = cursor.fetchall()
         if status_updates:
-            case_expr = " ".join(f"WHEN {a_id} THEN '{status}'" for a_id, status in status_updates)
-            assignment_ids = [str(a_id) for a_id, _ in status_updates]
-            cursor.execute(f"""
-                UPDATE Assignment
-                SET status = CASE assignment_ID {case_expr} END
-                WHERE assignment_ID IN ({','.join(assignment_ids)})
-            """)
-        
+            for assignment_id, new_status in status_updates:
+                cursor.execute(
+                    "UPDATE Assignment SET status = ? WHERE assignment_ID = ?",
+                    (new_status, assignment_id)
+                )
+
         # Remove the sub from BatchVolunteers
         cursor.execute('DELETE FROM BatchVolunteers WHERE batch_ID = ? AND substitute_ID = ?', (batch_ID, substitute_ID))
+
+        cursor.execute(
+            'SELECT 1 FROM BatchVolunteers WHERE batch_ID = ? LIMIT 1',
+            (batch_ID,)
+        )
+        new_batch_status = 'pending' if cursor.fetchone() else 'searching'
+
+        cursor.execute(
+            'UPDATE Batch SET status = ? WHERE batch_ID = ?',
+            (new_batch_status, batch_ID)
+        )
 
         conn.commit()
         return {"success": True, "message": f"{len(assignments)} applications canceled for batch {batch_ID}"}

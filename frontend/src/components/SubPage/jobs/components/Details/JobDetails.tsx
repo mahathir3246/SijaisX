@@ -3,13 +3,13 @@ import { SubstitutionBE } from '../Card/SubstituteJobsCard';
 import styles from "../../../../../scss_stylings/TeacherAssignmentPopup.module.scss";
 import { useState } from 'react';
 import { getUserID } from '../../../../../functions/auth';
-import { add_substitute_to_batch } from '../../../../../functions/api_calls';
+import { add_substitute_to_batch, cancel_application_for_batch } from '../../../../../functions/api_calls';
 import "../../.././../TeacherPage/TeacherDashboard.scss"
 
 export interface SubstitutionDetailsModalProps {
     open: boolean;
     onClose: () => void;
-    substitution: SubstitutionBE | null;
+    substitution: SubstitutionBE;
     status: 'Available' | 'Applied' | 'Accepted';
 }
 
@@ -21,6 +21,7 @@ export const statusClass: Record<SubstitutionBE['status'], string> = {
 
 export default function JobDetails({ open, onClose, substitution, status }: SubstitutionDetailsModalProps) {
     const [isApplying, setIsApplying] = useState(false);
+    const [isWithdrawing, setIsWithdrawing] = useState(false);
 
     const formatDate = (dateString: string) => {
         const dateObj = new Date(dateString);
@@ -51,6 +52,30 @@ export default function JobDetails({ open, onClose, substitution, status }: Subs
         } finally {
             setIsApplying(false);
         }
+    };
+
+    const handleWithdraw = async (e: React.MouseEvent) => {
+            e.stopPropagation();
+            const substituteID = getUserID();
+            if (!substituteID) {
+                alert('You must be logged in to withdraw');
+                return;
+            }
+            try{
+                console.log('withdraw', { substituteID, batchID: substitution.batch_ID });
+                const result = await cancel_application_for_batch(substituteID, substitution.batch_ID);
+                if (result && result.success) {
+                    alert('Successfully withdrawn from this job!');
+    
+                } else {
+                    alert(result?.error || 'Failed to withdraw from this job');
+                }
+            } catch (error) {
+                console.error('Error withdrawing from job:', error);
+                alert('An error occurred while withdrawing');
+            } finally {
+                setIsWithdrawing(false);
+            }
     };
 
     if (!substitution) return null;
@@ -151,6 +176,23 @@ export default function JobDetails({ open, onClose, substitution, status }: Subs
                         >
                             {isApplying ? 'Applying...' : 'Apply'}
                         </button>
+                    )}
+                    {status === 'Applied' && (
+                        <Button 
+                            className="close-button"
+                            style={{ backgroundColor: '#e74c3c', color: 'white', marginRight: '10px' }}
+                        >
+                            Cancel Application
+                        </Button>
+                    )}
+                    {status === 'Accepted' && (
+                        <Button 
+                            className="close-button"
+                            onClick={handleWithdraw}
+                            style={{ backgroundColor: '#e74c3c', color: 'white', marginRight: '10px' }}
+                        >
+                            Cancel Assigment
+                        </Button>
                     )}
                     <Button appearance="primary" className="close-button" 
                     onClick={(e) => {

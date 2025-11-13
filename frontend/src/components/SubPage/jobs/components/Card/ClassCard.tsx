@@ -1,7 +1,7 @@
 import { Button, Panel, Badge, TagProps } from 'rsuite';
 import "../../../../TeacherPage/TeacherDashboard.scss"
 import { SubstitutionFE, SubstitutionBE } from './SubstituteJobsCard';
-import { add_substitute_to_batch } from '../../../../../functions/api_calls';
+import { add_substitute_to_batch, cancel_application_for_batch } from '../../../../../functions/api_calls';
 import { getUserID } from '../../../../../functions/auth';
 import { useState } from 'react';
 import JobDetails from '../Details/JobDetails';
@@ -31,6 +31,7 @@ const ClassCard = ({ substitution, originalData, onApply }: Props) => {
     const [isApplying, setIsApplying] = useState(false);
     const [applied, setApplied] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const [isWithdrawing, setIsWithdrawing] = useState(false);
     
     const handleApply = async (e: React.MouseEvent)=> {
         e.stopPropagation();
@@ -58,6 +59,30 @@ const ClassCard = ({ substitution, originalData, onApply }: Props) => {
             alert('An error occurred while applying');
         } finally {
             setIsApplying(false);
+        }
+    };
+
+    const handleWithdraw = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        const substituteID = getUserID();
+        if (!substituteID) {
+            alert('You must be logged in to withdraw');
+            return;
+        }
+        try{
+            console.log('withdraw', { substituteID, batchID: substitution.batch_ID });
+            const result = await cancel_application_for_batch(substituteID, substitution.batch_ID);
+            if (result && result.success) {
+                alert('Successfully withdrawn from this job!');
+
+            } else {
+                alert(result?.error || 'Failed to withdraw from this job');
+            }
+        } catch (error) {
+            console.error('Error withdrawing from job:', error);
+            alert('An error occurred while withdrawing');
+        } finally {
+            setIsWithdrawing(false);
         }
     };
 
@@ -119,7 +144,12 @@ const ClassCard = ({ substitution, originalData, onApply }: Props) => {
                     >
                         Assigned ✓
                     </Button>
-                    <Button style={{backgroundColor: '#cb0d0d', color: 'white'}} block>
+                    <Button 
+                    style={{backgroundColor: '#cb0d0d', color: 'white'}} 
+                    block 
+                    onClick={handleWithdraw} 
+                    loading={isWithdrawing} 
+                    disabled={isWithdrawing}>
                         Cancel Assignment
                     </Button>
                     </>
