@@ -6,6 +6,7 @@ import "../../TeacherDashboard.scss"
 import AssignmentDetailsModal from '../Details';
 import { useTeacherJobs, getStatusColor, matchJobToAssignment, Job } from '../TeacherJobsHook';
 import PostAJobPopup from '../../JobPosting/PostAJobPopup';
+import { delete_assignments } from '../../../../functions/api_calls';
 const { Column, HeaderCell, Cell } = Table;
 
 const TeacherUpcomingsTable = () => {
@@ -16,6 +17,7 @@ const TeacherUpcomingsTable = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [postJobModalOpen, setPostJobModalOpen] = useState(false);
 
+  
   const handleSidebarSelect = (key: string) => {
     if (key === 'post-job') {
       setPostJobModalOpen(true);
@@ -59,14 +61,14 @@ const TeacherUpcomingsTable = () => {
 
         <Content className="dashboard-content">
           <div className="section-header">
-            <h3>Your Substitute Requests</h3>
+            <h3>Your Job Postings</h3>
             <p>Manage and track your job postings</p>
           </div>
 
           <div className="school-jobs-section">
-            <h3>All upcoming job postings</h3>
+            <h3>All Upcoming Assignments from you</h3>
             <p className="section-subtitle">
-              Click ‘View Details’ to see class notes, applicants, or edit the assignment.
+            Click ‘View Details’ to view class notes, applicants, or to edit/delete the assignment.
             </p>
 
             <Panel bordered>

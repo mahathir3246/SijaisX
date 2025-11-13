@@ -177,25 +177,25 @@ const SubstituteJobListTable = ({ apiFunction = get_batch_of_available_assignmen
                     <div className="school-jobs-section">
                         {apiFunction===get_batch_of_available_assignments_for_substitute &&
                         <>
-                        <h3>All Available job postings</h3>
+                        <h3>All Available job postings open to apply</h3>
                         <p className="section-subtitle">
-                        Click ‘View Details’ or click the row to see More information about the job.
+                        Click ‘View Details’ to see More information about the job, or to apply for the job.
                         </p>
                         </>
                         }
                         {apiFunction===get_all_applied_batches_of_substitute &&
                         <>
-                        <h3>All Applied jobs</h3>
+                        <h3>All the jobs you have Applied for</h3>
                         <p className="section-subtitle">
-                        Click ‘View Details’ or click the row to see More information about the job.
+                        Click ‘View Details’ to see More information about the job, or to cancel your application for the job.
                         </p>
                         </>
                         }
                         {apiFunction===get_batch_of_accepted_assignments_for_substitute &&
                         <>
-                        <h3>All Accepted jobs</h3>
+                        <h3>All the jobs you have been Accepted to</h3>
                         <p className="section-subtitle">
-                        Click ‘View Details’ or click the row to see More information about the job.
+                        Click ‘View Details’ to see More information about the job, or to cancel your assignment.
                         </p>
                         </>
                         }
@@ -248,7 +248,7 @@ const SubstituteJobListTable = ({ apiFunction = get_batch_of_available_assignmen
                             <Cell dataKey="grade" />
                             </Column>
 
-                            <Column flexGrow={3}>
+                            <Column flexGrow={3} align="center">
                                 <HeaderCell>Actions</HeaderCell>
                                 <Cell>
                                 {(rowData: SubstitutionFE) => (
@@ -256,42 +256,6 @@ const SubstituteJobListTable = ({ apiFunction = get_batch_of_available_assignmen
                                     <Button size="sm" appearance="primary" onClick={() => handleRowClick(rowData)}>
                                         View Details
                                     </Button>
-
-                                    {view === 'available' && (
-                                        <Button size="sm" appearance="primary" onClick={() => handleApply(rowData)}>
-                                        Apply
-                                        </Button>
-                                    )}
-
-                                    {view === 'applied' && (
-                                        <>
-                                        <Button size="sm" appearance="primary" disabled>
-                                            Applied ✓
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            appearance="ghost"
-                                            color="red"
-                                        >
-                                            Withdraw
-                                        </Button>
-                                        </>
-                                    )}
-
-                                    {view === 'accepted' && (
-                                        <>
-                                        <Button size="sm" appearance="primary" disabled>
-                                            Assigned ✓
-                                        </Button>
-                                        <Button
-                                            size="sm"
-                                            appearance="ghost"
-                                            color="red"
-                                        >
-                                            Withdraw
-                                        </Button>
-                                        </>
-                                    )}
                                     </div>
                                 )}
                                 </Cell>
