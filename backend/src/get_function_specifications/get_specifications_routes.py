@@ -98,7 +98,7 @@ def api_get_completed_batches(teacher_ID):
                 return jsonify({"success": False,"error": f"Invalid datetime format: {current_datetime}"}), 400
 
         batches = get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime)
-        return jsonify({"success": True, "batches": batches}), 200
+        return jsonify(batches), 200
 
     except Exception as e:
         print("Error in api_get_completed_batches:", e)

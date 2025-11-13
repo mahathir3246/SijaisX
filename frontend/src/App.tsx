@@ -17,6 +17,7 @@ import {
   get_all_applied_batches_of_substitute,
   get_batch_of_accepted_assignments_for_substitute} 
 from './functions/api_calls';
+import PastJobs from './components/TeacherPage/PastJobs/PastJobs';
 
 function App() {
   return (
@@ -59,6 +60,15 @@ function App() {
             <ProtectedRoute
               requiredRole='teacher'
               pageElemenTtoShow = {<SchoolJobsTable/>}/>
+          }
+        />
+
+        <Route
+          path="/teacher/past-jobs"
+          element={
+            <ProtectedRoute
+              requiredRole='teacher'
+              pageElemenTtoShow = {<PastJobs/>}/>
           }
         />
 

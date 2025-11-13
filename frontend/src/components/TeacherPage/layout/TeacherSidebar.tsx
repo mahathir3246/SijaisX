@@ -8,7 +8,7 @@ const navItems = [
   { eventKey: 'post-job', label: 'Post a Job', icon: <FiPlusCircle /> },
   { eventKey: 'my-jobs', label: 'My Job Posts', icon: <FiBriefcase />, href: '/teacher/my-jobs' },
   { eventKey: 'school-jobs', label: 'School Jobs', icon: <FiBriefcase />, href: '/teacher/school-jobs' },
-  { eventKey: 'history', label: 'Past Jobs', icon: <FiClock />, href: '/teacher/history' },
+  { eventKey: 'past-jobs', label: 'Past Jobs', icon: <FiClock />, href: '/teacher/past-jobs' },
   { eventKey: 'messages', label: 'Messages', icon: <FiMessageSquare />, href: '/teacher/messages' },
 ];
 
