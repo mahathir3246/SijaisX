@@ -502,8 +502,47 @@ def get_batch_of_completed_and_after_current_time(teacher_ID, current_datetime =
         else:
             by_time_completed = []
         
-        all_batches = list(set(completed_batches + by_time_completed))
-        return {"success": True, "batches": all_batches}
+        all_batch_ids = list(set(completed_batches + by_time_completed))
+        if not all_batch_ids:
+            return {"success": True, "batches": []}
+        else:
+            # fetch the assignment infos for each batch id
+            placeholders = ','.join(['?'] * len(all_batch_ids))
+            cursor.execute(f'''
+                SELECT A.batch_ID, S.school_name, A.date, C.subject, C.grade,
+                    C.beginning_time, C.ending_time, C.duration, C.room,
+                    A.notes, T.name AS teacher_name, T.email AS teacher_email
+                FROM Assignment AS A
+                JOIN Teacher AS T ON T.teacher_ID = A.teacher_ID
+                JOIN Class AS C ON C.class_ID = A.class_ID
+                JOIN School AS S ON S.school_ID = C.school_ID
+                WHERE A.batch_ID IN ({placeholders})
+                ORDER BY A.date ASC, S.school_name, C.beginning_time
+            ''', all_batch_ids)
+
+            result = cursor.fetchall()
+            batches = {}
+            for row in result:
+                key = (row["date"], row["school_name"], row["teacher_name"])
+                if key not in batches:
+                    batches[key] = {
+                        "date": row["date"],
+                        "school_name": row["school_name"],
+                        "teacher_name": row["teacher_name"],
+                        "teacher_email": row["teacher_email"],
+                        "batch_ID": row["batch_ID"],
+                        "classes": []
+                    }
+                batches[key]["classes"].append({
+                    "subject": row["subject"],
+                    "grade": row["grade"],
+                    "beginning_time": row["beginning_time"],
+                    "ending_time": row["ending_time"],
+                    "duration": row["duration"],
+                    "room": row["room"],
+                    "notes": row["notes"],
+                })
+            return {"success": True, "batches": list(batches.values())}
     
     except Exception as e:
         print("Error in get_batch_of_completed_and_after_current_time", e)

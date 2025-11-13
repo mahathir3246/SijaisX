@@ -8,7 +8,7 @@ type TagColour = NonNullable<TagProps['color']>;
 
 const statusColour: Record<Job['status'], TagColour> = {
   Pending: 'blue',
-  Searching: 'orange',
+  Searching: 'red',
   Accepted: 'green',
   Revoked: 'red',
 };
