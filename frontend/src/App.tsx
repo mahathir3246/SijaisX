@@ -2,17 +2,16 @@ import 'rsuite/dist/rsuite.min.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import FullHomePage from "./components/HomePage/FullHomePage";
-import FullSijaisPage from "./components/Subpage/FullSubPage";
 import RegisterPage from './components/Register/Register';
 import Login from './components/Login/Login';
 import ProtectedRoute from './components/Login/ProtectedRoute';
-import TeacherDashboard from "./components/TeacherNew/layout/TeacherDashboard";
-import TeacherProfile from "./components/TeacherNew/TeacherProfile/TeacherProfile";
-import TeacherUpcomingsTable from "./components/TeacherNew/UpcomingJobs(Teacher)/Table/TeacherJobsTable";
-import SchoolJobsTable from "./components/TeacherNew/UpcomingJobs(School)/Table/SchoolJobsTable";
-import SubDashboard from './components/SubNew/layout/SubDashboard';
-import SubstituteProfile from './components/SubNew/Profile/SubProfile';
-import SubstituteJobListTable from './components/SubNew/jobs/components/Table/SubstituteJobListTable';
+import TeacherDashboard from "./components/TeacherPage/layout/TeacherDashboard";
+import TeacherProfile from "./components/TeacherPage/TeacherProfile/TeacherProfile";
+import TeacherUpcomingsTable from "./components/TeacherPage/UpcomingJobs(Teacher)/Table/TeacherJobsTable";
+import SchoolJobsTable from "./components/TeacherPage/UpcomingJobs(School)/Table/SchoolJobsTable";
+import SubDashboard from './components/SubPage/layout/SubDashboard';
+import SubstituteProfile from './components/SubPage/Profile/SubProfile';
+import SubstituteJobListTable from './components/SubPage/jobs/components/Table/SubstituteJobListTable';
 import {
   get_batch_of_available_assignments_for_substitute,
   get_all_applied_batches_of_substitute,
@@ -61,14 +60,6 @@ function App() {
               requiredRole='teacher'
               pageElemenTtoShow = {<SchoolJobsTable/>}/>
           }
-        />
-
-        <Route
-          path="/sijaisille"
-          element={
-          <ProtectedRoute 
-            requiredRole='substitute'
-            pageElemenTtoShow ={<FullSijaisPage/>}/>}
         />
 
         <Route
