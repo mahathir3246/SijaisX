@@ -1,10 +1,12 @@
+/* ===== Layout: Main App Shell ===== */
 .dashboard-container {
     min-height: 100vh;
     background-color: var(--background);
     display: flex;
   }
   
-  .dashboard-sidebar {
+/* ===== Sidebar Navigation ===== */
+.dashboard-sidebar {
     background: var(--surface);
     border-right: 1px solid var(--border-color);
     height: 100vh;
@@ -88,7 +90,8 @@
     }
   }
   
-  .dashboard-main {
+/* ===== Main Content Column ===== */
+.dashboard-main {
     flex: 1;
     margin-left: 260px;
     transition: margin-left 0.3s ease;
@@ -102,7 +105,8 @@
     margin-left: 60px;
   }
   
-  .dashboard-header {
+/* ===== Sticky Top Header ===== */
+.dashboard-header {
     background: var(--surface);
     padding: var(--spacing-lg) var(--spacing-xl);
     border-bottom: 1px solid var(--border-color);
@@ -141,7 +145,8 @@
     }
   }
   
-  .dashboard-content {
+/* ===== Scrollable Content Area ===== */
+.dashboard-content {
     padding: var(--spacing-xl);
     overflow-y: auto;
     overflow-x: hidden;  // optional: hide any stray horizontal scroll
@@ -149,7 +154,8 @@
     min-width: 0;        // same idea, lets the card rail manage its own scroll
   }
   
-  .welcome-section {
+/* ===== Welcome Banner ===== */
+.welcome-section {
     margin-bottom: var(--spacing-xl);
     display: flex;
     justify-content: space-between;
@@ -173,7 +179,8 @@
     }
   }
   
-  .stat-card {
+/* ===== Dashboard Metric Cards ===== */
+.stat-card {
     padding: var(--spacing-lg);
     text-align: center;
     position: relative;
@@ -217,7 +224,8 @@
     }
   }
   
-  .section-header {
+/* ===== Section Heading Blocks ===== */
+.section-header {
     margin-bottom: var(--spacing-xl);
   
     h2 {
@@ -233,7 +241,8 @@
     }
   }
   
-  .job-card {
+/* ===== Job Card (Rail + Table) Styling ===== */
+.job-card {
     width: 260px;
     min-height: 320px;
     display: flex;
@@ -277,7 +286,8 @@
     }
   }
   
-  .school-jobs-preview {
+/* ===== School Jobs Preview List ===== */
+.school-jobs-preview {
     .job-row {
       display: flex;
       justify-content: space-between;
@@ -318,7 +328,8 @@
     }
   }
   
-  .profile-content {
+/* ===== Profile Page Panels ===== */
+.profile-content {
     max-width: 900px;
     margin: 0 auto;
     
@@ -591,5 +602,49 @@
         background-color: var(--primary-dark);
       }
     }
+  }
+}
+
+.stat-card {
+  padding: var(--spacing-lg);
+  text-align: center;
+  position: relative;
+  transition: transform 0.2s;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  .stat-number {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .stat-label {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  .stat-badge {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+  }
+  
+  &--completed {
+    border-left: 4px solid var(--status-completed);
+    .stat-number { color: var(--status-completed); }
+  }
+  
+  &--earnings {
+    border-left: 4px solid var(--secondary-color);
+    .stat-number { color: var(--secondary-color); }
+  }
+  
+  &--pending {
+    border-left: 4px solid var(--status-pending);
+    .stat-number { color: var(--status-pending); }
   }
 }

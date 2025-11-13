@@ -9,7 +9,7 @@ export interface Props {
     onClose(): void;
 }
 
-export default function PostJobModal({ open, onClose }: Props) {
+export default function PostAJobPopup({ open, onClose }: Props) {
     // Add mode selection state
     const [mode, setMode] = useState<'schedule' | 'custom'>('schedule');
     // Keep teacher ID logic

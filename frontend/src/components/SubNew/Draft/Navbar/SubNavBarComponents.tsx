@@ -1,0 +1,61 @@
+"use client";
+import ResponsiveNav from "@rsuite/responsive-nav";
+import NoticeIcon from '@rsuite/icons/Notice';
+import { Link } from 'react-router-dom';
+import navigationStyles from "../../../scss_stylings/navbar.module.scss"
+import ExitIcon from "@rsuite/icons/Exit";
+import { logout } from "../../../functions/auth";
+
+
+const NavigationBarComponents = () => {
+
+  const handleLogOut = () =>{
+    logout()
+  }
+  return (
+    <div className={navigationStyles.navContainer}>
+      <ResponsiveNav
+        id="responsiveNav"
+        moreText="More"
+        moreProps={{ className: navigationStyles.moreDropDownButton }}
+        pullRight={true}
+        className={navigationStyles.responsiveNav}
+      >
+        <ResponsiveNav.Item className={navigationStyles.navLink}>
+          <p className={navigationStyles.navItemSubContainer}>Kalenteri</p>
+        </ResponsiveNav.Item>
+        <ResponsiveNav.Item className={navigationStyles.navLink}>
+          <p className={navigationStyles.navItemSubContainer}>Raportit</p>
+        </ResponsiveNav.Item>
+        <ResponsiveNav.Item
+          as={Link}
+          to="/"
+          className={navigationStyles.navLink}
+        >
+            <span className={navigationStyles.navItemSubContainer}>
+                <NoticeIcon style={{ marginRight: "6px" }} />
+                Ilmoitukset
+            </span> 
+        </ResponsiveNav.Item>
+        <ResponsiveNav.Item
+          as={Link}
+          to="/"
+          className={navigationStyles.navLink}
+        >
+          <span className={navigationStyles.navItemSubContainer}>Sijaislista</span>
+        </ResponsiveNav.Item>
+        <ResponsiveNav.Item
+          className={`${navigationStyles.logOut} ${navigationStyles.navLink}`}
+          onClick={handleLogOut}
+        >
+          <p className={navigationStyles.navItemSubContainer}>
+            <ExitIcon className={navigationStyles.exitIcon} />
+            Kirjaudu ulos
+          </p>
+        </ResponsiveNav.Item>
+      </ResponsiveNav>
+    </div>
+  );
+};
+
+export default NavigationBarComponents;

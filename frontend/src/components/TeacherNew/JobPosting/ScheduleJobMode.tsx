@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { get_teacher_classes_within_range } from '../../../functions/api_calls';
 
 import { create_batch_assignment } from '../../../functions/api_calls';
-import ClassCard from './ClassCard';
+import PostAJobClassCard from './PostAJobClassCard';
 import { getUserID } from '../../../functions/auth';
 
 export interface ClassesBE{
@@ -168,7 +168,7 @@ export default function ScheduleJobMode({ onSubmitSuccess, onSubmitError }: Prop
                                     <h6>{format(date, 'MMM dd, yyyy')}</h6>
                                 </div>
                                 {classesForDate?.map((cls, classIndex) => (
-                                    <ClassCard 
+                                    <PostAJobClassCard 
                                         key={`${dateIndex}-${classIndex}`}
                                         class_ID={cls.class_ID}
                                         beginning_time={cls.beginning_time}

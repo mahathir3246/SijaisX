@@ -22,7 +22,7 @@ export interface ClassesFE{
 
 
 
-export default function ClassCard({
+export default function PostAJobClassCard({
     class_ID,
     beginning_time,
     ending_time,

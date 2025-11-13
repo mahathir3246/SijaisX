@@ -4,7 +4,7 @@ import SchoolAssignmentDetailsModal from '../Details';
 import SchoolJobsCard from './SchoolJobsCard';
 import { useSchoolJobs, matchJobToAssignment, SchoolJob } from '../SchoolJobHook';
 
-const SchoolUpcomings = () => {
+const SchoolJobsCardGallery = () => {
   const { assignments, jobs, loading, error } = useSchoolJobs();
   const [selectedAssignment, setSelectedAssignment] =
     useState<ReturnType<typeof matchJobToAssignment>>(null);
@@ -50,4 +50,4 @@ const SchoolUpcomings = () => {
   );
 };
 
-export default SchoolUpcomings;
+export default SchoolJobsCardGallery;

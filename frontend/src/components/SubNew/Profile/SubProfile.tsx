@@ -1,76 +1,61 @@
-
-import teacherStyles from '../../../scss_stylings/teacher.module.scss';
+import { Header, Loader,Content,toaster,Message, Button, Panel, Form, Input, Uploader } from 'rsuite';
+import subStyles from '../../../scss_stylings/substitute.module.scss';
 import { getUserID } from '../../../functions/auth';
-import { get_teacher_info, get_school_info , update_teacher_profile} from '../../../functions/api_calls';
+import { get_substitute_info , update_substitute_profile, get_all_schools_of_substitute} from '../../../functions/api_calls';
 import { useEffect, useState } from 'react';
-import { Header, Loader,Content,toaster,Message, Button, Panel, Form, Input } from 'rsuite';
-import TeacherSidebar from '../layout/TeacherSidebar';
+import SubSidebar from '../layout/SubSidebar';
+import "../../TeacherNew/TeacherDashboard.scss";
 import Logo from '../../../Logo/Logo';
-import PostAJobPopup from '../JobPosting/PostAJobPopup';
+
+const SubstituteProfile = () => {
 
 
-
-export interface TeacherData{
-  teacher_ID: string,
-  name: string,
-  phone_number: string,
-  email: string,
-  password: string,
-  school_ID: string
-}
-
-
-const TeacherProfile = () => {
-
-  interface SchoolData{
-    school_ID: string,
-    school_name: string
+  interface SubstituteData{
+    substitute_ID:string,
+    name: string,
+    phone_number: string,
+    email:string,
+    password:string,
+    experience: number,
   }
+  const [substitute, setSubstitute] = useState<SubstituteData | null>(null);
+  const [schools, setSchools] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const [activeKey, setActiveKey] = useState('profile');
   const [collapsed, setCollapsed] = useState(true);
 
-  const [teacher, setTeacher] = useState<TeacherData | null>(null);
-  const [school, setSchool] = useState<SchoolData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   //edit profile usestates
   const[isEditing, setIsEditing] = useState(false);
   const[isSaving, setIsSaving] = useState(false);
-
   const[name, setName] = useState("");
   const[email, setEmail]= useState("");
   const [phone, setPhone] = useState("");
 
-  const [postJobModalOpen, setPostJobModalOpen] = useState(false);
-
-  const handleSidebarSelect = (key: string) => {
-    if (key === 'post-job') {
-      setPostJobModalOpen(true);
-      return;
-    }
-    setActiveKey(key);
-  };
-
   const handleEdit = () =>{
-    if (!teacher) return;
+    if (!substitute) return;
     setIsEditing(true)
-    setName(teacher.name ?? '');
-    setEmail(teacher.email ?? '');
-    setPhone(teacher.phone_number ?? '');
+    if(substitute){
+      setName(substitute.name);
+      setEmail(substitute.email);
+      setPhone(substitute.phone_number);
+    }
   }
 
   const handleCancel = () =>{
-    if (!teacher) return;
-    setIsEditing(false);
-    setName(teacher.name ?? '');
-    setEmail(teacher.email ?? '');
-    setPhone(teacher.phone_number ?? '');
+    if (!substitute) return;
+    setIsEditing(false)
+    if(substitute){
+      setName(substitute.name);
+      setPhone(substitute.phone_number);
+      setEmail(substitute.email);
+    }
   }
 
   const handleSave = async () => {
-    if (!teacher) return;
+    if (!substitute) return;
     
     setIsSaving(true);
     
@@ -81,11 +66,11 @@ const TeacherProfile = () => {
         phone_number: phone.trim()
       };
 
-      const result = await update_teacher_profile(teacher.teacher_ID, updatedData);
+      const result = await update_substitute_profile(substitute.substitute_ID, updatedData);
       
       if (result && result.success) {
         // Update local state with new data
-        setTeacher(prev => prev ? {
+        setSubstitute(prev => prev ? {
           ...prev,
           name: updatedData.name,
           email: updatedData.email,
@@ -122,28 +107,20 @@ const TeacherProfile = () => {
   }
 
   useEffect(() => {
-    const getTeacherData = async () =>{
+    const getSubstituteData = async () =>{
       try{
-        const teacherID = getUserID();
+        const substitute_id = getUserID();
 
-        if(!teacherID || teacherID === "") {
-          setError('No teacher ID found');
+        if(!substitute_id || substitute_id === "") {
+          setError('No substitute ID found');
           setLoading(false);
           return;
         }
 
-        const teacherInfo = await get_teacher_info(teacherID);
+        const subInfo = await get_substitute_info(substitute_id);
 
-        if(teacherInfo){
-          setTeacher(teacherInfo as TeacherData);
-          setName((teacherInfo as TeacherData).name ?? '');
-          setEmail((teacherInfo as TeacherData).email ?? '');
-          setPhone((teacherInfo as TeacherData).phone_number ?? '');
-
-          const schoolInfo = await get_school_info((teacherInfo as TeacherData).school_ID);
-          if (schoolInfo) {
-            setSchool(schoolInfo as SchoolData);
-          }
+        if(subInfo){
+          setSubstitute(subInfo as SubstituteData)
         } else{
           setError("Error Loading profile")
         } 
@@ -155,12 +132,35 @@ const TeacherProfile = () => {
         setLoading(false)
       }
     }
-    getTeacherData()
+    getSubstituteData()
   } , []); 
+
+  useEffect(() => {
+  const getSchoolsData = async () => {
+    try {
+      const substitute_id = getUserID();
+      
+      if (!substitute_id || substitute_id === "") {
+        return;
+      }
+
+      const schoolsResponse = await get_all_schools_of_substitute(substitute_id);
+      
+      if (schoolsResponse && schoolsResponse.success) {
+        const schoolNames = schoolsResponse.schools?.map((school: any) => school.school_name) || [];
+        setSchools(schoolNames);
+      }
+    } catch (err) {
+      console.error('Error fetching schools:', err);
+    }
+  };
+  
+  getSchoolsData();
+}, []);
 
   if (loading) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <Loader size="lg" content="Loading profile..." />
       </div>
@@ -170,7 +170,7 @@ const TeacherProfile = () => {
 
   if (error) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <p style={{ color: 'red' }}>Error: {error}</p>
       </div>
@@ -178,9 +178,9 @@ const TeacherProfile = () => {
   );
   }
 
-  if (!teacher) {
+  if (!substitute) {
   return (
-    <Panel bordered className={teacherStyles.profileContainer}>
+    <Panel bordered className={subStyles.profileContainer}>
       <div style={{ textAlign: 'center', padding: '40px' }}>
         <p>No teacher data available</p>
       </div>
@@ -191,12 +191,11 @@ const TeacherProfile = () => {
 
   return (
     <div className={`dashboard-container ${collapsed ? 'sidebar-collapsed' : ''}`}>
-        <TeacherSidebar
+        <SubSidebar
             activeKey={activeKey}
-            onSelect={handleSidebarSelect}
+            onSelect={setActiveKey}
             collapsed={collapsed}
             onToggle={() => setCollapsed((prev) => !prev)}
-            onPostJobClick={() => setPostJobModalOpen(true)}
           />
       <div className="dashboard-main">
         <Header className="dashboard-header">
@@ -215,23 +214,23 @@ const TeacherProfile = () => {
               <div className="form-row">
               <Form.Group>
                 <Form.ControlLabel>Name</Form.ControlLabel>
-                <Input value={name} onChange={setName} disabled={!isEditing} />
+                <Input value={substitute.name} onChange={setName} disabled={!isEditing} />
               </Form.Group>
               </div>
 
               <Form.Group>
                 <Form.ControlLabel>Email</Form.ControlLabel>
-                <Input value={email} onChange={setEmail} disabled={!isEditing}/>
+                <Input value={substitute.email} onChange={setEmail} disabled={!isEditing}/>
               </Form.Group>
 
               <Form.Group>
                 <Form.ControlLabel>Phone Number</Form.ControlLabel>
-                <Input value={phone} onChange={setPhone} disabled={!isEditing} />
+                <Input value={substitute.phone_number} onChange={setPhone} disabled={!isEditing} />
               </Form.Group>
 
               <Form.Group>
                 <Form.ControlLabel>School</Form.ControlLabel>
-                <Input value={school?.school_name ?? ''} disabled={true} />
+                <Input value={schools.join(', ')} disabled={true} />
               </Form.Group>
 
               {isEditing ? (
@@ -252,31 +251,70 @@ const TeacherProfile = () => {
           </Panel>
 
           <Panel bordered className="profile-panel">
-            <h3>Teaching Information</h3>
-            <p className="section-subtitle">Your subjects and grade levels</p>
+            <h3>Qualifications & Experience</h3>
+            <p className="section-subtitle">Your teaching credentials and subjects</p>
 
             <Form fluid>
               <Form.Group>
-                <Form.ControlLabel>Primary Subjects</Form.ControlLabel>
-                <Input defaultValue="Mathematics, Physics" />
+                <Form.ControlLabel>Education</Form.ControlLabel>
+                <Input defaultValue="Master of Education, University of Helsinki" />
               </Form.Group>
 
               <Form.Group>
-                <Form.ControlLabel>Grade Levels</Form.ControlLabel>
-                <Input defaultValue="Grades 7-9" />
+                <Form.ControlLabel>Subjects</Form.ControlLabel>
+                <Input defaultValue="Mathematics, Physics, Chemistry" />
               </Form.Group>
 
               <Form.Group>
                 <Form.ControlLabel>Years of Experience</Form.ControlLabel>
-                <Input type="number" defaultValue="8" />
+                <Input type="number" defaultValue="5" />
               </Form.Group>
 
-              <Button appearance="primary">Update Information</Button>
+              <Form.Group>
+                <Form.ControlLabel>Bio</Form.ControlLabel>
+                <Input 
+                  as="textarea" 
+                  rows={4} 
+                  defaultValue="Experienced substitute teacher with a passion for mathematics and sciences. Skilled in engaging students and adapting to different teaching environments."
+                />
+              </Form.Group>
+
+              <Form.Group>
+                <Form.ControlLabel>Upload CV</Form.ControlLabel>
+                <Uploader action="//jsonplaceholder.typicode.com/posts/" draggable>
+                  <div style={{ lineHeight: '100px' }}>Click or Drag files to this area to upload</div>
+                </Uploader>
+              </Form.Group>
+
+              <Button appearance="primary">Update Qualifications</Button>
             </Form>
+          </Panel>
+
+          <Panel bordered className="profile-panel">
+            <h3>Feedback & Ratings</h3>
+            <p className="section-subtitle">Reviews from your previous assignments</p>
+
+            <div className="rating-summary">
+              <div className="rating-number">4.8 / 5.0</div>
+              <div className="rating-meta">
+                <span>Based on</span>
+                <strong>24 reviews</strong>
+              </div>
+            </div>
+
+            <div className="feedback-list">
+              <Panel bordered className="feedback-item">
+                <p className="feedback-school">From Jokiniemen Koulu</p>
+                <p className="feedback-text">"Excellent teacher! Very professional and the students learned a lot."</p>
+              </Panel>
+              <Panel bordered className="feedback-item">
+                <p className="feedback-school">From Simonkylän Koulu</p>
+                <p className="feedback-text">"Great communication and preparation. Would definitely request again."</p>
+              </Panel>
+            </div>
           </Panel>
           </Content>
       </div>
-      <PostAJobPopup open={postJobModalOpen} onClose={() => setPostJobModalOpen(false)} />
     </div>
 
     
@@ -353,4 +391,4 @@ const TeacherProfile = () => {
     */}
 };
 
-export default TeacherProfile;
+export default SubstituteProfile;

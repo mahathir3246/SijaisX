@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Header, Content, Panel, Badge, Grid, Row, Col, Button } from 'rsuite';
-import Logo from '../../Logo/Logo';
+import Logo from '../../../Logo/Logo';
 import './TeacherDashboard.scss';
-import TeacherUpcomings from './UpcomingJobs(Teacher)/Cards/TeacherUpcomings';
-import SchoolUpcomings from './UpcomingJobs(School)/Card/schoolupcomings';
+import TeacherCardGallery from '../UpcomingJobs(Teacher)/Cards/TEacherCardGalley';
+import SchoolJobsCardGallery from '../UpcomingJobs(School)/Card/SchoolJobsCardGallery';
 import TeacherSidebar from './TeacherSidebar';
 import { FiPlusCircle } from 'react-icons/fi';
-import PostJobModal from './JobPosting/PostJobPopup';
+import PostAJobPopup from '../JobPosting/PostAJobPopup';
  const TeacherDashboard = () => {
     const [activeKey, setActiveKey] = useState('dashboard');
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(true);
     const [postJobModalOpen, setPostJobModalOpen] = useState(false);
 
     const handleSidebarSelect = (key: string) => {
@@ -61,7 +61,7 @@ import PostJobModal from './JobPosting/PostJobPopup';
             </div>
             
 
-            <Grid fluid>
+            <Grid fluid style={{marginBottom: "20px"}}>
               <Row gutter={16}>
                 <Col xs={24} sm={8}>
                   <Panel bordered className="stat-card stat-card--searching">
@@ -91,18 +91,18 @@ import PostJobModal from './JobPosting/PostJobPopup';
               <h3>My Job Posts</h3>
             </div>
   
-            <TeacherUpcomings/>
+            <TeacherCardGallery/>
   
             <div className="section-header">
               <h3>School Jobs Overview</h3>
               <p>All substitute requests from your school</p>
             </div>
 
-            <SchoolUpcomings />
+            <SchoolJobsCardGallery />
   
          </Content>
         </div>
-        <PostJobModal open={postJobModalOpen} onClose={() => setPostJobModalOpen(false)} />
+        <PostAJobPopup open={postJobModalOpen} onClose={() => setPostJobModalOpen(false)} />
       </div>
     );
   };

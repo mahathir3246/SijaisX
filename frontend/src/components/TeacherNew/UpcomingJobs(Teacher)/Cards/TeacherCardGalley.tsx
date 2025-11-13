@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import styles from '../../../../scss_stylings/card.module.scss';
 import AssignmentDetailsModal from '../Details';
-import ClassCard from './ClassCard';
+import TeacherClassCard from './TeacherClassCard';
 import { useTeacherJobs, matchJobToAssignment, Job } from '../TeacherJobsHook';
 
-const TeacherUpcomings = () => {
+const TeacherCardGallery = () => {
   const { assignments, jobs, loading, error } = useTeacherJobs();
   const [selectedAssignment, setSelectedAssignment] = useState<typeof assignments[number] | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -35,7 +35,7 @@ const TeacherUpcomings = () => {
 
             return (
               <div key={`${job.date}-${job.beginning_time}-${job.subject}-${index}`} className={styles.cardWrapper}>
-                <ClassCard
+                <TeacherClassCard
                   job={job}
                   onClick={() => handleCardClick(job)}
                   assignmentIds={assignmentIds}
@@ -55,4 +55,4 @@ const TeacherUpcomings = () => {
   );
 };
 
-export default TeacherUpcomings;
+export default TeacherCardGallery;

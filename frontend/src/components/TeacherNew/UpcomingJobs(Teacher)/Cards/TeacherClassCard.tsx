@@ -26,7 +26,7 @@ type ClassCardProps = {
   assignmentIds?: string[];
 };
 
-export default function ClassCard({ job, onClick, assignmentIds }: ClassCardProps) {
+export default function TeacherClassCard({ job, onClick, assignmentIds }: ClassCardProps) {
   const handleDelete = async (e: React.MouseEvent) => {
     e.stopPropagation();
     if (!assignmentIds?.length) return;
