@@ -136,7 +136,7 @@ const PastJobs = () => {
         <Header className="dashboard-header">
           <Logo size="small" showText={false} />
           <div className="header-right">
-            <span className="page-title">My Jobs</span>
+            <span className="page-title">Past Jobs</span>
           </div>
         </Header>
 
@@ -149,7 +149,7 @@ const PastJobs = () => {
           <div className="school-jobs-section">
             <h3>All past job postings</h3>
             <p className="section-subtitle">
-              Click ‘View Details’ to see more info about the job, assigned substitute, and class details.
+              Click ‘View Details’ to see more info about the job, assigned substitute and class details, or to delete the assignment.
             </p>
 
             <Panel bordered>

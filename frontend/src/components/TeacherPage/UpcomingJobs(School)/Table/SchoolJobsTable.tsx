@@ -62,14 +62,14 @@ const SchoolJobsTable = () => {
 
         <Content className="dashboard-content">
           <div className="section-header">
-            <h3>School-Wide Job Posts</h3>
+            <h3>School-Wide Substitute Jobs</h3>
             <p>All substitute positions at your school</p>
           </div>
 
           <div className="school-jobs-section">
             <h3>All School Jobs</h3>
             <p className="section-subtitle">
-              View every substitute job posting; open “View Details” for applicants and notes.
+              View every substitute job postings from different teachers; Click “View Details” for more information.
             </p>
 
             <Panel bordered>

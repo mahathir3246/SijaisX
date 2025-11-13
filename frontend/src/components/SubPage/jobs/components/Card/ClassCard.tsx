@@ -120,7 +120,7 @@ const ClassCard = ({ substitution, originalData, onApply }: Props) => {
                         Assigned ✓
                     </Button>
                     <Button style={{backgroundColor: '#cb0d0d', color: 'white'}} block>
-                        Withdraw Application
+                        Cancel Assignment
                     </Button>
                     </>
                 )}
